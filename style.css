@@ -1,0 +1,43 @@
+body {
+    margin:0;
+    padding:0;
+}
+nav {
+    padding: 0.1rem 0.5rem;
+   font-family: "Poppins";
+   background: var(--background);
+   color:var(--text);
+   display:flex;
+   justify-content: space-between;
+   align-items: center;
+   /* width:100%; */
+}
+ul {
+    display:flex;
+    list-style: none;
+    justify-content: center;
+    gap:1rem;
+    align-items: center;
+}
+ul li {
+    text-decoration: none;
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    #logo p{
+        display:none;
+    }
+}
+
+/* Phones / large phones */
+@media (max-width: 768px) { }
+
+/* Tablets */
+@media (max-width: 1024px) { }
+
+/* Small desktops / laptops */
+@media (max-width: 1280px) { }
+
+/* Large desktops */
+@media (max-width: 1536px) { }
