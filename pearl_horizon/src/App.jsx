@@ -9,7 +9,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/booking" element={<h1> BOOKING </h1>} />
+        <Route path="/" element={<Home />} />
       </Routes>
+      {/* <Home/> */}
     </>
   );
 }

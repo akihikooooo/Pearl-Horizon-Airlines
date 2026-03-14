@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import "../index.css";
 
 function Navbar() {
@@ -17,9 +18,14 @@ function Navbar() {
         <p>Pearl Horizon Airlines</p>
       </div>
       <ul className={`hidden lg:flex gap-4 ml-auto  `}>
-        <li>Home</li>
-        <li>Book a flight</li>
-        <li>Contact Us</li>
+        {["Home", "Book a Flight", "About Us", "Contact"].map((item) => (
+          <NavLink
+            to={item === "Home" ? "/" : item === "Book a Flight" ? "/booking" : item === "About Us" ? "/about" : "/contact"}
+            key={`${item === "Book a Flight" ? "book" : item.toLowerCase()}`}
+            className={`cursor-pointer hover:text-blue-500 transition-colors duration-300 ${scrolled ? "text-gray-700" : "text-gray-900"}`}>
+            {item}
+          </NavLink>
+        ))}
       </ul>
     </nav>
   );
