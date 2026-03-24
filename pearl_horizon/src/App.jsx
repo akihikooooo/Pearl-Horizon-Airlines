@@ -2,6 +2,8 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
+import Booking from "./pages/Booking";
+import Footer from "./components/Footer"
 
 function App() {
   return (
@@ -9,10 +11,11 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/booking" element={<h1> BOOKING </h1>} />
+        <Route path="/booking" element={<Booking/>} />
         <Route path="/" element={<Home />} />
       </Routes>
       {/* <Home/> */}
+      <Footer/>
     </>
   );
 }

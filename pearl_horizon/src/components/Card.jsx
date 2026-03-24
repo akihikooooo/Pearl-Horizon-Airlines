@@ -1,11 +1,12 @@
-import React from "React";
+import React from "react";
 import {NavLink} from "react-router-dom";
 import "../index.css";
+import req from "../assets/requirements.jpg";
 
-function Card({ title, description, image }) {
+function Card({ title, description }) {
     return (
         <div id="card">
-            <img src={image} alt={title} className="w-full h-48 object-cover rounded-t" />
+            <img src={req} alt={title} className="object-cover rounded-t" />
             <div className="p-4">
                 <h2 className="font-bold text-lg mb-2">{title}</h2>
                 <p className="text-gray-600">{description}</p>

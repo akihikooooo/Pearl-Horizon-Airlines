@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import "../index.css";
 import req from "../assets/requirements.jpg";
+import Card from "../components/Card";
 
 const Home =  () => {
   return (
@@ -83,10 +84,15 @@ const Home =  () => {
             Check Travel Requirements
           </NavLink>
         </div>
-      <div id="places"> 
-        {["Pampanga", "Cebu", "Someplace"]
-        }
       </div>
+      <div id="cards-cont" className="p-8">
+        <h1 className="font-extrabold text-2xl">Places to go to!</h1>
+        <div id="places" className="flex justify-center items-center gap-10">
+          {["Pampanga", "Cebu", "Baguio"].map((place)=> (
+            <Card title={place} description="Lorem ipsum dolor sit amet, consectetur adipiscing elit." image={place}/>
+          ))
+          }
+        </div>
       </div>
     </div>
   );

@@ -13,6 +13,10 @@ nav{
     z-index: 10;
     transition: background-color 0.5s cubic-bezier(0.75, 0, 0.25, 1)
 }
+nav p,nav a{
+    color:white;
+    mix-blend-mode: difference;
+}
 .scrolled{
     background-color: rgba(255, 255, 255, 0.9);
 }
@@ -29,4 +33,13 @@ border-radius: 25px 25px 25px 25px;
 }
 #radios label{
     transition: all 0.3s cubic-bezier(0.75, 0, 0.25, 1);
+}
+#book-overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    width: 100%;
+    z-index:9;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 50%, rgba(255, 255, 255, 1) 100%);
 }
