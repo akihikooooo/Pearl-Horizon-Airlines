@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 
 function Footer(){
     return(
-        <div id="cont" className="p-8 bg-blue-500 text-white">
+        <div id="cont" className="p-8 bg-horizon-deep text-white">
             <div>
                 <h1 className="font-bold text-3xl">Pearl Horizon Airlines</h1>
             </div>

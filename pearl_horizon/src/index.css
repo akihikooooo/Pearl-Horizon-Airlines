@@ -1,8 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-horizon: #1A6EF5;
+  --color-horizon-deep: #1459CC;
+  --color-horizon-tint: #E8F0FE;
+
+  --color-sky-white: #FFFFFF;
+  --color-sky-cloud: #F5F6F8;
+  --color-sky-slate: #9AA3B2;
+  --color-sky-night: #1A1A2E;
+
+  --color-dusk-warm: #D4A97A;
+  --color-dusk-pale: #8DB8D4;
+}
+
 *, html,body{
     scroll-behavior: smooth;
+    transition: all 0.3s cubic-bezier(0.75, 0, 0.25, 1);
 }
 
 nav{
@@ -12,10 +27,6 @@ nav{
     width: 100%;
     z-index: 10;
     transition: background-color 0.5s cubic-bezier(0.75, 0, 0.25, 1)
-}
-nav p,nav a{
-    color:white;
-    mix-blend-mode: difference;
 }
 .scrolled{
     background-color: rgba(255, 255, 255, 0.9);

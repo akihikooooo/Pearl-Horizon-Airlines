@@ -5,11 +5,14 @@ import req from "../assets/requirements.jpg";
 import Card from "../components/Card";
 
 const Home =  () => {
+  const handleSearch = (e) => {
+    e.preventDefault();
+    window.location.href = "/booking";
+  };
+
   return (
     <div id="home">
-      <div
-        id="hero"
-        className="flex flex-col pt-14  lg:flex-row items-center justify-between bg-blue-100"
+      <div id="hero" className="flex flex-col pt-14  lg:flex-row items-center justify-between bg-blue-100"
       >
         {/* Carousel */}
         <div className="lg:w-1/2">Details Carousel</div>
@@ -22,7 +25,7 @@ const Home =  () => {
             Book a Flight
           </h1>
           {/* Form */}
-          <form className="flex flex-col justify-center gap-4 w-full h-full">
+          <form className="flex flex-col justify-center gap-4 w-full h-full" onSubmit={handleSearch}>
             <div id="radios" className="w-full flex">
               <input
                 type="radio"
@@ -30,10 +33,11 @@ const Home =  () => {
                 name="trip"
                 value="oneway"
                 className="hidden peer/oneway"
+                defaultChecked
               />
               <label
                 htmlFor="oneway"
-                className="border p-2 mr-2 rounded cursor-pointer peer-checked/oneway:bg-blue-500 peer-checked/oneway:text-white"
+                className="border p-2 mr-2 rounded cursor-pointer peer-checked/oneway:bg-horizon peer-checked/oneway:text-white"
               >
                 One Way
               </label>
@@ -46,7 +50,7 @@ const Home =  () => {
               />
               <label
                 htmlFor="roundtrip"
-                className="border p-2 rounded cursor-pointer peer-checked/roundtrip:bg-blue-500 peer-checked/roundtrip:text-white"
+                className="border p-2 rounded cursor-pointer peer-checked/roundtrip:bg-horizon peer-checked/roundtrip:text-white"
               >
                 Round Trip
               </label>
@@ -66,27 +70,27 @@ const Home =  () => {
             <input type="date" className="border p-2 rounded" />
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-horizon text-white hover:bg-horizon-deep px-4 py-2 rounded"
             >
               Search Flights
             </button>
           </form>
         </div>
       </div>
-      <div id="requirements" className="flex justify-center items-center gap-8 p-8 w-full">
+      <div id="requirements" className="flex justify-center items-center bg-sky-cloud gap-8 p-8 w-full">
         <img src={req} alt="requirements" className="w-2/5" />
         <div id="req-text" className="flex flex-col w-1/2">
-          <h1 className="font-extrabold text-2xl">Travel Requirements</h1>
-          <p className="text-gray-600 w-4/6">
+          <h1 className="font-extrabold text-sky-night text-2xl">Travel Requirements</h1>
+          <p className="text-sky-night w-4/6">
             Be ready for your trip—check the latest guidelines, documents, and health protocols before you fly.
           </p>
-          <NavLink to="requirements" className=" p-2 w-1/2 font-blue-500 border border-blue-500 rounded hover:bg-blue-500 hover:text-white transition duration-300">
+          <NavLink to="requirements" className=" p-2 w-1/2 font-horizon border border-horizon rounded hover:bg-horizon hover:text-white transition duration-300">
             Check Travel Requirements
           </NavLink>
         </div>
       </div>
-      <div id="cards-cont" className="p-8">
-        <h1 className="font-extrabold text-2xl">Places to go to!</h1>
+      <div id="cards-cont" className="p-8 bg-sky-cloud">
+        <h1 className="font-extrabold text-2xl text-sky-night">Places to go to!</h1>
         <div id="places" className="flex justify-center items-center gap-10">
           {["Pampanga", "Cebu", "Baguio"].map((place)=> (
             <Card title={place} description="Lorem ipsum dolor sit amet, consectetur adipiscing elit." image={place}/>

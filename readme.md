@@ -34,3 +34,5 @@ The website shall have these following features:
 3. PHP - It connects the frontend to the database with what's know as API (Application Programming Interface)— a necessary building block for website building, allowing the exchange of information
 
 ## Credits
+    **Frontend** - @akihikooooo\
+    **Backend, Hosting** - @bonaktan
