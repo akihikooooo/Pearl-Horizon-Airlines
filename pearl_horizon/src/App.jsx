@@ -1,6 +1,7 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import { BackendContext, Backend } from "./backend/useBackend";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Booking from "./pages/Booking";
 import Footer from "./components/Footer"

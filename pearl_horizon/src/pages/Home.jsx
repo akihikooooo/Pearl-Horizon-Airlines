@@ -5,6 +5,7 @@ import "../index.css";
 import "./stylesheets/Home.css";
 // import req from "../assets/requirements.jpg";
 import Card from "../components/Card";
+import useBackend from "../backend/useBackend";
 
 const Requirement =({ icon }) => {
   return(
