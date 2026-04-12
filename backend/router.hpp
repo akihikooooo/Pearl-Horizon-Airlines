@@ -9,7 +9,7 @@ namespace http = beast::http;
 
 namespace APIRouter {
     void setRoutes();
-    http::response<http::string_body> route(http::request<http::string_body> req);
+    boost::json::value route(http::request<http::string_body> req);
 }
 
 #endif
