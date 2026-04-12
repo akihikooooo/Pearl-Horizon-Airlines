@@ -28,104 +28,35 @@ namespace http = beast::http;
 namespace net = boost::asio;
 using tcp = boost::asio::ip::tcp;
 
-// Return a reasonable mime type based on the extension of a file.
-beast::string_view mime_type(beast::string_view path) {
-    using beast::iequals;
-    auto const ext = [&path] {
-        auto const pos = path.rfind(".");
-        if (pos == beast::string_view::npos) return beast::string_view{};
-        return path.substr(pos);
-    }();
-    if (iequals(ext, ".htm")) return "text/html";
-    if (iequals(ext, ".html")) return "text/html";
-    if (iequals(ext, ".css")) return "text/css";
-    if (iequals(ext, ".js")) return "application/javascript";
-    if (iequals(ext, ".json")) return "application/json";
-    if (iequals(ext, ".png")) return "image/png";
-    if (iequals(ext, ".jpeg")) return "image/jpeg";
-    if (iequals(ext, ".jpg")) return "image/jpeg";
-    if (iequals(ext, ".ico")) return "image/vnd.microsoft.icon";
-    if (iequals(ext, ".svg")) return "image/svg+xml";
-    return "application/text";
-}
+std::string SERVER = "pearl-horizon-airlines-backend";
 
-// Append an HTTP rel-path to a local filesystem path.
-// The returned path is normalized for the platform.
-std::string path_cat(beast::string_view base, beast::string_view path) {
-    if (base.empty()) return std::string(path);
-    std::string result(base);
-    char constexpr path_separator = '/';
-    if (result.back() == path_separator) result.resize(result.size() - 1);
-    result.append(path.data(), path.size());
-    return result;
+http::response<http::string_body> createResponse(boost::json::value response, http::status status, http::request<http::string_body> req) {
+    std::string response_serialized = boost::json::serialize(response);
+    http::response<http::string_body> res{status, req.version()};
+    res.set(http::field::server, SERVER);
+    res.set(http::field::content_type, "application/json");
+    res.body() = response_serialized;
+    res.content_length(response_serialized.size());
+    res.keep_alive(req.keep_alive());
+    res.prepare_payload();
+    return res;
 }
-
 // Return a response for the given request.
-//
 // The concrete type of the response message (which depends on the request), is type-erased in message_generator.
 template <class Body, class Allocator>
 http::message_generator handle_request(
     beast::string_view doc_root,
     http::request<Body, http::basic_fields<Allocator>>&& req) {
-    // Returns a bad request response
-    auto const bad_request = [&req](beast::string_view why) {
-        http::response<http::string_body> res{http::status::bad_request, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = std::string(why);
-        res.prepare_payload();
-        return res;
-    };
-
-    // Returns a not found response
-    auto const not_found = [&req](beast::string_view target) {
-        http::response<http::string_body> res{http::status::not_found,
-                                              req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() =
-            "The resource '" + std::string(target) + "' was not found.";
-        res.prepare_payload();
-        return res;
-    };
-
-    // Returns a server error response
-    auto const server_error = [&req](beast::string_view what) {
-        http::response<http::string_body> res{
-            http::status::internal_server_error, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = "An error occurred: '" + std::string(what) + "'";
-        res.prepare_payload();
-        return res;
-    };
-
     // Make sure we can handle the method
-    if (req.method() != http::verb::get && req.method() != http::verb::head)  // warn: no post request support for now
-        return bad_request("Unknown HTTP-method");
+    if (req.method() != http::verb::get)  // warn: no post request support for now
+        return createResponse({{"error", "Unknown HTTP Method"}}, http::status::bad_request, req);
+    if (req.target().empty() || req.target()[0] != '/' || req.target().find("..") != beast::string_view::npos)
+        return createResponse({{"error", "Illegal Request Target"}}, http::status::bad_request, req);
 
-    // Request path must be absolute and not contain "..".
-    if (req.target().empty() || req.target()[0] != '/' ||
-        req.target().find("..") != beast::string_view::npos)
-        return bad_request("Illegal request-target");
-    APIRouter::setRoutes();
-    http::response<http::string_body> res = APIRouter::route(req);
-    // TODO: build a class object to accept proper api endpoints
-    // ideally make that shit on a separate builder file
-    // also you could consider removing the functions below, depende nalang sayo if trip mo (maybe not)
+    boost::json::value apiReturn = APIRouter::route(req);
 
-    // Respond to GET request
-    // http::response<http::file_body> res{
-    //     std::piecewise_construct, std::make_tuple(std::move(body)),
-    //     std::make_tuple(http::status::ok, req.version())};
-    // res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-    // res.set(http::field::content_type, mime_type(path));
-    // res.content_length(size);
-    // res.keep_alive(req.keep_alive());
-    return res;
+    if (apiReturn.is_null()) return createResponse({{"error", "No API Endpoint Found."}}, http::status::not_found, req);
+    return createResponse(apiReturn, http::status::ok, req);
 }
 
 //------------------------------------------------------------------------------
@@ -304,7 +235,9 @@ int main(int argc, char* argv[]) {
 
     // Create and launch a listening port
     std::make_shared<listener>(ioc, tcp::endpoint{address, port}, doc_root)->run();
-
+    
+    // setup Router 
+    APIRouter::setRoutes();
     std::cout << "Pearl Horizon Airlines - Backend" << std::endl
               << "Running on " << DEFAULT_IP << ":" << DEFAULT_PORT << std::endl;
 
