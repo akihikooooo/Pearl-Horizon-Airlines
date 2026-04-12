@@ -22,6 +22,7 @@
 #include <thread>
 #include <vector>
 
+#include "router.hpp"
 namespace beast = boost::beast;
 namespace http = beast::http;
 namespace net = boost::asio;
@@ -62,9 +63,10 @@ std::string path_cat(beast::string_view base, beast::string_view path) {
 // Return a response for the given request.
 //
 // The concrete type of the response message (which depends on the request), is type-erased in message_generator.
-template <class Body, class Allocator> http::message_generator handle_request(
-        beast::string_view doc_root,
-        http::request<Body, http::basic_fields<Allocator>>&& req) {
+template <class Body, class Allocator>
+http::message_generator handle_request(
+    beast::string_view doc_root,
+    http::request<Body, http::basic_fields<Allocator>>&& req) {
     // Returns a bad request response
     auto const bad_request = [&req](beast::string_view why) {
         http::response<http::string_body> res{http::status::bad_request, req.version()};
@@ -102,55 +104,27 @@ template <class Body, class Allocator> http::message_generator handle_request(
     };
 
     // Make sure we can handle the method
-    if (req.method() != http::verb::get && req.method() != http::verb::head) // warn: no post request support for now
+    if (req.method() != http::verb::get && req.method() != http::verb::head)  // warn: no post request support for now
         return bad_request("Unknown HTTP-method");
 
     // Request path must be absolute and not contain "..".
     if (req.target().empty() || req.target()[0] != '/' ||
         req.target().find("..") != beast::string_view::npos)
         return bad_request("Illegal request-target");
-
-    // Build the path to the requested file
-    std::string path = path_cat(doc_root, req.target());
-    if (req.target().back() == '/') path.append("index.html");
-
+    APIRouter::setRoutes();
+    http::response<http::string_body> res = APIRouter::route(req);
     // TODO: build a class object to accept proper api endpoints
     // ideally make that shit on a separate builder file
     // also you could consider removing the functions below, depende nalang sayo if trip mo (maybe not)
 
-    // Attempt to open the file
-    beast::error_code ec;
-    http::file_body::value_type body;
-    body.open(path.c_str(), beast::file_mode::scan, ec);
-
-    // Handle the case where the file doesn't exist
-    if (ec == beast::errc::no_such_file_or_directory)
-        return not_found(req.target());
-
-    // Handle an unknown error
-    if (ec) return server_error(ec.message());
-
-    // Cache the size since we need it after the move
-    auto const size = body.size();
-
-    // Respond to HEAD request
-    if (req.method() == http::verb::head) {
-        http::response<http::empty_body> res{http::status::ok, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, mime_type(path));
-        res.content_length(size);
-        res.keep_alive(req.keep_alive());
-        return res;
-    }
-
     // Respond to GET request
-    http::response<http::file_body> res{
-        std::piecewise_construct, std::make_tuple(std::move(body)),
-        std::make_tuple(http::status::ok, req.version())};
-    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-    res.set(http::field::content_type, mime_type(path));
-    res.content_length(size);
-    res.keep_alive(req.keep_alive());
+    // http::response<http::file_body> res{
+    //     std::piecewise_construct, std::make_tuple(std::move(body)),
+    //     std::make_tuple(http::status::ok, req.version())};
+    // res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+    // res.set(http::field::content_type, mime_type(path));
+    // res.content_length(size);
+    // res.keep_alive(req.keep_alive());
     return res;
 }
 
@@ -191,7 +165,7 @@ class session : public std::enable_shared_from_this<session> {
         req_ = {};
         std::cout << "Request Received" << std::endl;
         // Set the timeout.
-        stream_.expires_after(std::chrono::seconds(30)); // bug: this shit is printing a timeout error, whether the request succeeded or not
+        stream_.expires_after(std::chrono::seconds(30));  // bug: this shit is printing a timeout error, whether the request succeeded or not
 
         // Read a request
         http::async_read(
@@ -317,7 +291,7 @@ class listener : public std::enable_shared_from_this<listener> {
 int main(int argc, char* argv[]) {
     std::string DEFAULT_IP = "127.0.0.1";
     int DEFAULT_PORT = 8080;
-    std::string ROOT_PATH = "."; // bug: this shit is reliant on the cwd, maybe make it so that it's fixed kung nasan nakalagay yung binary
+    std::string ROOT_PATH = ".";  // bug: this shit is reliant on the cwd, maybe make it so that it's fixed kung nasan nakalagay yung binary
     int THREAD_COUNT = 1;
 
     auto const address = net::ip::make_address(DEFAULT_IP);
@@ -329,7 +303,7 @@ int main(int argc, char* argv[]) {
     net::io_context ioc{threads};
 
     // Create and launch a listening port
-    std::make_shared<listener>(ioc, tcp::endpoint{address, port}, doc_root) -> run();
+    std::make_shared<listener>(ioc, tcp::endpoint{address, port}, doc_root)->run();
 
     std::cout << "Pearl Horizon Airlines - Backend" << std::endl
               << "Running on " << DEFAULT_IP << ":" << DEFAULT_PORT << std::endl;

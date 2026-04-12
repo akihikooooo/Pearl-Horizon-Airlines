@@ -3,7 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/backend/**",
                 "A:/Cache/Boost/boost_1_89_0" // put your boost install here
             ],
             "defines": [
