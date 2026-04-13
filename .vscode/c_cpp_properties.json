@@ -1,20 +1,20 @@
 {
-    "configurations": [
-        {
-            "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}/backend/**",
-                "A:/Cache/Boost/boost_1_89_0" // put your boost install here
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "cStandard": "c17",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "windows-gcc-x64"
-        }
-    ],
-    "version": 4
+  "configurations": [
+    {
+      "name": "Windows",
+      "includePath": [
+        "A:\\Programs\\MSYS2\\ucrt64\\include\\boost\\asio",
+        "A:\\Programs\\MSYS2\\ucrt64\\include\\boost\\json",
+        "A:\\Programs\\MSYS2\\ucrt64\\include\\boost\\beast",
+        // "A:\\Programs\\MSYS2\\ucrt64\\include\\boost",
+        "${workspaceFolder}/backend/**"
+      ],
+      "compilerPath": "A:\\Programs\\MSYS2\\ucrt64\\bin\\g++.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-gcc-x64"
+      
+    }
+  ],
+  "version": 4
 }
