@@ -13,6 +13,16 @@
 
   --color-dusk-warm: #D4A97A;
   --color-dusk-pale: #8DB8D4;
+
+  --color-primary: var(--color-horizon);
+--color-primary-hover: var(--color-horizon-deep);
+--color-primary-soft: var(--color-horizon-tint);
+--color-bg: var(--color-sky-white);
+--color-bg-alt: var(--color-sky-cloud);
+--color-text-primary: var(--color-sky-night);
+--color-text-secondary: var(--color-sky-slate);
+--color-accent-warm: var(--color-dusk-warm);
+--color-accent-cool: var(--color-dusk-pale);
 }
 
 *, html,body{
@@ -32,25 +42,16 @@ nav{
     background-color: rgba(255, 255, 255, 0.9);
 }
 
-#hero{
-    height: calc(100vh);
-    background: url('./assets/hero_bg.jpg') no-repeat center center/cover;
+nav{
+    animation: navdown 0.5s cubic-bezier(0.75, 0, 0.25, 1) forwards;
+    z-index:999;
 }
-#form{
-    background: rgba(61, 63, 77, 0.48);
-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
-backdrop-filter: blur(10px);
-border-radius: 25px 25px 25px 25px;
-}
-#radios label{
-    transition: all 0.3s cubic-bezier(0.75, 0, 0.25, 1);
-}
-#book-overlay{
-    position: absolute;
-    top: 0;
-    left: 0;
-    height:100%;
-    width: 100%;
-    z-index:9;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 50%, rgba(255, 255, 255, 1) 100%);
+
+@keyframes navdown{
+    0%{
+        transform: translateY(-100%);
+    }
+    100%{
+        transform: translateY(0);
+    }
 }

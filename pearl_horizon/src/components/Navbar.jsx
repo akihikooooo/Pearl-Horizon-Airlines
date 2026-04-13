@@ -12,21 +12,30 @@ function Navbar() {
   }, []);
   return (
     <nav
-      className={`flex items-center h-16 px-8 ${scrolled ? "scrolled" : ""}`}
+      className={`flex items-center justify-between h-16 px-8 ${scrolled ? "scrolled" : ""}`}
     >
-      <div id="logo">
-        <p>Pearl Horizon Airlines</p>
-      </div>
-      <ul className={`hidden lg:flex gap-4 ml-auto  `}>
-        {["Home", "Book a Flight", "About Us", "Contact"].map((item) => (
-          <NavLink
-            to={item === "Home" ? "/" : item === "Book a Flight" ? "/booking" : item === "About Us" ? "/about" : "/contact"}
-            key={`${item === "Book a Flight" ? "book" : item.toLowerCase()}`}
-            className={`cursor-pointer hover:text-blue-500 transition-colors duration-300 ${scrolled ? "text-gray-700" : "text-gray-900"}`}>
-            {item}
-          </NavLink>
+     <span>
+      <NavLink to="/" className="text-xl font-bold text-black">
+        Pearl <span className="text-horizon">Horizon</span> Airline
+      </NavLink>
+     </span>
+     <span>
+      <ul className="flex items-center">
+        {["Home", "Booking", "About", "Contact"].map((item) => (
+          <li key={item} className="inline-block ml-6">
+            <NavLink to={item === "Home" ? "/" : `/${item.toLowerCase().replace(/\s/g, "")}`} className={({ isActive }) => (isActive ? "text-horizon" : "text-black")}>
+              {item}
+            </NavLink>
+          </li>
         ))}
+        <span id="account" className="flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300">
+          <span className="material-symbols-outlined mr-1">
+            person
+          </span>
+          Log In
+        </span>
       </ul>
+     </span>
     </nav>
   );
 }
