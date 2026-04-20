@@ -44,18 +44,7 @@ function Booking() {
           </button>
         </div>
         <div id="lower" className="flex flex-row flex-wrap gap-6 mt-6">
-          {Array.from({ length: passenger }, (_, i) => (
-            <div key={i} id="passenger-cont" className="flex flex-wrap justify-left w-full bg-dusk-pale gap-2 m-2">
-                <span id="title" className="bg-sky-cloud p-6 font-bold"  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>PASSENGER {i + 1}</span>
-              <span id="inputs" className="flex flex-wrap gap-2">
-                <span className="flex justify-between">
-                  {["First Name", "Middle Name", "Last Name"].map(((item) => (
-                    <input placeholder={item} type="text" className=""/>
-                  )))}
-                </span>
-              </span>
-            </div>
-          ))}
+
         </div>
       </div>
     </>

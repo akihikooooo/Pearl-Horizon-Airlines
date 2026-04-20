@@ -1,0 +1,22 @@
+#header h1::before{
+    content: " ";
+    display:inline-block;
+    height:0.2rem;
+    width: 1.6rem;
+    background: var(--color-horizon);
+    margin-right: 1rem;
+}
+#filter{
+    transition: all 0s;
+}
+
+@media screen and (min-width: 768px) {
+    #header h1::after{
+    content: " ";
+    display:inline-block;
+    height:0.2rem;
+    width: 1.6rem;
+    background: var(--color-horizon);
+    margin-left: 1rem;
+}
+}
