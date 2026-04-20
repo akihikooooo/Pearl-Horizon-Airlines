@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "../index.css";
+import "./stylesheets/Navbar.css";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -12,15 +13,16 @@ function Navbar() {
   }, []);
   return (
     <nav
-      className={`flex items-center justify-between h-16 px-8 ${scrolled ? "scrolled" : ""}`}
+      className={`flex items-center justify-between h-16 px-8 ${scrolled ? "scrolled" : ""} overflow-hidden`}
     >
      <span>
-      <NavLink to="/" className="text-xl font-bold text-black">
+      <NavLink to="/" className="text-base md:text-xl font-bold text-black">
         Pearl <span className="text-horizon">Horizon</span> Airline
       </NavLink>
      </span>
+     
      <span>
-      <ul className="flex items-center">
+      <ul className="hidden md:flex items-center">
         {["Home", "Booking", "About", "Contact"].map((item) => (
           <li key={item} className="inline-block ml-6">
             <NavLink to={item === "Home" ? "/" : `/${item.toLowerCase().replace(/\s/g, "")}`} className={({ isActive }) => (isActive ? "text-horizon" : "text-black")}>
