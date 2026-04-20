@@ -11,11 +11,14 @@
     "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": false,
     "C_Cpp.default.cppStandard": "c++20",
     "C_Cpp.default.cStandard": "c23",
-    "editor.quickSuggestions": {
-        "comments": "off",
-        "strings": "off",
-        "other": "off"
-    },
-    "editor.suggestOnTriggerCharacters": false,
-    "discord.enabled": true
+    // "editor.quickSuggestions": {
+    //     "comments": "off",
+    //     "strings": "off",
+    //     "other": "off"
+    // },
+
+    // "editor.suggestOnTriggerCharacters": false,
+    "discord.enabled": true,
+    "editor.stickyTabStops": false,
+    "editor.tabSize": 2
 }

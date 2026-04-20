@@ -1,7 +1,20 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "./stylesheets/Search.css";
 
-const renderResults = () => {
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}H`);
+  if (minutes > 0) parts.push(`${minutes}M`);
+  
+  return parts.join(' ');
+}
+
+const RenderResults = ({result}) => {
   return (
     <>
       <div id="cont" className="w-full border border-horizon flex p-2">
@@ -11,8 +24,8 @@ const renderResults = () => {
         >
           <div className="flex items-center justify-center gap-10">
             <span id="origin" className="flex justify-center items-center flex-col gap-0">
-                <p>19:30</p>
-                <p className="uppercase">MNL</p>
+                <p>{new Date(result.departure_timestamp*1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false})}</p>
+                <p className="uppercase">{result.origin_airport_id}</p>
             </span>
             <span id="graphics"className="flex justify-center items-center text-horizon-deep gap-2">
               <span className="material-symbols-outlined">flight_takeoff</span>
@@ -29,12 +42,12 @@ const renderResults = () => {
               <span className="material-symbols-outlined">flight_land</span>
             </span>
             <span id="destination" className="flex justify-center items-center flex-col gap-0">
-                <p>21:30</p>
-                <p className="uppercase">Ceb</p>
+                <p>{new Date((result.departure_timestamp+result.flight_time)*1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false})}</p>
+                <p className="uppercase">{result.destination_airport_id}</p>
             </span>
           </div>
           <div className="flex px-2 gap-0 border-t-2 border-horizon-deep w-full">
-            <p>Flight Duration: 2H</p>
+            <p>Flight Duration: {formatTime(result.flight_time)}</p>
           </div>
         </div>
         <div id="flight-price" className="w-1/2 flex items-center justify-center">
@@ -46,6 +59,21 @@ const renderResults = () => {
 };
 
 const Search = () => {
+  const [searchParams] = useSearchParams()
+  const [searchResults, setSearchResults] = useState([])
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/search/flights", {
+      params: {
+        route: searchParams.get("route"),
+        origin: searchParams.get("origin"),
+        destination: searchParams.get("destination"),
+        departuredate: searchParams.get("departure"),
+        // TODO: put return date logic here
+    }})
+    .then((response) => {
+      setSearchResults(response.data)
+    })
+  }, [searchParams])
   return (
     <div className="search-page pt-14">
       <div id="header" className="md:px-20 py-2 md:py-10">
@@ -62,10 +90,10 @@ const Search = () => {
             id="origin-destination"
             className="text-2xl md:text-4xl text-sky-cloud font-medium flex items-center justify-start uppercase"
           >
-            Mnl<span className="material-symbols-outlined">travel</span>Ceb
+            {searchParams.get("origin")}<span className="material-symbols-outlined">travel</span>{searchParams.get("destination")}
           </p>
           <p id="flight-date" className="text-sky-white m-0">
-            Thu, 16 Apr
+            {new Date(searchParams.get("departure")).toDateString()}
           </p>
         </div>
         <div className="flex justify-center items-center gap-2 text-sky-white cursor-pointer rounded-sm">
@@ -89,7 +117,9 @@ const Search = () => {
                 })}
             </div>
         </div>
-        {renderResults()}
+        {searchResults.map((result) => {
+          return <RenderResults result={result}/>
+        })}
       </div>
     </div>
   );
