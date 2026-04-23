@@ -1,13 +1,12 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Booking from "./pages/Booking";
-import Footer from "./components/Footer"
 import Login from "./pages/Login";
 import Search from "./pages/Search.jsx";
 import SeatMap from "./pages/Seatmap.jsx";
-
+import Home from "./pages/Home.jsx"
 function App() {
   return (
     <>

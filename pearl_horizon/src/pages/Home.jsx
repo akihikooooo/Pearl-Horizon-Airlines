@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, createSearchParams } from "react-router-dom";
 import "../index.css";
 import "./stylesheets/Home.css";
 // import req from "../assets/requirements.jpg";
@@ -22,8 +22,24 @@ const Requirement =({ icon, title, description }) => {
 
 const Home = () => {
   const navigate = useNavigate();
-    const [tripType, setTripType] = useState("oneway"); 
-    const handleSearch = (e) => { e.preventDefault(); navigate("/search"); };
+  const [tripType, setTripType] = useState("oneway"); 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    let form = new FormData(e.target)
+    console.log(form.get("From"))
+    console.log(form.get("To"))
+    console.log(form.get("Departure"))
+    console.log(form.get("Passengers"))
+    navigate({
+      pathname: "/search", 
+      search: `?${createSearchParams({
+        route: tripType,
+        origin: form.get("From"),
+        destination: form.get("To"),
+        departure: form.get("Departure"),
+      })}`});
+  };
+
   return (
     <div id="container">
       <section id="hero" className="flex items-center justify-around flex-col md:flex-row pt-20 pb-16">
@@ -103,6 +119,7 @@ const BookingField = ({ label, ...inputProps }) => (
     </label>
     <input
       {...inputProps}
+      name={label}
       className="md:text-sm w-full bg-sky-cloud border border-sky-slate px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
     />
   </div>

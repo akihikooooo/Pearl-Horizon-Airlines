@@ -1,0 +1,24 @@
+{
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0 }",
+    "files.autoSave": "afterDelay",
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "C_Cpp.autocomplete": "disabled",
+    "C_Cpp.autocompleteAddParentheses": true,
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+    "C_Cpp.intelliSenseCacheSize": 2048,
+    "C_Cpp.workspaceParsingPriority": "low",
+    "cmake.sourceDirectory": "/home/bonny/projects/Pearl-Horizon-Airlines/PearlHorizonAirlines-Backend",
+    "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": false,
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.cStandard": "c23",
+    // "editor.quickSuggestions": {
+    //     "comments": "off",
+    //     "strings": "off",
+    //     "other": "off"
+    // },
+
+    // "editor.suggestOnTriggerCharacters": false,
+    "discord.enabled": true,
+    "editor.stickyTabStops": false,
+    "editor.tabSize": 2
+}
