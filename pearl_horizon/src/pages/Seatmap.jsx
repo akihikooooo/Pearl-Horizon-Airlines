@@ -44,8 +44,8 @@ const SeatMap = () => {
   return (
     <div className="pt-14">
     <div id="container" className="flex">
-        <div className="w-1/2 flex flex-col gap-4">
-          {[...Array(passengerCount)].map((_, i) => {
+        <div className="w-1/2 hidden md:flex flex-col gap-4">
+          {[...Array(5)].map((_, i) => {
             return (<Infos key={i} passengerID={i + 1} />);
           })}
           </div>
@@ -70,7 +70,7 @@ const SeatMap = () => {
               ) : (
                 <button
                   key={seat.id}
-                  className={`p-4 border rounded ${
+                  className={`p-4 flex justify-center items-center border rounded ${
                     seat.status === "available"
                       ? "bg-green-200"
                       : seat.status === "occupied"

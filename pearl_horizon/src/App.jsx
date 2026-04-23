@@ -6,7 +6,8 @@ import Booking from "./pages/Booking";
 import Login from "./pages/Login";
 import Search from "./pages/Search.jsx";
 import SeatMap from "./pages/Seatmap.jsx";
-import Home from "./pages/Home.jsx"
+import Home from "./pages/Home.jsx";
+import Signup from "./pages/Signup.jsx";
 function App() {
   return (
     <>
@@ -18,6 +19,8 @@ function App() {
         <Route path="/search" element={<Search/>}/>
         <Route path="/search/results" element={<Booking/>}/>
         <Route path="/search/Results/Seatmap" element={<SeatMap/>}/>
+        <Route path="/accounts/login" element={<Login/>}/>
+        <Route path="/accounts/signup" element={<Signup/>}/>
       </Routes>
       <Footer/>
     </>

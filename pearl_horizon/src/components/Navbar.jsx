@@ -30,12 +30,12 @@ function Navbar() {
             </NavLink>
           </li>
         ))}
-        <span id="account" className="flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300">
+        <NavLink to="/accounts/login" id="account" className="flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300">
           <span className="material-symbols-outlined mr-1">
             person
           </span>
           Log In
-        </span>
+        </NavLink>
       </ul>
      </span>
     </nav>
