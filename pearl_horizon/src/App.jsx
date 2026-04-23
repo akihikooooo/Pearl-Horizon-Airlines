@@ -5,7 +5,6 @@ import Navbar from "./components/Navbar";
 import Booking from "./pages/Booking";
 import Footer from "./components/Footer"
 import Login from "./pages/Login";
-import AnotherHome from "./pages/AnotherHome";
 import Search from "./pages/Search.jsx";
 import SeatMap from "./pages/Seatmap.jsx";
 
@@ -17,7 +16,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/booking" element={<Booking/>} />
         <Route path="/login" element={<Login />} />
-        <Route path="/homehome" element={<AnotherHome/>}/>
         <Route path="/search" element={<Search/>}/>
         <Route path="/search/results" element={<Booking/>}/>
         <Route path="/search/Results/Seatmap" element={<SeatMap/>}/>
