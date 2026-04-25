@@ -34,7 +34,7 @@ function Navbar() {
           <span className="material-symbols-outlined mr-1">
             person
           </span>
-          Log In
+          <NavLink to="/login">Log In</NavLink>
         </span>
       </ul>
      </span>

@@ -1,10 +1,15 @@
-from fastapi import FastAPI
+from datetime import datetime, timedelta
+
+import jwt
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from .router import api_router
 
 app = FastAPI()
 origins = [
-    "http://localhost:5173", # for dev
+    "http://localhost:5173",  # for dev
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -13,4 +18,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+
+
 app.include_router(router=api_router, prefix="/api")
