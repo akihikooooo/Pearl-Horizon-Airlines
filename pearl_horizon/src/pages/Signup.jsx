@@ -1,15 +1,13 @@
-import { useState } from "react";
-
 import { NavLink } from "react-router-dom";
 
-function Login() {
+function Signup() {
     return(
         <>
             <div id="cont" className="flex justify-center items-center w-screen h-screen bg-horizon-tint">
                 <div id="field" className="p-14 bg-sky-cloud flex justify-center items-center flex-col rounded-md shadow-2xl">
                     <div className="text-base md:text-2xl font-bold text-center leading-none">
                         Pearl <span className="text-horizon">Horizon</span> Airline <br/>
-                        Login
+                        Signup
                     </div>
                     <form onSubmit={1+1}id="form" className="flex flex-col gap-2 p-2">
                         <input />
@@ -17,7 +15,7 @@ function Login() {
                         <BookingField label="Password" type="password" placeholder=""/>
                         <button className="bg-horizon w-full rounded-md">Log-in</button>
                     </form>
-                    <p>Don't have an account? <NavLink to="/accounts/signup"className="text-horizon">Sign Up.</NavLink></p>
+                    <p>Have an account? <NavLink to="/accounts/login"className="text-horizon">Log in.</NavLink></p>
                 </div>
             </div>
         </>
@@ -37,4 +35,4 @@ const BookingField = ({ label, ...inputProps }) => (
   </div>
 );
 
-export default Login;
+export default Signup;

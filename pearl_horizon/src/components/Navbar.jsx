@@ -23,19 +23,17 @@ function Navbar() {
      
      <span>
       <ul className="hidden md:flex items-center">
-        {["Home", "Booking", "About", "Contact"].map((item) => (
+        {["Home", "Booking", "Contact"].map((item) => (
           <li key={item} className="inline-block ml-6">
             <NavLink to={item === "Home" ? "/" : `/${item.toLowerCase().replace(/\s/g, "")}`} className={({ isActive }) => (isActive ? "text-horizon" : "text-black")}>
               {item}
             </NavLink>
           </li>
         ))}
-        <span id="account" className="flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300">
-          <span className="material-symbols-outlined mr-1">
-            person
-          </span>
-          <NavLink to="/login">Log In</NavLink>
+        <span className="material-symbols-outlined mr-1">
+          person
         </span>
+        <NavLink to="/accounts/login" id="account" className="flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300">Log In</NavLink>
       </ul>
      </span>
     </nav>
