@@ -1,0 +1,7 @@
+.seat-buttons:not(:disabled):hover {
+  background-image: linear-gradient(rgb(0 0 0/20%) 0 0);
+}
+
+.seat-buttons:not(:disabled):active {
+  background-image: linear-gradient(rgba(26 110 245/40%) 0 0);
+}

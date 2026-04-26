@@ -37,6 +37,7 @@ const Home = () => {
         origin: form.get("From"),
         destination: form.get("To"),
         departure: form.get("Departure"),
+        passengers: form.get("Passengers")
       })}`});
   };
 
