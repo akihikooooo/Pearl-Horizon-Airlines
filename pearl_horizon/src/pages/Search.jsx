@@ -129,7 +129,7 @@ const Search = () => {
   const [searchParams] = useSearchParams()
   const [searchResults, setSearchResults] = useState([])
   useEffect(() => {
-    axios.get("http://192.168.100.8:8000/api/search/flights", {
+    axios.get("http://localhost:8000/api/search/flights", {
       params: {
         route: searchParams.get("route"),
         origin: searchParams.get("origin"),

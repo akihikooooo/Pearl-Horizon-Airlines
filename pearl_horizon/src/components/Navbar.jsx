@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "../index.css";
 import "./stylesheets/Navbar.css";
+import { useAuth } from "../services/auth";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-
+  const {user, _logout}= useAuth();
+  const userid = (user ? user.user_id : "Log in")
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -33,7 +35,7 @@ function Navbar() {
         <span className="material-symbols-outlined mr-1">
           person
         </span>
-        <NavLink to="/accounts/login" id="account" className="flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300">Log In</NavLink>
+        <NavLink to="/accounts/login" id="account" className="flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300">{userid}</NavLink>
       </ul>
      </span>
     </nav>

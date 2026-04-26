@@ -8,9 +8,14 @@ import Search from "./pages/Search.jsx";
 import SeatMap from "./pages/Seatmap.jsx";
 import Home from "./pages/Home.jsx";
 import Signup from "./pages/Signup.jsx";
+import axios from "axios";
+import { useEffect } from "react";
+import { AuthProvider } from "./services/auth.jsx";
+
 function App() {
+  useEffect(() => {axios.defaults.withCredentials = true;}, [])
   return (
-    <>
+    <AuthProvider>
       <Navbar />
       <Routes className="">
         <Route path="/" element={<Home />} />
@@ -23,7 +28,7 @@ function App() {
         <Route path="/accounts/signup" element={<Signup/>}/>
       </Routes>
       <Footer/>
-    </>
+    </AuthProvider>
   );
 }
 

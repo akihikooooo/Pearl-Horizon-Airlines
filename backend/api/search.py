@@ -23,7 +23,7 @@ class SearchFlightParams(BaseModel):
 
 @router.get("/flights")
 async def get_all_channels(payload: Annotated[SearchFlightParams, Query()]):
-    con = db.Database().con
+    con = db.Database().con  
     cur = con.cursor()
     cur.execute(
         "SELECT departure_timestamp, flight_time, booked_economy, flight_id, origin_airport_id, destination_airport_id FROM flight WHERE route=? AND origin_airport_id=? AND destination_airport_id=?;",

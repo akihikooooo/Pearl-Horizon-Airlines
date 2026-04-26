@@ -20,5 +20,5 @@
     // "editor.suggestOnTriggerCharacters": false,
     "discord.enabled": true,
     "editor.stickyTabStops": false,
-    "editor.tabSize": 2
+    "editor.tabSize": 4
 }
