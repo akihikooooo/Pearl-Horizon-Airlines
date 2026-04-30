@@ -8,7 +8,17 @@
     "C_Cpp.intelliSenseCacheSize": 2048,
     "C_Cpp.workspaceParsingPriority": "low",
     "cmake.sourceDirectory": "/home/bonny/projects/Pearl-Horizon-Airlines/PearlHorizonAirlines-Backend",
-    "[javascriptreact]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    }
+    "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": false,
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.cStandard": "c23",
+    // "editor.quickSuggestions": {
+    //     "comments": "off",
+    //     "strings": "off",
+    //     "other": "off"
+    // },
+
+    // "editor.suggestOnTriggerCharacters": false,
+    "discord.enabled": true,
+    "editor.stickyTabStops": false,
+    "editor.tabSize": 4
 }

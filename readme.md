@@ -29,9 +29,10 @@ The website shall have these following features:
     - Admin Management
 
 ## Tools Used in this Project
-1. Node.js - a pack
+1. Node.js - a package manager for javascript
 2. React.js - The main building block for this project, responsible for the frontend of the website
-3. PHP - It connects the frontend to the database with what's know as API (Application Programming Interface)— a necessary building block for website building, allowing the exchange of information
+3. SQLite - Database
+4. Python - Backend
 
 ## Credits
     **Frontend** - @akihikooooo\
