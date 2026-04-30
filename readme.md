@@ -35,5 +35,5 @@ The website shall have these following features:
 4. Python - Backend
 
 ## Credits
-**Frontend** - @akihikooooo
-**Backend, Hosting** - @bonaktan
+    **Frontend** - @akihikooooo\
+    **Backend, Hosting** - @bonaktan

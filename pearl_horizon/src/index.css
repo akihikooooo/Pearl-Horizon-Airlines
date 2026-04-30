@@ -5,11 +5,31 @@
   --color-horizon: #1A6EF5;
   --color-horizon-deep: #1459CC;
   --color-horizon-tint: #E8F0FE;
-
   --color-sky-white: #FFFFFF;
   --color-sky-cloud: #F5F6F8;
   --color-sky-slate: #9AA3B2;
   --color-sky-night: #1A1A2E;
+
+  --color-dusk-warm: #D4A97A;
+  --color-dusk-pale: #8DB8D4;
+}
+
+*, html,body{
+    scroll-behavior: smooth;
+    transition: all 0.3s cubic-bezier(0.75, 0, 0.25, 1);
+}
+
+nav{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    transition: background-color 0.5s cubic-bezier(0.75, 0, 0.25, 1)
+}
+.scrolled{
+    background-color: rgba(255, 255, 255, 0.9);
+}
 
   --color-dusk-warm: #D4A97A;
   --color-dusk-pale: #8DB8D4;
@@ -25,7 +45,3 @@
 --color-accent-cool: var(--color-dusk-pale);
 }
 
-*, html,body{
-    scroll-behavior: smooth;
-    transition: all 0.3s cubic-bezier(0.75, 0, 0.25, 1);
-}
