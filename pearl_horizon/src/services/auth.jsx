@@ -1,8 +1,10 @@
-import { createContext, useContext, useState, useEffect } from "react";
-
+import { createContext, useContext, useEffect, useState } from "react";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import axios from "axios";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -15,7 +17,6 @@ export function AuthProvider({ children }) {
                 if (response.ok) {
                     const userData = await response.json();
                     setUser(userData);
-                    console.log(userData)
                 } else {
                     setUser(null);
                 }
@@ -32,21 +33,18 @@ export function AuthProvider({ children }) {
 
     const login = async (credentials) => {
         try {
-            // Replace with your actual login API call
-            const response = await fetch("http://localhost:8000/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include", // Important: allows server to set httpOnly cookie
-                body: JSON.stringify(credentials),
-            });
+            axios
+                .post("http://localhost:8000/api/auth/login", credentials, {
 
-            if (!response.ok) {
-                throw new Error("Login failed");
-            }
+                })
+                .then((response) => console.log(response))
+                .catch(() => {
+                    throw new Error("Login failed");
+                });
 
-            const userData = await response.json();
-            setUser(userData);
-            alert(1)
+            // setUser(userData);
+            // navigate("/", { replace: true });
+            // window.location.reload(); // Hard refresh of the entire document
             return { success: true };
         } catch (error) {
             return { success: false, error: error.message };
@@ -55,7 +53,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch("http://localhost:8000/api/logout", {
+            await fetch("http://localhost:8000/api/auth/logout", {
                 method: "POST",
                 credentials: "include", // Important: sends cookie to be cleared
             });
@@ -65,11 +63,24 @@ export function AuthProvider({ children }) {
             setUser(null);
         }
     };
-
+    const signup = async (credentials) => {
+        try {
+            const response = await fetch("http://localhost:8000/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(credentials),
+            });
+            navigate("/login");
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const value = {
         user,
         login,
         logout,
+        signup,
         isAuthenticated: !!user,
         loading,
     };
@@ -81,3 +92,21 @@ export function useAuth() {
     const context = useContext(AuthContext);
     return context;
 }
+
+export const ProtectedRoutes = () => {
+    // Replace this with your actual auth logic (e.g., from Context or Redux)
+    const checkAuth = () => {
+        const response = axios
+            .get("http://localhost:8000/api/auth/check", {
+                withCredentials: true,
+            })
+            .then(() => true)
+            .catch(() => false);
+        console.log(response);
+        return response;
+    };
+    const isAuthenticated = checkAuth();
+    console.log(isAuthenticated ? "true" : "false ");
+
+    return isAuthenticated ? <Outlet /> : <Navigate to="/accounts/login" replace />;
+};

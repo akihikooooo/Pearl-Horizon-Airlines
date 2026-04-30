@@ -4,8 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/auth";
 function Login() {
-    const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, logout } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -52,6 +51,7 @@ function Login() {
                             Sign Up.
                         </NavLink>
                     </p>
+                    <button onClick={logout}>Logout</button>
                 </div>
             </div>
         </>
