@@ -1,7 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/auth";
 function Login() {
     const { login, logout } = useAuth();

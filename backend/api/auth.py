@@ -100,6 +100,13 @@ def logout(response: Response):
 
 @app.get("/check")
 async def protected_route(payload: dict = Depends(verify_token)):
-    return {"user_id": payload["user_id"]
-    
-    }
+    con = db.Database().con
+    cur = con.cursor()
+    cur.execute(
+        "SELECT first_name, middle_name, last_name FROM users WHERE (user_id IS ?)",
+        (
+            payload["user_id"],
+        ),
+    )
+    ret = cur.fetchone() # TODO: what if invalid userid? 
+    return {"user_id": payload["user_id"], "first_name": ret[0], "middle_name": ret[1], "last_name": ret[2]}

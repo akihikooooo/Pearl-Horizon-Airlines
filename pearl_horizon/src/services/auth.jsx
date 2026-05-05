@@ -8,47 +8,19 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const response = await fetch("http://localhost:8000/api/auth/check", {
-                    credentials: "include",
-                });
-                if (response.ok) {
-                    const userData = await response.json();
-                    setUser(userData);
-                } else {
-                    setUser(null);
-                }
-            } catch (error) {
-                console.error("Auth check failed:", error);
-                setUser(null);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        checkAuth();
-    }, []);
-
     const login = async (credentials) => {
-        try {
-            axios
-                .post("http://localhost:8000/api/auth/login", credentials, {
-
-                })
-                .then((response) => console.log(response))
-                .catch(() => {
-                    throw new Error("Login failed");
-                });
-
-            // setUser(userData);
-            // navigate("/", { replace: true });
-            // window.location.reload(); // Hard refresh of the entire document
-            return { success: true };
-        } catch (error) {
-            return { success: false, error: error.message };
-        }
+        // TODO: error handling, need ko ng qa test dito
+        const data = axios
+            .post("http://localhost:8000/api/auth/login", credentials, {})
+            .then(async () => {
+                await checkAuth();
+                navigate("/", { replace: true });
+                return { success: true };
+            })
+            .catch(() => {
+                throw new Error("Login failed"); // TODO: if signup failed, return an error
+            });
+        return data;
     };
 
     const logout = async () => {
@@ -60,53 +32,60 @@ export function AuthProvider({ children }) {
         } catch (error) {
             console.error("Logout failed:", error);
         } finally {
-            setUser(null);
+            setUser(null)
         }
     };
+
     const signup = async (credentials) => {
         try {
-            const response = await fetch("http://localhost:8000/api/auth/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(credentials),
-            });
-            navigate("/login");
+            const _data = axios.post("http://localhost:8000/api/auth/signup", credentials, {}).then(() => navigate("/login", { replace: true }));
         } catch (error) {
             console.log(error);
         }
     };
+
+    const checkAuth = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api/auth/check", {
+                credentials: "include",
+            });
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+            } else {
+                setUser(null);
+            }
+        } catch (error) {
+            console.error("Auth check failed:", error);
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const value = {
         user,
         login,
         logout,
         signup,
-        isAuthenticated: !!user,
+        checkAuth,
+        authed: !!user,
         loading,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+export const ProtectedRoutes = () => {
+    // Replace this with your actual auth logic (e.g., from Context or Redux)
+    const { checkAuth, authed } = useAuth();
+    useEffect(() => {
+        checkAuth();
+    }, []);
+    return authed ? <Outlet /> : <Navigate to="/accounts/login" replace />;
+};
+
 export function useAuth() {
     const context = useContext(AuthContext);
     return context;
 }
-
-export const ProtectedRoutes = () => {
-    // Replace this with your actual auth logic (e.g., from Context or Redux)
-    const checkAuth = () => {
-        const response = axios
-            .get("http://localhost:8000/api/auth/check", {
-                withCredentials: true,
-            })
-            .then(() => true)
-            .catch(() => false);
-        console.log(response);
-        return response;
-    };
-    const isAuthenticated = checkAuth();
-    console.log(isAuthenticated ? "true" : "false ");
-
-    return isAuthenticated ? <Outlet /> : <Navigate to="/accounts/login" replace />;
-};
