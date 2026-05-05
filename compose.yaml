@@ -1,0 +1,41 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: pearl-cloudflared
+    command: tunnel run pearl-horizon
+    volumes:
+      - ./cloudflared:/etc/cloudflared:ro
+    restart: unless-stopped
+    cpus: "0.5"
+    mem_limit: 64m
+
+  nginx:
+    container_name: pearl-nginx
+    volumes:
+      - pearlfrontend:/app:ro
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    cpus: "0.5"
+    mem_limit: 64m
+
+  # frontend-builder:
+  #   container_name: pearl-frontend-builder
+  #   build:
+  #     context: ./pearl_horizon
+  #   volumes:
+  #     - pearlfrontend:/app
+  #   restart: no
+
+  # backend:
+  #   build: backend/
+  #   container_name: pearl-backend
+  #   restart: always
+  #   expose:
+  #     - "8000"
+  #   cpus: "1"
+  #   mem_limit: 128m
+
+volumes:
+  pearlfrontend:
+    driver: local
