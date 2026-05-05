@@ -7,7 +7,7 @@ import { useAuth } from "../services/auth";
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const {user, authed} = useAuth();
-  console.log(user)
+  
   const accountText = (authed ? user.first_name : "Log in")
 
   const taskbarItems = ["Home", "Contact"]

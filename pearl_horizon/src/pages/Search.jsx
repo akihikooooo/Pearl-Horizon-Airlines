@@ -1,8 +1,8 @@
-import { Outlet, useSearchParams } from "react-router-dom";
+import { Outlet, useNavigate, useSearchParams, createSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./stylesheets/Search.css";
-
+const apiUrl = import.meta.env.VITE_BACKEND_URL
 // function formatTime(seconds) {
 //   const hours = Math.floor(seconds / 3600);
 //   const minutes = Math.floor((seconds % 3600) / 60);
@@ -17,8 +17,16 @@ import "./stylesheets/Search.css";
 
 
 const RenderResults = ({result}) => {
+  const navigate = useNavigate();
   const [selectedClass, setSelectedClass] = useState("");
+  const bookFlight = () => {
+    navigate({
+      pathname: "/search/results/seatmap", 
+      search: `?${createSearchParams({
+        flight_id: result.flight_id,
+      })}`})
 
+  }
   return (
     <>
       <div
@@ -54,11 +62,11 @@ const RenderResults = ({result}) => {
                 className="flex justify-center items-center flex-col gap-0"
               >
                 <p>21:30</p>
-                <p className="uppercase">Ceb</p>
+                <p className="uppercase">{result.destination_airport_id}</p>
               </span>
             </div>
             <div className="flex px-2 gap-0 border-t-2 border-horizon-deep w-full">
-              <p>Flight Duration: 2H</p>
+              <p>Flight Duration: 2H</p> { /* TODO replace 2h w/ dynamic shits, natamad pa ko irender*/}
             </div>
           </div>
           <div
@@ -72,7 +80,7 @@ const RenderResults = ({result}) => {
               }}
               className="flex flex-row items-center justify-center gap-2 px-2 h-12/12 w-full border-b-6 border-horizon-tint"
             >
-              2,500
+              {result.economy}
               {selectedClass === "Economy" && (
                 <span className="material-symbols-outlined text-horizon">
                   check_circle
@@ -85,7 +93,7 @@ const RenderResults = ({result}) => {
               }}
               className="flex flex-row items-center justify-center gap-2 px-2 h-full w-full border-b-6 border-horizon-deep"
             >
-              2,500
+              {result.business}
               {selectedClass === "Business" && (
                 <span className="material-symbols-outlined text-horizon">
                   check_circle
@@ -98,7 +106,7 @@ const RenderResults = ({result}) => {
               }}
               className="flex flex-row items-center justify-center gap-2 px-2 h-full w-full border-b-6 border-horizon "
             >
-              2,500
+              {result.first}
               {selectedClass === "First" && (
                 <span className="material-symbols-outlined text-horizon">
                   check_circle
@@ -109,11 +117,12 @@ const RenderResults = ({result}) => {
         </div>
         <div id="book-cont" className={` ${selectedClass != "" ? "flex justify-center items-center" : "hidden"} bg-sky-cloud w-full h-16 flex justify-end items-center px-2`}>
               <span className="font-semibold text-horizon mr-4">
-                Total Amount: 2,500
+                Total Amount: 2,500  { /* TODO: what is the meaning of this? price?*/}
               </span>
 
               <button
           className={` ${selectedClass != "" ? "flex justify-center items-center" : "hidden"} bg-horizon text-white px-4 py-2 rounded-sm`}
+          onClick={bookFlight}
         >
           Book Flight
         </button>
@@ -129,7 +138,7 @@ const Search = () => {
   const [searchParams] = useSearchParams()
   const [searchResults, setSearchResults] = useState([])
   useEffect(() => {
-    axios.get("http://localhost:8000/api/search/flights", {
+    axios.get(`${apiUrl}/api/search/flights`, {
       params: {
         route: searchParams.get("route"),
         origin: searchParams.get("origin"),

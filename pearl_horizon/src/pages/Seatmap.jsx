@@ -1,6 +1,3 @@
-import { useMemo } from "react";
-import { useState } from "react";
-
 // const [passengerCount, setPassengerCount] = useState(1);
 // const [selectedSeat, setSelectedSeat] = useState("");
 function generator(status) {
@@ -13,7 +10,7 @@ function generator(status) {
         id: `${i}${col}`,
         row: i,
         column: col,
-        status: status[Math.floor(Math.random() * status.length)],
+        status: "available",
       });
     });
   }
@@ -36,10 +33,7 @@ const Infos = ({passengerID}) => {
 const SeatMap = () => {
   // Call generator if needed, for example:
   // const seatData = generator(['available', 'occupied', 'reserved']);
-  const seatData = useMemo(
-    () => generator(["available", "occupied", "reserved"]),
-    [],
-  );
+  const seatData = generator()
 
   return (
     <div className="pt-14">

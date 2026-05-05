@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 const AuthContext = createContext(null);
-
+const apiUrl = import.meta.env.VITE_BACKEND_URL
 export function AuthProvider({ children }) {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
     const login = async (credentials) => {
         // TODO: error handling, need ko ng qa test dito
         const data = axios
-            .post("http://localhost:8000/api/auth/login", credentials, {})
+            .post(`${apiUrl}/api/auth/login`, credentials, {})
             .then(async () => {
                 await checkAuth();
                 navigate("/", { replace: true });
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch("http://localhost:8000/api/auth/logout", {
+            await fetch(`${apiUrl}/api/auth/logout`, {
                 method: "POST",
                 credentials: "include", // Important: sends cookie to be cleared
             });
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
 
     const signup = async (credentials) => {
         try {
-            const _data = axios.post("http://localhost:8000/api/auth/signup", credentials, {}).then(() => navigate("/login", { replace: true }));
+            const _data = axios.post(`${apiUrl}/api/auth/signup`, credentials, {}).then(() => navigate("/login", { replace: true }));
         } catch (error) {
             console.log(error);
         }
@@ -46,9 +46,10 @@ export function AuthProvider({ children }) {
 
     const checkAuth = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/auth/check", {
+            const response = await fetch(`${apiUrl}/api/auth/check`, {
                 credentials: "include",
             });
+            console.log(response)
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData);
@@ -62,7 +63,9 @@ export function AuthProvider({ children }) {
             setLoading(false);
         }
     };
-
+    useEffect(() => {
+        checkAuth();
+    }, []);
     const value = {
         user,
         login,

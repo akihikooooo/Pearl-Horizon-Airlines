@@ -26,7 +26,18 @@ async def get_all_channels(payload: Annotated[SearchFlightParams, Query()]):
     con = db.Database().con
     cur = con.cursor()
     cur.execute(
-        "SELECT departure_timestamp, flight_time, booked_economy, flight_id, origin_airport_id, destination_airport_id FROM flight WHERE route=? AND origin_airport_id=? AND destination_airport_id=?;",
+        """
+            SELECT departure_timestamp,
+                   flight_time,
+                   (SELECT seats_economy FROM airplane WHERE airplane.airplane_id = flight.airplane_id) - booked_economy AS available_economy,
+                   (SELECT seats_business FROM airplane WHERE airplane.airplane_id = flight.airplane_id) - booked_business AS available_business,
+                   (SELECT seats_first FROM airplane WHERE airplane.airplane_id = flight.airplane_id) - booked_first AS available_first, 
+                   flight_id,
+                   origin_airport_id,
+                   destination_airport_id
+            FROM flight
+            WHERE route=? AND origin_airport_id=? AND destination_airport_id=?;
+        """,
         (payload.route.lower(), payload.origin.upper(), payload.destination.upper()),
     )
     ret = cur.fetchall()
@@ -36,10 +47,12 @@ async def get_all_channels(payload: Annotated[SearchFlightParams, Query()]):
             {
                 "departure_timestamp": i[0],
                 "flight_time": i[1],
-                "booked_economy": i[2],
-                "flight_id": i[3],
-                "origin_airport_id": i[4],
-                "destination_airport_id": i[5],
+                "economy": i[2],
+                "business": i[3],
+                "first": i[4],
+                "flight_id": i[5],
+                "origin_airport_id": i[6],
+                "destination_airport_id": i[7],
             }
         )
     return JSONResponse(
