@@ -1,12 +1,15 @@
-import logging 
-import uvicorn
 import asyncio
-from api import app
+import logging
+
 import db
 import logs
+import uvicorn
+from api import app
+
 logs.setup_logging()
 
 log = logging.getLogger(f"PearlHorizon.{__name__}")
+
 
 async def main():
     db.init()
@@ -17,10 +20,10 @@ async def main():
         port=8000,
         loop="asyncio",
         log_level="info",
-        log_config=None
+        log_config=None,
     )
     await uvicorn.Server(uviConfig).serve()
-    
+
 
 if __name__ == "__main__":
     asyncio.run(main())

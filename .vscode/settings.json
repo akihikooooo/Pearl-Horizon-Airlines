@@ -20,5 +20,8 @@
     // "editor.suggestOnTriggerCharacters": false,
     "discord.enabled": true,
     "editor.stickyTabStops": false,
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "prettier.bracketSameLine": true,
+    "prettier.printWidth": 300,
+    "prettier.tabWidth": 4
 }

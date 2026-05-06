@@ -1,36 +1,21 @@
+import uuid
 from datetime import datetime, timedelta
-from typing import Optional
+from sqlite3 import IntegrityError
 
+import db
 import jwt
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Cookie, Response
+from auth import ALGORITHM, SECRET_KEY, verify_token
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel
-import uuid
-import db
-from sqlite3 import IntegrityError
 
 app = APIRouter()
 security = HTTPBearer()
-
-SECRET_KEY = "putanginamotalaganatamadpakogumawangproperprovatekeyparadito<3"
-ALGORITHM = "HS256"
 
 
 def create_cookie(user_id: str):
     payload = {"user_id": user_id, "exp": datetime.utcnow() + timedelta(hours=24)}
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-
-def verify_token(token: Optional[str] = Cookie(None)):
-    if not token:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 class LoginRequest(BaseModel):
@@ -47,7 +32,7 @@ async def login(payload: LoginRequest, response: Response):
         (
             payload.email,
             payload.password,
-        )
+        ),
     )
     user = cur.fetchone()
     print(user)
@@ -93,20 +78,25 @@ async def signup(payload: SignupRequest):
         raise HTTPException(status_code=409, detail="Duplicate Entries")
     con.commit()
 
+
 @app.post("/logout")
 def logout(response: Response):
     response.delete_cookie(key="token")
     return {"status": "success"}
 
+
 @app.get("/check")
-async def protected_route(payload: dict = Depends(verify_token)):
+async def check_credentials(payload: dict = Depends(verify_token)):
     con = db.Database().con
     cur = con.cursor()
     cur.execute(
         "SELECT first_name, middle_name, last_name FROM users WHERE (user_id IS ?)",
-        (
-            payload["user_id"],
-        ),
+        (payload["user_id"],),
     )
-    ret = cur.fetchone() # TODO: what if invalid userid? 
-    return {"user_id": payload["user_id"], "first_name": ret[0], "middle_name": ret[1], "last_name": ret[2]}
+    ret = cur.fetchone()  # TODO: what if invalid userid?
+    return {
+        "user_id": payload["user_id"],
+        "first_name": ret[0],
+        "middle_name": ret[1],
+        "last_name": ret[2],
+    }

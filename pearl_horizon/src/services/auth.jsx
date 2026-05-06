@@ -45,6 +45,7 @@ export function AuthProvider({ children }) {
     };
 
     const checkAuth = async () => {
+        setLoading(true)
         try {
             const response = await fetch(`${apiUrl}/api/auth/check`, {
                 credentials: "include",
@@ -80,11 +81,14 @@ export function AuthProvider({ children }) {
 }
 
 export const ProtectedRoutes = () => {
-    // Replace this with your actual auth logic (e.g., from Context or Redux)
-    const { checkAuth, authed } = useAuth();
+    const { checkAuth, authed, loading } = useAuth();
     useEffect(() => {
         checkAuth();
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
     return authed ? <Outlet /> : <Navigate to="/accounts/login" replace />;
 };
 

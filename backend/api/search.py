@@ -3,7 +3,7 @@ from datetime import date
 from typing import Annotated, Optional
 
 import db
-from fastapi import HTTPException, Query, status
+from fastapi import Query, status
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
@@ -22,7 +22,7 @@ class SearchFlightParams(BaseModel):
 
 
 @router.get("/flights")
-async def get_all_channels(payload: Annotated[SearchFlightParams, Query()]):
+async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
     con = db.Database().con
     cur = con.cursor()
     cur.execute(
