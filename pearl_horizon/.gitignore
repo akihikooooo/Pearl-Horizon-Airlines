@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# non-critical envfiles
+# .env*
+# !.env.example

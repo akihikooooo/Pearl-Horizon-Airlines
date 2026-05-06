@@ -1,9 +1,8 @@
-import { Outlet, useSearchParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./stylesheets/Search.css";
-
+import { useEffect, useState } from "react";
+import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import "./stylesheets/search.css";
+const apiUrl = import.meta.env.VITE_BACKEND_URL
 function formatTime(seconds) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -19,7 +18,14 @@ const RenderResults = ({ result }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const passengers = parseInt(searchParams.get("passengers")) || 1;
+  const bookFlight = () => {
+    navigate({
+      pathname: "/booking", 
+      search: `?${createSearchParams({
+        passengers: passengers
+      })}`})
 
+  }
   return (
     <>
       <div
@@ -63,11 +69,11 @@ const RenderResults = ({ result }) => {
                 className="flex justify-center items-center flex-col gap-0"
               >
                 <p>21:30</p>
-                <p className="uppercase">Ceb</p>
+                <p className="uppercase">{result.destination_airport_id}</p>
               </span>
             </div>
             <div className="flex px-2 gap-0 border-t-2 border-horizon-deep w-full">
-              <p>Flight Duration: {formatTime(result.duration)}</p>
+              <p>Flight Duration: {formatTime(result.flight_time)}</p>
             </div>
           </div>
           <div
@@ -78,10 +84,14 @@ const RenderResults = ({ result }) => {
               onClick={() => {}}
               className="flex flex-row items-center justify-center gap-2 px-2 h-12/12 w-full"
             >
-              2,500
+              {result.economy}
+                <span className="material-symbols-outlined text-horizon">
+                  check_circle
+                </span>
+              
             </button>
             <button
-              onClick={() => navigate(`/booking?passengers=${passengers}`)}
+              onClick={() => bookFlight}
               className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}
             >
               Book Flight
@@ -106,23 +116,18 @@ const Search = () => {
   const passenger = searchParams.get("passengers");
 
   useEffect(() => {
-    axios
-      .get("http://192.168.100.8:8000/api/search/flights", {
-        params: {
-          route: searchParams.get("route"),
-          origin: searchParams.get("origin"),
-          destination: searchParams.get("destination"),
-          departuredate: searchParams.get("departure"),
-          passengers: searchParams.get("passengers"),
-          // TODO: put return date logic here
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        setSearchResults(response.data);
-      });
-  }, [searchParams]);
-  console.log(searchResults);
+    axios.get(`${apiUrl}/api/search/flights`, {
+      params: {
+        route: searchParams.get("route"),
+        origin: searchParams.get("origin"),
+        destination: searchParams.get("destination"),
+        departuredate: searchParams.get("departure"),
+        // TODO: put return date logic here
+    }})
+    .then((response) => {
+      setSearchResults(response.data)
+    })
+  }, [searchParams])
   return (
     <div className="search-page pt-14 flex flex-col">
       <div id="header" className="md:px-20 py-2 md:py-10">

@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 function Signup() {
+    // TODO: integrate signup to the auth process
     return(
         <>
             <div id="cont" className="flex justify-center items-center w-screen h-screen bg-horizon-tint">

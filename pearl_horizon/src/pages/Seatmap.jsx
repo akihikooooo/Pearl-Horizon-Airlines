@@ -1,41 +1,82 @@
-import { useMemo } from "react";
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState, useReducer } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useAuth } from "../services/auth";
 import "./stylesheets/seatmap.css"
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
-// const [passengerCount, setPassengerCount] = useState(1);
-// const [selectedSeat, setSelectedSeat] = useState("");
-function generator(status) {
+function generator(seatsTaken) {
   const seats = [];
   const cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-  
+
   for (let i = 1; i <= 35; i++) {
     cols.forEach((col) => {
+      const id = `${i}${col}`;
       seats.push({
-        id: `${i}${col}`,
+        id: id,
         row: i,
         column: col,
-        status: status[Math.floor(Math.random() * status.length)],
+        status: seatsTaken.includes(id) ? "occupied" : "available",
       });
     });
   }
   return seats;
 }
 
-const SeatMap = () => {
-  // Call generator if needed, for example:
-  // const seatData = generator(['available', 'occupied', 'reserved']);
-  const seatData = useMemo(
-    () => generator(["available", "occupied"]),
-    [],
+const Infos = ({ passengerID, name, seat }) => {
+  return (
+    <>
+      <div id="passenger-info" className="bg-horizon max-w-11/12 p-4 rounded-r-full">
+        <p className="text-white text-lg font-medium">Passenger Name: {name}</p>
+        <p className="text-white">Passenger ID: {passengerID}</p>
+        <p className="text-white">Selected Seat: {seat ? seat : "None"}</p>
+        {/* <p className="text-white">Passenger ID: {selectedPassengerID}</p> */}
+      </div>
+    </>
   );
-  const [SelectedSeat, setSelectedSeat] = useState(null);
-  const [scrolled, setScrolled] = useState("false");
+};
+
+const SeatMap = () => {
+  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const [takenSeats, setTakenSeats] = useState([]);
+  const [seatData, updateSeatData] = useState(generator(takenSeats));
+  const [selectedPassenger, setSelectedPassenger] = useState(0);
+  const [selectedSeat, setSelectedSeat] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [passengers, updatePassenger] = useReducer(
+    (state, action) => {
+      // action expects {"type": "update_seat", "passenger": pax, "seat": seatid}
+      if (action.type == "update_seat") {
+        return state.map((passenger, index) => (index === action.passenger ? { ...passenger, selected_seat: action.seat } : passenger));
+      }
+      return state;
+    },
+    [{ first_name: user.first_name, middle_name: user.middle_name, last_name: user.last_name, selected_seat: null }],
+  );
+
+  const selectSeat = (seatid) => {
+    if (takenSeats.includes(seatid)) return;
+    setSelectedSeat(seatid);
+    updatePassenger({ type: "update_seat", passenger: selectedPassenger, seat: seatid });
+  };
 
   useEffect(() => {
-      const handleScroll = () => setScrolled(window.scrollY > 10);
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    axios
+      .get(`${apiUrl}/api/book/seats`, {
+        params: {
+          flight_id: searchParams.get("flight_id"),
+        },
+      })
+      .then((res) => {
+        setTakenSeats(res.data.taken_seats);
+        updateSeatData(generator(res.data.taken_seats));
+        setLoading(false);
+      });
+  }, [searchParams]);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="pt-14">
@@ -49,8 +90,7 @@ const SeatMap = () => {
           </div>
           <div id="add-ons" className="flex flex-col">
             <div>
-              <p>Seat Number: {SelectedSeat}</p>
-              
+              <p>Seat Number: {selectedSeat}</p>
             </div>
           </div>
           </div>
