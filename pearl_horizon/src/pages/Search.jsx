@@ -23,6 +23,7 @@ const RenderResults = ({ result }) => {
             pathname: "/booking",
             search: `?${createSearchParams({
                 passengers: passengers,
+                flight_id: result.flight_id
             })}`,
         });
     };
@@ -64,7 +65,7 @@ const RenderResults = ({ result }) => {
                             {result.economy}
                             <span className="material-symbols-outlined text-horizon">check_circle</span>
                         </button>
-                        <button onClick={() => bookFlight} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
+                        <button onClick={bookFlight} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
                             Book Flight
                         </button>
                     </div>
