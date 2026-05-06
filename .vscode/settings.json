@@ -22,6 +22,6 @@
     "editor.stickyTabStops": false,
     "editor.tabSize": 4,
     "prettier.bracketSameLine": true,
-    "prettier.printWidth": 160,
+    "prettier.printWidth": 150,
     "prettier.tabWidth": 4
 }

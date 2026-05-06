@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useReducer, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../services/auth";
+import "./stylesheets/seatmap.css";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function generator(seatsTaken) {
@@ -79,34 +80,43 @@ const SeatMap = () => {
 
     return (
         <div className="pt-14">
-            <div id="container" className="flex">
-                <div className="w-1/2 hidden md:flex flex-col gap-4">
-                    {passengers.map((details, i) => {
-                        const name = `${details.first_name} ${details.middle_name} ${details.last_name}`;
-                        return <Infos key={i} passengerID={i + 1} name={name} seat={details.selected_seat} />;
-                    })}
+            <div id="header"></div>
+            <div id="container" className="flex flex-col md:flex-row">
+                <div
+                    id="informations"
+                    className="sticky md:relative top-16 md:top-0 md:w-1/2 flex justify-start items-center flex-col bg-horizon-tint">
+                    <div id="header">
+                        <p className="text-2xl font-bold text-horizon">Passenger 1: Akihiko Tanaka</p>
+                    </div>
+                    <div id="add-ons" className="flex flex-col">
+                        <div>
+                            <p>Seat Number: {selectedSeat}</p>
+                        </div>
+                    </div>
                 </div>
-                <div className="grid grid-cols-12 gap-2 border-2 border-horizon-deep p-4 mr-2">
+                <div className="grid grid-cols-12 gap-2 border-2 border-horizon-deep p-4 md:mr-2">
                     {seatData.map((seat) =>
                         seat.column === "H" || seat.column === "D" ? (
                             <>
                                 <div className="text-center font-bold">{seat.row}</div>
                                 <button
-                                    key={seat.id}
                                     onClick={() => {
-                                        selectSeat(seat.id);
+                                        setSelectedSeat(seat.id);
                                     }}
-                                    className={`p-4 border rounded flex justify-center items-center ${selectedSeat == seat.id ? "bg-green-400" : seat.status === "available" ? "bg-green-200" : "bg-red-200"}`}>
+                                    key={seat.id}
+                                    className={`p-4 border rounded flex justify-center items-center ${seat.status === "available" ? "bg-green-200" : "bg-red-200"} seat-buttons`}
+                                    disabled={seat.status === "occupied"}>
                                     {seat.id}
                                 </button>
                             </>
                         ) : (
                             <button
-                                key={seat.id}
                                 onClick={() => {
-                                    selectSeat(seat.id);
+                                    setSelectedSeat(seat.id);
                                 }}
-                                className={`p-4 flex justify-center items-center border rounded ${selectedSeat == seat.id ? "bg-green-400" : seat.status === "available" ? "bg-green-200" : "bg-red-200"}`}>
+                                key={seat.id}
+                                className={`p-4 flex justify-center items-center border rounded ${seat.status === "available" ? "bg-green-200" : "bg-red-200"} seat-buttons`}
+                                disabled={seat.status === "occupied"}>
                                 {seat.id}
                             </button>
                         ),

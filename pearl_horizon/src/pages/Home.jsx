@@ -1,10 +1,8 @@
-import React from "react";
 import { useState } from "react";
-import { NavLink, useNavigate, createSearchParams } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 import "../index.css";
 import "./stylesheets/home.css";
 // import req from "../assets/requirements.jpg";
-import Card from "../components/Card";
 
 const Requirement = ({ icon, title, description }) => {
     return (
@@ -37,6 +35,7 @@ const Home = () => {
                 origin: form.get("From"),
                 destination: form.get("To"),
                 departure: form.get("Departure"),
+                passengers: form.get("Passengers"),
             })}`,
         });
     };
@@ -102,8 +101,8 @@ const Home = () => {
                     />
                 </div>
                 <div className="px-4 py-6 text-center">
-                    For more information on travel requirements, please visit the official website of the Philippine Department of Tourism or contact your local
-                    embassy.
+                    For more information on travel requirements, please visit the official website of the Philippine Department of Tourism or contact
+                    your local embassy.
                 </div>
             </section>
         </div>

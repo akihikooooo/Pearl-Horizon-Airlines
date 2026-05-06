@@ -1,40 +1,47 @@
-import { Outlet, useNavigate, useSearchParams, createSearchParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import "./stylesheets/search.css";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
-// function formatTime(seconds) {
-//   const hours = Math.floor(seconds / 3600);
-//   const minutes = Math.floor((seconds % 3600) / 60);
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
 
-//   const parts = [];
-//   if (hours > 0) parts.push(`${hours}H`);
-//   if (minutes > 0) parts.push(`${minutes}M`);
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}H`);
+    if (minutes > 0) parts.push(`${minutes}M`);
 
-//   return parts.join(' ');
-// }
+    return parts.join(" ");
+}
 
 const RenderResults = ({ result }) => {
     const navigate = useNavigate();
-    const [selectedClass, setSelectedClass] = useState("");
+    const [searchParams] = useSearchParams();
+    const passengers = parseInt(searchParams.get("passengers")) || 1;
     const bookFlight = () => {
         navigate({
-            pathname: "/search/results/seatmap",
+            pathname: "/booking",
             search: `?${createSearchParams({
-                flight_id: result.flight_id,
+                passengers: passengers,
             })}`,
         });
     };
     return (
         <>
-            <div id="cont" className="w-full border border-horizon bg-dusk-pale flex justify-center items-center flex-col h-full my-2 shadow-md">
+            <div
+                id="cont"
+                className="w-9/12 border rounded-md border-horizon bg-dusk-pale flex justify-center items-center flex-col h-full my-2 shadow-md">
                 <div className="flex flex-col md:flex-row justify-between items-stretch w-full h-full gap-0 pl-2 pt-2">
                     <div id="flight-info" className="w-full h-full md:w-1/2 font-medium flex items-start justify-center flex-col">
                         <div>{result.flight_id}</div>
                         <div className="flex items-center justify-center gap-10 w-full">
                             <span id="origin" className="flex justify-center items-center flex-col gap-0">
                                 <p className="">
-                                    {new Date(result.departure_timestamp * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}
+                                    {new Date(result.departure_timestamp * 1000).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: false,
+                                    })}
                                 </p>
                                 <p className="uppercase">{result.origin_airport_id}</p>
                             </span>
@@ -49,47 +56,18 @@ const RenderResults = ({ result }) => {
                             </span>
                         </div>
                         <div className="flex px-2 gap-0 border-t-2 border-horizon-deep w-full">
-                            <p>Flight Duration: 2H</p> {/* TODO replace 2h w/ dynamic shits, natamad pa ko irender*/}
+                            <p>Flight Duration: {formatTime(result.flight_time)}</p>
                         </div>
                     </div>
                     <div id="flight-price" className="md:w-1/2 flex items-stretch justify-end gap-4 pr-4 font-medium text-xl">
-                        {/* Economy */}
-                        <button
-                            onClick={() => {
-                                setSelectedClass("Economy");
-                            }}
-                            className="flex flex-row items-center justify-center gap-2 px-2 h-12/12 w-full border-b-6 border-horizon-tint">
+                        <button onClick={() => {}} className="flex flex-row items-center justify-center gap-2 px-2 h-12/12 w-full">
                             {result.economy}
-                            {selectedClass === "Economy" && <span className="material-symbols-outlined text-horizon">check_circle</span>}
+                            <span className="material-symbols-outlined text-horizon">check_circle</span>
                         </button>
-                        <button
-                            onClick={() => {
-                                setSelectedClass("Business");
-                            }}
-                            className="flex flex-row items-center justify-center gap-2 px-2 h-full w-full border-b-6 border-horizon-deep">
-                            {result.business}
-                            {selectedClass === "Business" && <span className="material-symbols-outlined text-horizon">check_circle</span>}
-                        </button>
-                        <button
-                            onClick={() => {
-                                setSelectedClass("First");
-                            }}
-                            className="flex flex-row items-center justify-center gap-2 px-2 h-full w-full border-b-6 border-horizon ">
-                            {result.first}
-                            {selectedClass === "First" && <span className="material-symbols-outlined text-horizon">check_circle</span>}
+                        <button onClick={() => bookFlight} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
+                            Book Flight
                         </button>
                     </div>
-                </div>
-                <div
-                    id="book-cont"
-                    className={` ${selectedClass != "" ? "flex justify-center items-center" : "hidden"} bg-sky-cloud w-full h-16 flex justify-end items-center px-2`}>
-                    <span className="font-semibold text-horizon mr-4">Total Amount: 2,500 {/* TODO: what is the meaning of this? price?*/}</span>
-
-                    <button
-                        className={` ${selectedClass != "" ? "flex justify-center items-center" : "hidden"} bg-horizon text-white px-4 py-2 rounded-sm`}
-                        onClick={bookFlight}>
-                        Book Flight
-                    </button>
                 </div>
             </div>
         </>
@@ -99,8 +77,15 @@ const RenderResults = ({ result }) => {
 const Search = () => {
     const [filter, setFilter] = useState("Relevance");
     const [showFilters, setShowFilters] = useState(false);
-    const [searchParams] = useSearchParams();
     const [searchResults, setSearchResults] = useState([]);
+
+    const [searchParams] = useSearchParams();
+
+    const origin = searchParams.get("origin");
+    const destination = searchParams.get("destination");
+    const departure = searchParams.get("departure");
+    const passenger = searchParams.get("passengers");
+
     useEffect(() => {
         axios
             .get(`${apiUrl}/api/search/flights`, {
@@ -117,9 +102,35 @@ const Search = () => {
             });
     }, [searchParams]);
     return (
-        <div className="search-page pt-14">
+        <div className="search-page pt-14 flex flex-col">
+            <div id="header" className="md:px-20 py-2 md:py-10">
+                <h1 className="md:text-4xl text-horizon font-semibold flex items-center justify-center md:tracking-wider">Search Flights</h1>
+            </div>
+            <div id="flight-details" className="px-2 md:px-20 flex justify-between gap-0 bg-horizon">
+                <div className="flex gap-6 w-full">
+                    <div>
+                        <p
+                            id="origin-destination"
+                            className="text-2xl md:text-4xl text-sky-cloud font-medium flex items-center justify-start uppercase">
+                            {origin}
+                            <span className="material-symbols-outlined">travel</span>
+                            {destination}
+                        </p>
+                        <p id="flight-date" className="text-sky-white m-0">
+                            {departure}
+                        </p>
+                    </div>
+                    <div className="text-white text-center">
+                        <span className="text-xs">Passenger Count</span> <br /> {passenger}
+                    </div>
+                </div>
+                <div className="flex justify-center items-center gap-2 text-sky-white cursor-pointer rounded-sm">
+                    <span class="material-symbols-outlined">edit</span>
+                    Edit
+                </div>
+            </div>
             <div id="search-results" className="px-2 md:px-8 py-2">
-                <div className="flex md:flex-row flex-col items-center justify-between gap-2 rounded-sm md:pl-2 md:h-16 border mb-2 bg-sky-cloud shadow-xl">
+                <div className="flex md:flex-row flex-col items-center justify-between gap-2 rounded-sm md:pl-2 md:h-16 border border-horizon mb-2 bg-sky-cloud shadow-xl">
                     {/* Toggle button — mobile only */}
                     <button
                         className="flex items-center gap-2 md:hidden px-3 py-1 border border-horizon rounded-sm"
@@ -132,26 +143,20 @@ const Search = () => {
                         {["Relevance", "Fastest", "Latest", "Earliest", "Cheapest"].map((item) => (
                             <button
                                 key={item}
-                                className={`px-3 py-1 rounded-sm transition-colors duration-75 ${
-                                    filter === item ? "border border-horizon bg-horizon text-white" : "border border-horizon hover:bg-horizon hover:text-white"
-                                }`}
+                                className={`px-3 py-1 rounded-sm transition-colors duration-75 ${filter === item ? "border border-horizon bg-horizon text-white" : "border border-horizon hover:bg-horizon hover:text-white"}`}
                                 onClick={() => setFilter(item)}>
                                 {item === "Relevance" ? "Most Relevance" : item}
                             </button>
                         ))}
                     </div>{" "}
                     {/* 👈 this was missing */}
-                    {/* Flight Classes */}
-                    <div className="flex justify-center items-center h-full w-full md:w-1/2">
-                        <span className="font-semibold bg-horizon-tint text-horizon p-1 w-full h-full flex justify-center items-center">Economy</span>
-                        <span className="font-semibold bg-horizon-deep text-horizon-tint p-1 w-full h-full flex justify-center items-center">Business</span>
-                        <span className="font-semibold bg-horizon text-sky-cloud p-1 w-full h-full flex justify-center items-center">First Class</span>
-                    </div>
                 </div>
 
-                {searchResults.map((result) => {
-                    return <RenderResults result={result} />;
-                })}
+                <div id="results" className="flex justify-center items-center flex-col">
+                    {searchResults.map((result) => {
+                        return <RenderResults result={result} />;
+                    })}
+                </div>
             </div>
         </div>
     );

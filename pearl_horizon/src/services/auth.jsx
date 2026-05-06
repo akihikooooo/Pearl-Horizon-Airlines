@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 const AuthContext = createContext(null);
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
-
 export function AuthProvider({ children }) {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
