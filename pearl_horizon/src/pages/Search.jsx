@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useSearchParams, createSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./stylesheets/Search.css";
+import "./stylesheets/search.css";
 const apiUrl = import.meta.env.VITE_BACKEND_URL
 // function formatTime(seconds) {
 //   const hours = Math.floor(seconds / 3600);

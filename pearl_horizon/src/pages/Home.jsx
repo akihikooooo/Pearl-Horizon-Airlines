@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { NavLink, useNavigate, createSearchParams } from "react-router-dom";
 import "../index.css";
-import "./stylesheets/Home.css";
+import "./stylesheets/home.css";
 // import req from "../assets/requirements.jpg";
 import Card from "../components/Card";
 
