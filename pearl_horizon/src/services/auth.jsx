@@ -1,8 +1,9 @@
+import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import axios from "axios";
 const AuthContext = createContext(null);
-const apiUrl = import.meta.env.VITE_BACKEND_URL
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
+
 export function AuthProvider({ children }) {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -32,7 +33,7 @@ export function AuthProvider({ children }) {
         } catch (error) {
             console.error("Logout failed:", error);
         } finally {
-            setUser(null)
+            setUser(null);
         }
     };
 
@@ -45,12 +46,12 @@ export function AuthProvider({ children }) {
     };
 
     const checkAuth = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
             const response = await fetch(`${apiUrl}/api/auth/check`, {
                 credentials: "include",
             });
-            console.log(response)
+            console.log(response);
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData);
