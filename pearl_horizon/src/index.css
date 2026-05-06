@@ -1,31 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-horizon: #1A6EF5;
-  --color-horizon-deep: #1459CC;
-  --color-horizon-tint: #E8F0FE;
+    --color-horizon: #1a6ef5;
+    --color-horizon-deep: #1459cc;
+    --color-horizon-tint: #e8f0fe;
 
-  --color-sky-white: #FFFFFF;
-  --color-sky-cloud: #F5F6F8;
-  --color-sky-slate: #9AA3B2;
-  --color-sky-night: #1A1A2E;
+    --color-sky-white: #ffffff;
+    --color-sky-cloud: #f5f6f8;
+    --color-sky-slate: #9aa3b2;
+    --color-sky-night: #1a1a2e;
 
-  --color-dusk-warm: #D4A97A;
-  --color-dusk-pale: #8DB8D4;
+    --color-dusk-warm: #d4a97a;
+    --color-dusk-pale: #8db8d4;
 
-  --color-primary: var(--color-horizon);
---color-primary-hover: var(--color-horizon-deep);
---color-primary-soft: var(--color-horizon-tint);
---color-bg: var(--color-sky-white);
---color-bg-alt: var(--color-sky-cloud);
---color-text-primary: var(--color-sky-night);
---color-text-secondary: var(--color-sky-slate);
---color-accent-warm: var(--color-dusk-warm);
---color-accent-cool: var(--color-dusk-pale);
+    --color-primary: var(--color-horizon);
+    --color-primary-hover: var(--color-horizon-deep);
+    --color-primary-soft: var(--color-horizon-tint);
+    --color-bg: var(--color-sky-white);
+    --color-bg-alt: var(--color-sky-cloud);
+    --color-text-primary: var(--color-sky-night);
+    --color-text-secondary: var(--color-sky-slate);
+    --color-accent-warm: var(--color-dusk-warm);
+    --color-accent-cool: var(--color-dusk-pale);
 }
 
-*, html,body{
+*,
+html,
+body {
     scroll-behavior: smooth;
     transition: all 0.3s cubic-bezier(0.75, 0, 0.25, 1);
 }

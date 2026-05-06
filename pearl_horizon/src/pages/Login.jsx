@@ -38,8 +38,7 @@ function Login() {
                                 e.preventDefault();
                                 login({ email: email, password: password });
                             }}
-                            className="bg-horizon w-full rounded-md"
-                        >
+                            className="bg-horizon w-full rounded-md">
                             Log-in
                         </button>
                     </form>
