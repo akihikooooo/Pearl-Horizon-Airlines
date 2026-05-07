@@ -1,7 +1,12 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../services/auth";
+import { useState } from "react";
 
 function Signup() {
-    // TODO: integrate signup to the auth process
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const { signup } = useAuth();
+
     return (
         <>
             <div id="cont" className="flex justify-center items-center w-screen h-screen bg-horizon-tint">
@@ -10,12 +15,18 @@ function Signup() {
                         Pearl <span className="text-horizon">Horizon</span> Airline <br />
                         Signup
                     </div>
-                    <form onSubmit={1 + 1} id="form" className="flex flex-col gap-2 p-2">
+                    <div id="form" className="flex flex-col gap-2 p-2">
                         <input />
-                        <BookingField label="E-mail" type="text" placeholder="johndoe@email.com" />
-                        <BookingField label="Password" type="password" placeholder="" />
-                        <button className="bg-horizon w-full rounded-md">Log-in</button>
-                    </form>
+                        <BookingField value={email} onChange={(e) => {setEmail(e.target.value)}} label="E-mail" type="text" placeholder="johndoe@email.com" />
+                        <BookingField value={password} onChange={(e) => {setPassword(e.target.value)}} label="Password" type="password" placeholder="" />
+                        <button
+                            className="bg-horizon w-full rounded-md"
+                            onClick={() => {
+                                signup({ email: email, password: password, first_name: "Testing", middle_name: "Testing", last_name: "Dela Cruz" });
+                            }}>
+                            Log-in
+                        </button>
+                    </div>
                     <p>
                         Have an account?{" "}
                         <NavLink to="/accounts/login" className="text-horizon">

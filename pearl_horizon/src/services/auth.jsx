@@ -50,7 +50,6 @@ export function AuthProvider({ children }) {
             const response = await fetch(`${apiUrl}/api/auth/check`, {
                 credentials: "include",
             });
-            console.log(response);
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData);

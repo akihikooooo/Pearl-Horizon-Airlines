@@ -33,7 +33,7 @@ function App() {
                 {/* Protected Routes */}
                 <Route element={<ProtectedRoutes />}>
                     <Route path="/booking" element={<Booking />} />
-                    <Route path="/search/results/seatmap" element={<SeatMap />} />
+                    <Route path="/booking/seatmap" element={<SeatMap />} />
                 </Route>
             </Routes>
             <Footer />
