@@ -10,7 +10,8 @@ from .router import api_router
 app = FastAPI()
 origins = [
     "http://localhost:5173",
-    "http://192.168.100.8:5173",  # for dev
+    "http://192.168.100.8:5173",
+    "http://10.172.210.213:5173"  # for dev
 ]
 app.add_middleware(
     CORSMiddleware,

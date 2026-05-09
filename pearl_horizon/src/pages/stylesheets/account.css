@@ -1,0 +1,8 @@
+#header h1::before {
+    content: " ";
+    display: inline-block;
+    height: 0.2rem;
+    width: 1.6rem;
+    background: var(--color-horizon);
+    margin-right: 1rem;
+}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import "../index.css";
 import "./stylesheets/home.css";
+import InputField from "../components/InputField";
 // import req from "../assets/requirements.jpg";
 
 const Requirement = ({ icon, title, description }) => {
@@ -57,7 +58,7 @@ const Home = () => {
                         Discover the Philippines in comfort. From the highlands of Baguio to the shores of Cebu — every journey starts here.
                     </p>
                 </div>
-                <div className="md:w-4/12 bg-sky-cloud border border-sky-cloud shadow-xl shadow-sky-night/20 m-2 p-4 md:p-8 rounded-sm flex justify-center flex-col">
+                <div className="md:w-4/12 bg-sky-white border border-sky-cloud shadow-xl shadow-sky-night/20 m-2 p-4 md:p-8 rounded-sm flex justify-center flex-col">
                     <span className="text-2xl font-semibold">Book a Flight</span>
                     <div className="flex border border-sky-cloud mb-6 rounded-sm overflow-hidden">
                         {["oneway", "roundtrip"].map((type) => (
@@ -72,14 +73,14 @@ const Home = () => {
                     </div>
                     <form onSubmit={handleSearch} className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-3">
-                            <BookingField label="From" placeholder="Manila (MNL)" type="text" />
-                            <BookingField label="To" placeholder="Cebu (CEB)" type="text" />
+                            <InputField label="From" placeholder="Manila (MNL)" type="text" />
+                            <InputField label="To" placeholder="Cebu (CEB)" type="text" />
                         </div>
                         <div className="grid grid-cols-2 gap-3">
-                            <BookingField label="Departure" type="date" />
-                            {tripType === "roundtrip" && <BookingField label="Return" type="date" />}
+                            <InputField label="Departure" type="date" />
+                            {tripType === "roundtrip" && <InputField label="Return" type="date" />}
                         </div>
-                        <BookingField label="Passengers" type="number" placeholder="1" min="1" max="9" />
+                        <InputField label="Passengers" type="number" placeholder="1" min="1" max="9" />
                         <button
                             type="submit"
                             className="w-full bg-horizon text-white py-3.5 text-sm font-medium tracking-widest hover:bg-horizon-deep transition-colors mt-1">
@@ -109,15 +110,6 @@ const Home = () => {
     );
 };
 
-const BookingField = ({ label, ...inputProps }) => (
-    <div>
-        <label className="block text-[0.65rem] font-semibold md:tracking-[0.15em] text-sky-slate uppercase mb-1.5">{label}</label>
-        <input
-            {...inputProps}
-            name={label}
-            className="md:text-sm w-full bg-sky-cloud border border-sky-slate px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
-        />
-    </div>
-);
+
 
 export default Home;

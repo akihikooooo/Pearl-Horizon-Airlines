@@ -1,21 +1,15 @@
-export default function Management() {
-    return (
-        <div>
-            <h1>Management Page</h1>
+import "./stylesheets/account.css";
+
+function AccountManagement(){
+    return(
+        <>
+        <div id="cont" className="pt-16 flex bg-dusk-warm">
+            <div id="header">
+                <h1 className="text-4xl text-sky-white flex justify-center items-center">Account Management</h1>
+            </div>
         </div>
+        </>
     );
 }
-export function Login() {
-    return (
-        <div>
-            <h1>Login Page</h1>
-        </div>
-    );
-}
-export function Register() {
-    return (
-        <div>
-            <h1>Register Page</h1>
-        </div>
-    );
-}
+
+export default AccountManagement;

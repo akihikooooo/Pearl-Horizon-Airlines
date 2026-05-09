@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../services/auth";
+import InputField from "../components/InputField";
 function Login() {
     const { login, logout } = useAuth();
     const [email, setEmail] = useState("");
@@ -8,14 +9,15 @@ function Login() {
 
     return (
         <>
+            <title>Login | Pearl Horizon Airlines</title>
             <div id="cont" className="flex justify-center items-center w-screen h-screen bg-horizon-tint">
-                <div id="field" className="p-14 bg-sky-cloud flex justify-center items-center flex-col rounded-md shadow-2xl">
+                <div id="field" className="p-14 bg-sky-white flex justify-center items-center flex-col rounded-md shadow-2xl">
                     <div className="text-base md:text-2xl font-bold text-center leading-none">
                         Pearl <span className="text-horizon">Horizon</span> Airline <br />
                         Login
                     </div>
                     <form onSubmit={1 + 1} id="form" className="flex flex-col gap-2 p-2">
-                        <BookingField
+                        <InputField
                             value={email}
                             onChange={(e) => {
                                 setEmail(e.target.value);
@@ -24,7 +26,7 @@ function Login() {
                             type="text"
                             placeholder="johndoe@email.com"
                         />
-                        <BookingField
+                        <InputField
                             value={password}
                             onChange={(e) => {
                                 setPassword(e.target.value);
@@ -55,17 +57,5 @@ function Login() {
     );
 }
 
-const BookingField = ({ label, value, onChange, ...inputProps }) => (
-    <div>
-        <label className="block text-sm font-semibold md:tracking-[0.15em] text-horizon uppercase mb-1.5">{label}</label>
-        <input
-            {...inputProps}
-            name={label}
-            value={value}
-            onChange={onChange}
-            className="md:text-sm w-full bg-sky-cloud border border-sky-slate px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
-        />
-    </div>
-);
 
 export default Login;

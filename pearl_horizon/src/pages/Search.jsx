@@ -18,11 +18,14 @@ const RenderResults = ({ result }) => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const passengers = parseInt(searchParams.get("passengers")) || 1;
-    const bookFlight = () => {
+    const bookFlight = (flightID) => {
+        console.log(flightID);
         navigate({
             pathname: "/booking",
             search: `?${createSearchParams({
                 passengers: passengers,
+                bookingID: "d12k",
+                flightID: flightID,
             })}`,
         });
     };
@@ -64,7 +67,7 @@ const RenderResults = ({ result }) => {
                             {result.economy}
                             <span className="material-symbols-outlined text-horizon">check_circle</span>
                         </button>
-                        <button onClick={() => bookFlight} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
+                        <button onClick={() => bookFlight(result.flight_id)} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
                             Book Flight
                         </button>
                     </div>
@@ -75,8 +78,6 @@ const RenderResults = ({ result }) => {
 };
 
 const Search = () => {
-    const [filter, setFilter] = useState("Relevance");
-    const [showFilters, setShowFilters] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
 
     const [searchParams] = useSearchParams();
@@ -130,15 +131,15 @@ const Search = () => {
                 </div>
             </div>
             <div id="search-results" className="px-2 md:px-8 py-2">
-                <div className="flex md:flex-row flex-col items-center justify-between gap-2 rounded-sm md:pl-2 md:h-16 border border-horizon mb-2 bg-sky-cloud shadow-xl">
-                    {/* Toggle button — mobile only */}
+                {/* <div className="flex md:flex-row flex-col items-center justify-between gap-2 rounded-sm md:pl-2 md:h-16 border border-horizon mb-2 bg-sky-cloud shadow-xl">
+                    {/* Toggle button — mobile only
                     <button
                         className="flex items-center gap-2 md:hidden px-3 py-1 border border-horizon rounded-sm"
                         onClick={() => setShowFilters((prev) => !prev)}>
                         <span className="material-symbols-outlined">filter_list</span>
                         {showFilters ? "Hide filters" : "Filter"}
                     </button>
-                    {/* Filter buttons */}
+                    {/* Filter buttons *
                     <div className={` md:flex-row flex-wrap items-center gap-2 ${showFilters ? "flex" : "hidden"} md:flex`}>
                         {["Relevance", "Fastest", "Latest", "Earliest", "Cheapest"].map((item) => (
                             <button
@@ -148,9 +149,8 @@ const Search = () => {
                                 {item === "Relevance" ? "Most Relevance" : item}
                             </button>
                         ))}
-                    </div>{" "}
-                    {/* 👈 this was missing */}
-                </div>
+                    </div> 
+                </div> */}
 
                 <div id="results" className="flex justify-center items-center flex-col">
                     {searchResults.map((result) => {

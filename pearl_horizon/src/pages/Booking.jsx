@@ -3,17 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import "../index.css";
 import "./stylesheets/booking.css";
 import "./stylesheets/search.css";
-
-const InputField = ({ label, ...inputProps }) => (
-    <div className="w-full">
-        <label className="block text-[0.65rem] font-semibold md:tracking-[0.15em] text-sky-slate uppercase mb-1.5">{label}</label>
-        <input
-            {...inputProps}
-            name={label}
-            className="md:text-sm w-full bg-sky-cloud border border-sky-slate px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
-        />
-    </div>
-);
+import InputField from "../components/InputField";
 
 const RenderPassenger = ({ index, data, onChange }) => {
     const [selectedgender, setselectedGender] = useState(null);
@@ -30,7 +20,7 @@ const RenderPassenger = ({ index, data, onChange }) => {
                             value={data.title}
                             onChange={(e) => onChange("title", e.target.value)}
                             required
-                            className="w-full md:text-sm bg-sky-cloud border border-sky-slate px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm">
+                            className="w-full md:text-sm bg-sky-white border border-sky-slate px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm">
                             <option value="" disabled>
                                 -Select your title-
                             </option>
@@ -103,6 +93,7 @@ function Booking() {
 
     return (
         <div id="cont" className="pt-14">
+            <title>Booking</title>
             <div id="header" className="md:px-20 py-2 md:py-10">
                 <h1 className="md:text-4xl text-horizon font-semibold flex items-center justify-center md:tracking-wider">Booking Information</h1>
             </div>
