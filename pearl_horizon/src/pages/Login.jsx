@@ -16,7 +16,7 @@ function Login() {
                         Pearl <span className="text-horizon">Horizon</span> Airline <br />
                         Login
                     </div>
-                    <form onSubmit={1 + 1} id="form" className="flex flex-col gap-2 p-2">
+                    <div id="form" className="flex flex-col gap-2 p-2">
                         <InputField
                             value={email}
                             onChange={(e) => {
@@ -43,7 +43,7 @@ function Login() {
                             className="bg-horizon w-full rounded-md">
                             Log-in
                         </button>
-                    </form>
+                    </div>
                     <p>
                         Don't have an account?{" "}
                         <NavLink to="/accounts/signup" className="text-horizon">

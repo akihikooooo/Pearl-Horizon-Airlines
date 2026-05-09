@@ -29,6 +29,7 @@ const RenderResults = ({ result }) => {
             })}`,
         });
     };
+    console.log(result);
     return (
         <>
             <div
@@ -54,7 +55,13 @@ const RenderResults = ({ result }) => {
                                 <span className="material-symbols-outlined">flight_land</span>
                             </span>
                             <span id="destination" className="flex justify-center items-center flex-col gap-0">
-                                <p>21:30</p>
+                                <p>
+                                    {new Date((result.departure_timestamp + result.flight_time) * 1000).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: false,
+                                    })}
+                                </p>
                                 <p className="uppercase">{result.destination_airport_id}</p>
                             </span>
                         </div>
