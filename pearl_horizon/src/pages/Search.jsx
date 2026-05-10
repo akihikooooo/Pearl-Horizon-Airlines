@@ -91,7 +91,7 @@ const Search = () => {
 
     const origin = searchParams.get("origin");
     const destination = searchParams.get("destination");
-    const departure = searchParams.get("departure");
+    const departure = new Date(searchParams.get("departure"))
     const passenger = searchParams.get("passengers");
 
     useEffect(() => {
@@ -99,9 +99,9 @@ const Search = () => {
             .get(`${apiUrl}/api/search/flights`, {
                 params: {
                     route: searchParams.get("route"),
-                    origin: searchParams.get("origin"),
-                    destination: searchParams.get("destination"),
-                    departuredate: searchParams.get("departure"),
+                    origin: origin,
+                    destination: destination,
+                    departuredate: departure.getTime() / 1000,
                     // TODO: put return date logic here
                 },
             })
@@ -125,7 +125,7 @@ const Search = () => {
                             {destination}
                         </p>
                         <p id="flight-date" className="text-sky-white m-0">
-                            {departure}
+                            {departure.toDateString()}
                         </p>
                     </div>
                     <div className="text-white text-center">

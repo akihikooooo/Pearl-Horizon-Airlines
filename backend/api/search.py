@@ -1,5 +1,5 @@
 import logging
-from datetime import date
+from datetime import datetime
 from typing import Annotated, Optional
 
 import db
@@ -17,8 +17,8 @@ class SearchFlightParams(BaseModel):
     route: str
     origin: str
     destination: str
-    departuredate: date
-    returndate: Optional[date] = None
+    departuredate: datetime
+    returndate: Optional[datetime] = None
 
 
 @router.get("/flights")
@@ -35,10 +35,18 @@ async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
                    flight_id,
                    origin_airport_id,
                    destination_airport_id
-            FROM flight
-            WHERE route=? AND origin_airport_id=? AND destination_airport_id=?;
+            FROM flight WHERE
+                        route=:route
+                    AND origin_airport_id=:origin
+                    AND destination_airport_id=:destination
+                    AND departure_timestamp BETWEEN :departure AND (:departure+86400);
         """,
-        (payload.route.lower(), payload.origin.upper(), payload.destination.upper()),
+        {
+            "route": payload.route.lower(),
+            "origin": payload.origin.upper(),
+            "destination": payload.destination.upper(),
+            "departure": int(payload.departuredate.timestamp()),
+        },
     )
     ret = cur.fetchall()
     response = []

@@ -12,6 +12,8 @@ import SeatMap from "./pages/Seatmap.jsx";
 import Signup from "./pages/Signup.jsx";
 import { ProtectedRoutes } from "./services/auth.jsx";
 import AccountManagement from "./pages/Account.jsx";
+import AdminPanel from "./pages/Admin.jsx";
+import { AdminRoutes } from "./services/admin.jsx";
 
 function App() {
     useEffect(() => {
@@ -21,22 +23,29 @@ function App() {
     return (
         <>
             <Navbar />
-            
+
             <Routes className="">
                 {/* Unprotected Routes */}
                 <Route path="/" element={<Home />} />
 
-                <Route path="/login" element={<Login />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/search/results" element={<Booking />} />
-                <Route path="/accounts" element={<AccountManagement/>}/>
-                <Route path="/accounts/login" element={<Login />} />
-                <Route path="/accounts/signup" element={<Signup />} />
+
+                <Route element={<ProtectedRoutes accounts={true} />}>
+                    <Route path="/accounts/login" element={<Login />} />
+                    <Route path="/accounts/signup" element={<Signup />} />
+                </Route>
 
                 {/* Protected Routes */}
-                <Route element={<ProtectedRoutes />}>
+                <Route element={<ProtectedRoutes accounts={false} />}>
                     <Route path="/booking" element={<Booking />} />
                     <Route path="/booking/seatmap" element={<SeatMap />} />
+
+                    <Route element={<AdminRoutes />}>
+                        <Route path="/admin" element={<AdminPanel />} />
+                    </Route>
+
+                    <Route path="/accounts" element={<AccountManagement />} />
                 </Route>
             </Routes>
             <div id="colors" className="flex justify-between">

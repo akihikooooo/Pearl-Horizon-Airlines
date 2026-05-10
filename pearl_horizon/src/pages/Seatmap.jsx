@@ -37,6 +37,7 @@ const Infos = ({ passengerID, name, seat }) => {
 
 const SeatMap = () => {
     const { state } = useLocation();
+    console.log(state)
     const [takenSeats, setTakenSeats] = useState([]);
     const [seatData, updateSeatData] = useState(generator(takenSeats));
     const [selectedPassenger, setSelectedPassenger] = useState(0);

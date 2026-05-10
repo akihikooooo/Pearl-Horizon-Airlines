@@ -9,7 +9,7 @@ const RenderPassenger = ({ index, data, onChange }) => {
     return (
         <div id="passenger-cont" className="border rounded-md w-9/12 mx-2 my-4 p-2">
             <div id="passenger-header">
-                <p className="flex items-center font-bold">Passenger {index+1}</p>
+                <p className="flex items-center font-bold">Passenger {index + 1}</p>
             </div>
             <div id="passenger-details">
                 <div id="name" className="flex gap-2 md:items-center flex-col md:flex-row">
@@ -75,19 +75,43 @@ const RenderPassenger = ({ index, data, onChange }) => {
             <div id="contact-details">
                 <p className="flex items-center font-medium"> Contact Information </p>
                 <div className="flex gap-2 md:items-center flex-col md:flex-row">
-                    <InputField label="Email" placeholder="juandelacruz@email.com" type="email" required value={data.email}
-                            onChange={(e) => onChange({ passenger: index, field: "email", value: e.target.value })} />
-                    <InputField label="Phone Number" placeholder="+63 912 345 6789" type="tel" required value={data.phone_number}
-                            onChange={(e) => onChange({ passenger: index, field: "phone_number", value: e.target.value })}/>
+                    <InputField
+                        label="Email"
+                        placeholder="juandelacruz@email.com"
+                        type="email"
+                        required
+                        value={data.email}
+                        onChange={(e) => onChange({ passenger: index, field: "email", value: e.target.value })}
+                    />
+                    <InputField
+                        label="Phone Number"
+                        placeholder="+63 912 345 6789"
+                        type="tel"
+                        required
+                        value={data.phone_number}
+                        onChange={(e) => onChange({ passenger: index, field: "phone_number", value: e.target.value })}
+                    />
                 </div>
             </div>
             <div id="emergency-details">
                 <p className="flex items-center font-medium"> Emergency Contact Information </p>
                 <div className="flex gap-2 md:items-center flex-col md:flex-row">
-                    <InputField label="Emergency Contact Name" placeholder="Marcelo Aguncillo" type="text" required value={data.emergency_contact_name}
-                            onChange={(e) => onChange({ passenger: index, field: "emergency_contact_name", value: e.target.value })}/>
-                    <InputField label="Phone Number" placeholder="+63 912 345 6789" type="tel" required value={data.emergency_phone_number}
-                            onChange={(e) => onChange({ passenger: index, field: "emergency_phone_number", value: e.target.value })}/>
+                    <InputField
+                        label="Emergency Contact Name"
+                        placeholder="Marcelo Aguncillo"
+                        type="text"
+                        required
+                        value={data.emergency_contact_name}
+                        onChange={(e) => onChange({ passenger: index, field: "emergency_contact_name", value: e.target.value })}
+                    />
+                    <InputField
+                        label="Phone Number"
+                        placeholder="+63 912 345 6789"
+                        type="tel"
+                        required
+                        value={data.emergency_phone_number}
+                        onChange={(e) => onChange({ passenger: index, field: "emergency_phone_number", value: e.target.value })}
+                    />
                 </div>
             </div>
         </div>
@@ -95,7 +119,7 @@ const RenderPassenger = ({ index, data, onChange }) => {
 };
 
 function Booking() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const passengerCount = parseInt(searchParams.get("passengers")) || 1;
 
@@ -118,12 +142,12 @@ function Booking() {
             phone_number: "",
             emergency_contact_name: "",
             emergency_phone_number: "",
-            selected_seat: ""
+            selected_seat: "",
         })),
     );
 
     const handleSubmit = () => {
-        navigate("/booking/seatmap", {state: {flight_id: searchParams.get("flight_id"), passengers: passengers}})
+        navigate("/booking/seatmap", { state: { flight_id: searchParams.get("flightID"), passengers: passengers } });
     };
 
     return (

@@ -10,20 +10,24 @@ export function AuthProvider({ children }) {
 
     const login = async (credentials) => {
         // TODO: error handling, need ko ng qa test dito
+        setLoading(true);
         const data = axios
             .post(`${apiUrl}/api/auth/login`, credentials, {})
             .then(async () => {
-                await checkAuth();
+                await checkAuth(true);
                 navigate("/", { replace: true });
                 return { success: true };
             })
             .catch(() => {
                 throw new Error("Login failed"); // TODO: if signup failed, return an error
-            });
+            })
+            .finally(setLoading(false));
+
         return data;
     };
 
     const logout = async () => {
+        setLoading(true);
         try {
             await fetch(`${apiUrl}/api/auth/logout`, {
                 method: "POST",
@@ -34,6 +38,7 @@ export function AuthProvider({ children }) {
         } finally {
             setUser(null);
         }
+        setLoading(false);
     };
 
     const signup = async (credentials) => {
@@ -44,7 +49,7 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const checkAuth = async () => {
+    const checkAuth = async (skipLoading = false) => {
         setLoading(true);
         try {
             const response = await fetch(`${apiUrl}/api/auth/check`, {
@@ -52,7 +57,9 @@ export function AuthProvider({ children }) {
             });
             if (response.ok) {
                 const userData = await response.json();
-                setUser(userData);
+                
+                userData.permissions = userData.permissions ? userData.permissions.split(" ") : []
+                setUser(userData); 
             } else {
                 setUser(null);
             }
@@ -60,7 +67,7 @@ export function AuthProvider({ children }) {
             console.error("Auth check failed:", error);
             setUser(null);
         } finally {
-            setLoading(false);
+            if (!skipLoading) setLoading(false);
         }
     };
     useEffect(() => {
@@ -79,16 +86,20 @@ export function AuthProvider({ children }) {
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export const ProtectedRoutes = () => {
+export const ProtectedRoutes = ({ accounts = false }) => {
     const { checkAuth, authed, loading } = useAuth();
     useEffect(() => {
         checkAuth();
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="pt-16">Loading...</div>;
     }
-    return authed ? <Outlet /> : <Navigate to="/accounts/login" replace />;
+    if (accounts) {
+        return authed ? <Navigate to="/accounts" replace /> : <Outlet />;
+    } else {
+        return authed ? <Outlet /> : <Navigate to="/accounts/login" replace />;
+    }
 };
 
 export function useAuth() {
