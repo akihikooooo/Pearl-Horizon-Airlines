@@ -14,6 +14,7 @@ import { ProtectedRoutes } from "./services/auth.jsx";
 import AccountManagement from "./pages/Account.jsx";
 import AdminPanel from "./pages/Admin.jsx";
 import { AdminRoutes } from "./services/admin.jsx";
+import Payment from "./pages/Payment.jsx";
 
 function App() {
     useEffect(() => {
@@ -40,6 +41,7 @@ function App() {
                 <Route element={<ProtectedRoutes accounts={false} />}>
                     <Route path="/booking" element={<Booking />} />
                     <Route path="/booking/seatmap" element={<SeatMap />} />
+                    <Route path="/booking/payment" element={<Payment />} />
 
                     <Route element={<AdminRoutes />}>
                         <Route path="/admin" element={<AdminPanel />} />

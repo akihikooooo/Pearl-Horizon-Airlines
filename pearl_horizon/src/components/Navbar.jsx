@@ -23,6 +23,7 @@ function Navbar() {
         <nav className={`flex items-center justify-between h-16 px-8 ${scrolled ? "scrolled" : ""} overflow-hidden`}>
             <span>
                 <NavLink to="/" className={`text-base md:text-xl font-bold ${scrolled ? "text-black" : "text-white"}`}>
+                    <img src="/src/assets/Pearl Horizon.png" alt="Pearl Horizon Logo" className="inline-block w-8 mr-2" />
                     Pearl <span className="text-horizon">Horizon</span> Airline
                 </NavLink>
             </span>

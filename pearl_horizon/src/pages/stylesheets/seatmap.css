@@ -5,3 +5,12 @@
 .seat-buttons:not(:disabled):active {
     background-image: linear-gradient(rgba(26 110 245/40%) 0 0);
 }
+#add-ons p::after{
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: rgb(255 255 255 / 20%);
+    margin-top: 0.5rem;
+
+}
