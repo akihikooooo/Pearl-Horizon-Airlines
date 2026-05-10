@@ -5,7 +5,12 @@ import { useState } from "react";
 
 function Signup() {
     const [email, setEmail] = useState("");
+    const [confirmEmail, setConfirmEmail] = useState("");
+    const [showMailError, setShowMailError] = useState(false);
+
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPasswordError, setShowPasswordError] = useState(false);
     const { signup } = useAuth();
 
     return (
@@ -16,33 +21,80 @@ function Signup() {
                         Pearl <span className="text-horizon">Horizon</span> Airline <br />
                         Signup
                     </div>
-                    <form onSubmit={1 + 1} id="form" className="flex flex-col gap-2 p-2">
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            if (email != confirmEmail || password != confirmPassword) {
+                                return false;
+                            }
+                            signup({ email: email, password: password, first_name: e.target[0].value, last_name: e.target[1].value });
+                        }}
+                        id="form"
+                        className="flex flex-col gap-2 p-2">
                         <div className="flex gap-2">
-                            <InputField label="First Name" type="text" placeholder="John" />
-                            <InputField label="Last Name" type="text" placeholder="Doe" />
+                            <InputField label="First Name" type="text" placeholder="John" required />
+                            <InputField label="Last Name" type="text" placeholder="Doe" required />
                         </div>
                         <div id="email" className="flex gap-2">
-                            <InputField label="E-mail" type="text" placeholder="johndoe@email.com" />
-                            <InputField label="Confirm E-mail" type="text" placeholder="johndoe@email.com" />
+                            <InputField
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                label="E-mail"
+                                type="email"
+                                placeholder="johndoe@email.com"
+                                required
+                            />
+                            <InputField
+                                value={confirmEmail}
+                                onChange={(e) => {
+                                    setConfirmEmail(e.target.value);
+                                    setShowMailError(false);
+                                }}
+                                label="Confirm E-mail"
+                                type="email"
+                                placeholder="johndoe@email.com"
+                                error={email != confirmEmail && showMailError}
+                                onBlur={() => setShowMailError(true)}
+                                required
+                            />
                         </div>
                         <div id="pw" className="flex gap-2">
-                            <InputField label="Password" type="password" placeholder="" />
-                            <InputField label="Confirm Password" type="password" placeholder="" />
+                            <InputField
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                label="Password"
+                                type="password"
+                                placeholder=""
+                                required
+                            />
+                            <InputField
+                                value={confirmPassword}
+                                onChange={(e) => {
+                                    setConfirmPassword(e.target.value);
+                                    setShowPasswordError(false);
+                                }}
+                                label="Confirm Password"
+                                type="password"
+                                placeholder=""
+                                error={password != confirmPassword && showPasswordError}
+                                onBlur={() => setShowPasswordError(true)}
+                                required
+                            />
                         </div>
-                        <button className="bg-horizon w-full rounded-md">Log-in</button>
+                        <button type="submit" className="bg-horizon w-full rounded-md">
+                            Log-in
+                        </button>
                     </form>
-                    <div id="form" className="flex flex-col gap-2 p-2">
+                    {/* <div id="form" className="flex flex-col gap-2 p-2">
                         <input />
                         <InputField value={email} onChange={(e) => {setEmail(e.target.value)}} label="E-mail" type="text" placeholder="johndoe@email.com" />
                         <InputField value={password} onChange={(e) => {setPassword(e.target.value)}} label="Password" type="password" placeholder="" />
                         <button
                             className="bg-horizon w-full rounded-md"
-                            onClick={() => {
-                                signup({ email: email, password: password, first_name: "Testing", middle_name: "Testing", last_name: "Dela Cruz" });
-                            }}>
+                            onClick={}>
                             Log-in
                         </button>
-                    </div>
+                    </div> */}
                     <p>
                         Have an account?{" "}
                         <NavLink to="/accounts/login" className="text-horizon">

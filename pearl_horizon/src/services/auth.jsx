@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
 
     const signup = async (credentials) => {
         try {
-            const _data = axios.post(`${apiUrl}/api/auth/signup`, credentials, {}).then(() => navigate("/login", { replace: true }));
+            const _data = axios.post(`${apiUrl}/api/auth/signup`, credentials, {}).then(() => navigate("/accounts/login", { replace: true }));
         } catch (error) {
             console.log(error);
         }
@@ -57,9 +57,9 @@ export function AuthProvider({ children }) {
             });
             if (response.ok) {
                 const userData = await response.json();
-                
-                userData.permissions = userData.permissions ? userData.permissions.split(" ") : []
-                setUser(userData); 
+
+                userData.permissions = userData.permissions ? userData.permissions.split(" ") : [];
+                setUser(userData);
             } else {
                 setUser(null);
             }

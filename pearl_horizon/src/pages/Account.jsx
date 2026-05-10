@@ -15,7 +15,7 @@ function AccountManagement() {
             </div>
             {user.permissions.includes("ADMINISTRATOR") ? (
                 <div>
-                    <button onClick={() => navigate("/admin", { replace: true })}>Admin Panel</button>
+                    <button onClick={() => navigate("/admin")}>Admin Panel</button>
                 </div>
             ) : (
                 <></>

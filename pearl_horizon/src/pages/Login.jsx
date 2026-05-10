@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../services/auth";
 import InputField from "../components/InputField";
 function Login() {
-    const { login, logout } = useAuth();
+    const { login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -16,7 +16,13 @@ function Login() {
                         Pearl <span className="text-horizon">Horizon</span> Airline <br />
                         Login
                     </div>
-                    <div id="form" className="flex flex-col gap-2 p-2">
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            login({ email: email, password: password });
+                        }}
+                        id="form"
+                        className="flex flex-col gap-2 p-2">
                         <InputField
                             value={email}
                             onChange={(e) => {
@@ -35,27 +41,20 @@ function Login() {
                             type="password"
                             placeholder=""
                         />
-                        <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                login({ email: email, password: password });
-                            }}
-                            className="bg-horizon w-full rounded-md">
+                        <button type="submit" className="bg-horizon w-full rounded-md">
                             Log-in
                         </button>
-                    </div>
+                    </form>
                     <p>
                         Don't have an account?{" "}
                         <NavLink to="/accounts/signup" className="text-horizon">
                             Sign Up.
                         </NavLink>
                     </p>
-                    <button onClick={logout}>Logout</button>
                 </div>
             </div>
         </>
     );
 }
-
 
 export default Login;

@@ -28,7 +28,7 @@ async def login(payload: LoginRequest, response: Response):
     con = db.Database().con
     cur = con.cursor()
     cur.execute(
-        "SELECT user_id, first_name, middle_name, last_name FROM users WHERE (email IS ? AND password IS ?);",
+        "SELECT user_id FROM users WHERE (email IS ? AND password IS ?);",
         (
             payload.email,
             payload.password,
@@ -53,7 +53,6 @@ class SignupRequest(BaseModel):
     email: str
     password: str
     first_name: str
-    middle_name: str
     last_name: str
 
 
@@ -64,11 +63,10 @@ async def signup(payload: SignupRequest):
     userId = str(uuid.uuid4())
     try:
         cur.execute(
-            "INSERT INTO users (user_id, first_name, middle_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO users (user_id, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)",
             (
                 userId,
                 payload.first_name,
-                payload.middle_name,
                 payload.last_name,
                 payload.email,
                 payload.password,
@@ -90,14 +88,13 @@ async def check_credentials(payload: dict = Depends(verify_token)):
     con = db.Database().con
     cur = con.cursor()
     cur.execute(
-        "SELECT first_name, middle_name, last_name, permissions FROM users WHERE (user_id IS ?)",
+        "SELECT first_name, last_name, permissions FROM users WHERE (user_id IS ?)",
         (payload["user_id"],),
     )
     ret = cur.fetchone()  # TODO: what if invalid userid?
     return {
         "user_id": payload["user_id"],
         "first_name": ret[0],
-        "middle_name": ret[1],
-        "last_name": ret[2],
-        "permissions": ret[3]
+        "last_name": ret[1],
+        "permissions": ret[2]
     }
