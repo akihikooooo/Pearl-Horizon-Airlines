@@ -11,34 +11,40 @@ export function AuthProvider({ children }) {
     const login = async (credentials) => {
         // TODO: error handling, need ko ng qa test dito
         setLoading(true);
-        const data = axios
+        const ret = axios
             .post(`${apiUrl}/api/auth/login`, credentials, {})
             .then(async () => {
                 await checkAuth(true);
                 navigate("/", { replace: true });
                 return { success: true };
             })
-            .catch(() => {
-                throw new Error("Login failed"); // TODO: if signup failed, return an error
+            .catch((error) => {
+                console.log(error.response);
+                if (error.response) {
+                    if (error.response.status == 401) {
+                        // invalid credentials
+                        return { success: false, details: error.response.data.detail };
+                    } else {
+                        console.error(error);
+                    }
+                } else {
+                    console.error(error);
+                }
             })
             .finally(setLoading(false));
 
-        return data;
+        return ret;
     };
 
     const logout = async () => {
         setLoading(true);
-        try {
-            await fetch(`${apiUrl}/api/auth/logout`, {
-                method: "POST",
-                credentials: "include", // Important: sends cookie to be cleared
-            });
-        } catch (error) {
-            console.error("Logout failed:", error);
-        } finally {
-            setUser(null);
-        }
-        setLoading(false);
+        axios
+            .post(`${apiUrl}/api/auth/logout`)
+            .then(() => setUser(null))
+            .catch((error) => {
+                console.error("Logout failed:", error);
+            })
+            .finally(() => setLoading(false));
     };
 
     const signup = async (credentials) => {
@@ -70,6 +76,7 @@ export function AuthProvider({ children }) {
             if (!skipLoading) setLoading(false);
         }
     };
+    
     useEffect(() => {
         checkAuth();
     }, []);

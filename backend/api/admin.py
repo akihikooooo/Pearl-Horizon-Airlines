@@ -1,13 +1,11 @@
 import logging
-from typing import Annotated
-
 import sqlite3
+
 import db
 from auth import verify_token
-from fastapi import Depends, Query, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import Depends, HTTPException
 from fastapi.routing import APIRouter
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 log = logging.getLogger(f"PearlHorizon.{__name__}")
 

@@ -6,7 +6,7 @@ function Login() {
     const { login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    const [error, setError] = useState("");
     return (
         <>
             <title>Login | Pearl Horizon Airlines</title>
@@ -17,9 +17,10 @@ function Login() {
                         Login
                     </div>
                     <form
-                        onSubmit={(e) => {
+                        onSubmit={async (e) => {
                             e.preventDefault();
-                            login({ email: email, password: password });
+                            const ret = await login({ email: email, password: password });
+                            if (!ret.success) setError(ret.details);
                         }}
                         id="form"
                         className="flex flex-col gap-2 p-2">
@@ -27,6 +28,7 @@ function Login() {
                             value={email}
                             onChange={(e) => {
                                 setEmail(e.target.value);
+                                setError("");
                             }}
                             label="E-mail"
                             type="text"
@@ -36,6 +38,7 @@ function Login() {
                             value={password}
                             onChange={(e) => {
                                 setPassword(e.target.value);
+                                setError("");
                             }}
                             label="Password"
                             type="password"
@@ -45,6 +48,7 @@ function Login() {
                             Log-in
                         </button>
                     </form>
+                    <p className="text-red-500">{error}</p>
                     <p>
                         Don't have an account?{" "}
                         <NavLink to="/accounts/signup" className="text-horizon">
