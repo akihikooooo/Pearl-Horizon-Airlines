@@ -67,3 +67,26 @@ async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
         content=response,
         status_code=status.HTTP_200_OK,
     )
+
+@router.get("/airports")
+def get_all_airports():
+    con = db.Database().con
+    cur = con.cursor()
+    cur.execute("SELECT * FROM airport")
+    data = cur.fetchall()
+    ret = {}
+    for airport in data:
+        ret[airport[0]] = {"country": airport[1], "city": airport[2]}
+    return ret
+        
+@router.get("/airplanes")
+def get_all_airplanes():
+    con = db.Database().con
+    cur = con.cursor()
+    cur.execute("SELECT * FROM airplane")
+    data = cur.fetchall()
+    ret = {}
+    for airplane in data:
+        ret[airplane[0]] = {"model": airplane[1], "seats": airplane[2]}
+    return ret
+        
