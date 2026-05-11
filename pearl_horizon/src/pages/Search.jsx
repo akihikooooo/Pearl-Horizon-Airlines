@@ -89,10 +89,13 @@ const Search = () => {
 
     const [searchParams] = useSearchParams();
 
+    const route = searchParams.get("route")
     const origin = searchParams.get("origin");
     const destination = searchParams.get("destination");
-    const departure = new Date(searchParams.get("departure"))
+    const departure = new Date(searchParams.get("departure"));
     const passenger = searchParams.get("passengers");
+    const returnDate = new Date(searchParams.get("return"));
+
 
     useEffect(() => {
         axios
@@ -102,6 +105,7 @@ const Search = () => {
                     origin: origin,
                     destination: destination,
                     departuredate: departure.getTime() / 1000,
+                    returndate: returnDate ? new Date(returnDate).getTime() / 1000 : null,
                     // TODO: put return date logic here
                 },
             })
@@ -110,32 +114,38 @@ const Search = () => {
             });
     }, [searchParams]);
     return (
-        <div className="search-page pt-14 flex flex-col">
-            <div id="header" className="md:px-20 py-2 md:py-10">
-                <h1 className="md:text-4xl text-horizon font-semibold flex items-center justify-center md:tracking-wider">Search Flights</h1>
-            </div>
-            <div id="flight-details" className="px-2 md:px-20 flex justify-between gap-0 bg-horizon">
-                <div className="flex gap-6 w-full">
-                    <div>
+        <div className="search-page pt-16 flex flex-col">
+            <div id="flight-details" className="px-2 md:px-20 flex justify-center gap-2 bg-horizon">
+                    <div className="flex gap-2 justify-center items-center">
                         <p
                             id="origin-destination"
-                            className="text-2xl md:text-4xl text-sky-cloud font-medium flex items-center justify-start uppercase">
+                            className="text-2xl md:text-4xl text-sky-white font-medium flex items-center justify-start uppercase">
                             {origin}
-                            <span className="material-symbols-outlined">travel</span>
+                            <span className="material-symbols-outlined">{route == "roundtrip" ? "compare_arrows" : "travel"}</span>
                             {destination}
                         </p>
-                        <p id="flight-date" className="text-sky-white m-0">
-                            {departure.toDateString()}
+                        <div className="w-1 h-9/12 bg-horizon-tint"/>
+                        <span className="flex gap-1">
+                            <p id="flight-date" className="text-sky-white m-0">
+                                {departure.toDateString()} 
+                            </p>
+                            <span className="material-symbols-outlined text-sky-white">calendar_month</span>
+                            <p id="flight-date" className="text-sky-white m-0">
+                            {returnDate.toDateString()}
                         </p>
+                        </span>
+                        <div className="w-1 h-9/12 bg-horizon-tint"/>
+                        <span className="flex items-center">
+                            <p id="passengers" className="text-sky-white m-0">
+                                {passenger} 
+                            </p>
+                                <span className="material-symbols-outlined text-sky-white">person</span>
+                        </span>
                     </div>
-                    <div className="text-white text-center">
-                        <span className="text-xs">Passenger Count</span> <br /> {passenger}
-                    </div>
-                </div>
-                <div className="flex justify-center items-center gap-2 text-sky-white cursor-pointer rounded-sm">
+                {/* <div id="modify" className="flex justify-center items-center gap-2 text-sky-white cursor-pointer">
                     <span class="material-symbols-outlined">edit</span>
                     Edit
-                </div>
+                </div> */}
             </div>
             <div id="search-results" className="px-2 md:px-8 py-2">
                 {/* <div className="flex md:flex-row flex-col items-center justify-between gap-2 rounded-sm md:pl-2 md:h-16 border border-horizon mb-2 bg-sky-cloud shadow-xl">
