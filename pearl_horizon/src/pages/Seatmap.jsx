@@ -22,9 +22,9 @@ function generator(seatsTaken) {
     return seats;
 }
 
-const Infos = ({ passengerID, selectedPassenger, onSelect, name, seat }) => {
-    const [mealPreference, setMealPreference] = useState("");
-
+const Infos = ({ passengerID, selectedPassenger, onSelect, name, seat, mealPreference, onClick }) => {
+    console.log(mealPreference)
+    const Meals = ["Sandwich", "Drink", "Snack"];
     return (
         <div className="flex flex-col gap-1">
             <button
@@ -38,17 +38,12 @@ const Infos = ({ passengerID, selectedPassenger, onSelect, name, seat }) => {
                 <p className="text-white text-lg font-medium">Selected Seat: {seat ? seat : "None"}</p>
                 <p className="text-white text-lg font-medium">Meal Preferences</p>
                 <div className="flex mt-2 justify-between w-full gap-2">
-                    {["Sandwich", "Drink", "Snack"].map((option) => (
+                    {Meals.map((option, i) => (
                         <button
-                            key={option}
-                            className={`w-full ${mealPreference === option ? "bg-dusk-warm text-sky-white" : "bg-horizon-tint"}`}
-                            onClick={() => {
-                                if (mealPreference === option) {
-                                    setMealPreference(null);
-                                } else {
-                                    setMealPreference(option);
-                                }
-                            }}>
+                            key={i}
+                            value={option}
+                            className={`w-full ${mealPreference == option ? "bg-dusk-warm text-sky-white" : "bg-horizon-tint"}`}
+                            onClick={onClick}>
                             {option}
                         </button>
                     ))}
@@ -60,7 +55,6 @@ const Infos = ({ passengerID, selectedPassenger, onSelect, name, seat }) => {
 
 const SeatMap = () => {
     const { state } = useLocation();
-    console.log(state);
     const [takenSeats, setTakenSeats] = useState([]);
     const [seatData, updateSeatData] = useState(generator(takenSeats));
     const [selectedPassenger, setSelectedPassenger] = useState(0);
@@ -68,9 +62,21 @@ const SeatMap = () => {
     const [passengers, updatePassenger] = useReducer((state, action) => {
         // expects {passenger: num, field: str, value: value}
         // TODO: sanity checking
-        return state.map((passenger, index) => (index === action.passenger ? { ...passenger, [action.field]: action.value } : passenger));
+        console.log(state)
+        const newState = state.map((passenger, index) => (index === action.passenger ? { ...passenger, [action.field]: action.value } : passenger));
+        console.log(newState)
+        return newState
     }, state.passengers);
 
+    const onSubmit = () => {
+        const passengerNoSeat = passengers.findIndex((passenger) => passenger.selected_seat === "");
+        if (passengerNoSeat != -1) {
+            alert(`Passenger ${passengerNoSeat+1} has no selected seats yet.`)
+            // TODO: a better way to warn the user
+        }
+        axios.post(`${apiUrl}/api/book/entry`, {flight_id: state.flight_id, amount_due: 0, passengers: passengers}).then((res) => console.log(res.data))
+        console.log(passengers);
+    };
     useEffect(() => {
         axios
             .get(`${apiUrl}/api/book/seats`, {
@@ -98,30 +104,49 @@ const SeatMap = () => {
                             key={i}
                             passengerID={i}
                             selectedPassenger={selectedPassenger}
-                            name={passenger.name}
+                            name={`${passenger.first_name} ${passenger.last_name}`}
                             seat={passenger.selected_seat}
-                            onSelect={() => setSelectedPassenger(i)} 
+                            onSelect={() => setSelectedPassenger(i)}
+                            mealPreference={passenger.meal_preference}
+                            onClick={(e) => updatePassenger({passenger: i, field: "meal_preference", value: e.target.value})}
                         />
                     ))}
 
-                    <button className="bg-horizon text-sky-white ml-2 p-4 rounded-lg">Proceed to Payment</button>
+                    <button onClick={onSubmit} className="bg-horizon text-sky-white ml-2 p-4 rounded-lg">
+                        Proceed to Payment
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-12 gap-2 border-2 border-horizon-deep p-4 md:mr-2">
-                    {seatData.map((seat) => (
-                        <>
-                            {["H", "D"].includes(seat.column) ? <div className="text-center font-bold">{seat.row}</div> : <></>}
-                            <button
-                                onClick={() => {
-                                    updatePassenger({ passenger: selectedPassenger, field: "selected_seat", value: seat.id });
-                                }}
-                                key={seat.id}
-                                className={`p-4 border rounded flex justify-center items-center ${seat.id == passengers[selectedPassenger].selected_seat ? "bg-yellow-200" : seat.status === "available" ? "bg-green-200" : "bg-red-200"} seat-buttons`}
-                                disabled={seat.status === "occupied" || seat.id == passengers[selectedPassenger].selected_seat}>
-                                {seat.id}
-                            </button>
-                        </>
-                    ))}
+                    {seatData.map((seat, i) => {
+                        let seat_color = "bg-green-200";
+                        const seatSelectedByOthers = passengers.some((passenger) => passenger.selected_seat === seat.id);
+                        if (seat.id == passengers[selectedPassenger].selected_seat) {
+                            seat_color = "bg-yellow-400";
+                        } else if (seatSelectedByOthers) {
+                            seat_color = "bg-yellow-200";
+                        } else if (seat.status == "occupied") {
+                            seat_color = "bg-red-200";
+                        }
+
+                        return (
+                            <>
+                                {["H", "D"].includes(seat.column) ? <div className="text-center font-bold">{seat.row}</div> : <></>}
+                                <button
+                                    onClick={() => {
+                                        console.log(seat.id);
+                                        updatePassenger({ passenger: selectedPassenger, field: "selected_seat", value: seat.id });
+                                    }}
+                                    key={i}
+                                    className={`p-4 border rounded flex justify-center items-center ${seat_color} seat-buttons`}
+                                    disabled={
+                                        seat.status === "occupied" || seat.id == passengers[selectedPassenger].selected_seat || seatSelectedByOthers
+                                    }>
+                                    {seat.id}
+                                </button>
+                            </>
+                        );
+                    })}
                 </div>
             </div>
         </div>

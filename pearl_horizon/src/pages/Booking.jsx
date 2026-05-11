@@ -89,6 +89,7 @@ const RenderPassenger = ({ index, data, onChange }) => {
                         type="tel"
                         required
                         value={data.phone_number}
+                        pattern="^(\+639|09)\d{9}$"
                         onChange={(e) => onChange({ passenger: index, field: "phone_number", value: e.target.value })}
                     />
                 </div>
@@ -109,6 +110,7 @@ const RenderPassenger = ({ index, data, onChange }) => {
                         placeholder="+63 912 345 6789"
                         type="tel"
                         required
+                        pattern="^(\+639|09)\d{9}$"
                         value={data.emergency_phone_number}
                         onChange={(e) => onChange({ passenger: index, field: "emergency_phone_number", value: e.target.value })}
                     />
@@ -143,6 +145,7 @@ function Booking() {
             emergency_contact_name: "",
             emergency_phone_number: "",
             selected_seat: "",
+            meal_preference: null,
         })),
     );
 
