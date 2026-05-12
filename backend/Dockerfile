@@ -12,7 +12,7 @@ FROM python:slim-trixie as build
 WORKDIR /usr/src/pearl_backend
 RUN useradd -ms /bin/bash pearl_backend && mkdir logs
 COPY --from=dependencies --chown=root:pearl_backend --chmod=755 /usr/src/pearl_backend/.venv /usr/src/pearl_backend/.venv
-COPY --chown=root:pearl_backend --chmod=755 --parents api main.py logs.py db.py db.db ./
+COPY --chown=root:pearl_backend --chmod=755 --parents api *.py db.db ./
 RUN chmod 775 logs db.py
 USER pearl_backend
 ENV PATH="/usr/src/pearl_backend/.venv/bin:$PATH"
