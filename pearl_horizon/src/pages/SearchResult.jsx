@@ -20,17 +20,16 @@ const RenderResults = ({ result }) => {
     const passengers = parseInt(searchParams.get("passengers")) || 1;
     const route = searchParams.get("route");
     const bookFlight = (flightID) => {
-        console.log(flightID);
         navigate({
             pathname: "/booking",
             search: `?${createSearchParams({
                 passengers: passengers,
                 bookingID: "d12k",
                 flightID: flightID,
+                route: route
             })}`,
         });
     };
-    console.log(result);
     return (
         <>
             <div
@@ -79,46 +78,50 @@ const RenderResults = ({ result }) => {
                         </div>
                         {/* Back */}
                     </div>
-                    <div id="flight-info" className={ `w-full h-full md:w-1/2 font-medium ${route == "roundtrip" ? "flex" : "hidden" } items-start justify-center flex-col` }>
-                        <div className="w-full bg-horizon-deep text-horizon-tint font-bold pl-2">{result.flight_id}</div>
-                        <div className="flex items-center justify-center gap-10 w-full pl-3 text-horizon-deep mt-2">
-                            <span id="origin" className="flex justify-center items-center flex-col gap-0">
-                                <p className="">
-                                    {new Date(result.departure_timestamp * 1000).toLocaleDateString([], {
-                                        month: "short",
-                                        day: "numeric",
-                                    })}
-                                    <br />
-                                    {new Date(result.departure_timestamp * 1000).toLocaleTimeString([], {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                        hour12: false,
-                                    })}
-                                </p>
-                                <p className="uppercase">{result.origin_airport_id}</p>
-                            </span>
-                            <span id="graphics" className="flex justify-center items-center text-horizon-deep gap-2 flex-1 w-full">
-                                <span className="material-symbols-outlined">flight_takeoff</span>
-                                <span className="flex-1 w-full border-t-2 border-dotted border-horizon-deep" />
-                                <span className="material-symbols-outlined">flight_land</span>
-                            </span>
-                            <span id="destination" className="flex justify-center items-center flex-col gap-0">
-                                <p>
-                                    17 May
-                                    <br />
-                                    {new Date((result.departure_timestamp + result.flight_time) * 1000).toLocaleTimeString([], {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                        hour12: false,
-                                    })}
-                                </p>
-                                <p className="uppercase">{result.destination_airport_id}</p>
-                            </span>
+                    {searchParams.get("route") == "roundtrip" ? (
+                        <div id="flight-info" className={ `w-full h-full md:w-1/2 font-medium items-start justify-center flex-col` }>
+                            <div className="w-full bg-horizon-deep text-horizon-tint font-bold pl-2">{result.flight_id}</div>
+                            <div className="flex items-center justify-center gap-10 w-full pl-3 text-horizon-deep mt-2">
+                                <span id="origin" className="flex justify-center items-center flex-col gap-0">
+                                    <p className="">
+                                        {new Date(result.departure_timestamp * 1000).toLocaleDateString([], {
+                                            month: "short",
+                                            day: "numeric",
+                                        })}
+                                        <br />
+                                        {new Date(result.departure_timestamp * 1000).toLocaleTimeString([], {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            hour12: false,
+                                        })}
+                                    </p>
+                                    <p className="uppercase">{result.origin_airport_id}</p>
+                                </span>
+                                <span id="graphics" className="flex justify-center items-center text-horizon-deep gap-2 flex-1 w-full">
+                                    <span className="material-symbols-outlined">flight_takeoff</span>
+                                    <span className="flex-1 w-full border-t-2 border-dotted border-horizon-deep" />
+                                    <span className="material-symbols-outlined">flight_land</span>
+                                </span>
+                                <span id="destination" className="flex justify-center items-center flex-col gap-0">
+                                    <p>
+                                        17 May
+                                        <br />
+                                        {new Date((result.departure_timestamp + result.flight_time) * 1000).toLocaleTimeString([], {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            hour12: false,
+                                        })}
+                                    </p>
+                                    <p className="uppercase">{result.destination_airport_id}</p>
+                                </span>
+                            </div>
+                            <div className="flex px-2 gap-0 border-t-2 border-horizon-deep w-full">
+                                <p>Flight Duration: {formatTime(result.flight_time)}</p>
+                            </div>
                         </div>
-                        <div className="flex px-2 gap-0 border-t-2 border-horizon-deep w-full">
-                            <p>Flight Duration: {formatTime(result.flight_time)}</p>
-                        </div>
-                    </div>
+                    ) : (
+                        <></>
+                    )}
                     <div id="flight-price" className="md:w-1/2 flex items-stretch justify-end gap-4 pr-4 font-medium text-xl">
                         <button onClick={() => {}} className="flex flex-row items-center justify-center gap-2 px-2 h-12/12 w-full">
                             Seats Available<br/>
@@ -147,7 +150,6 @@ const SearchResult = () => {
     const departure = new Date(searchParams.get("departure"));
     const passenger = searchParams.get("passengers");
     const returnDate = searchParams.get("return") != "null" ? new Date(searchParams.get("return")) : null;
-    console.log(returnDate ? { returndate: new Date(returnDate).getTime() / 1000 } : {});
 
     useEffect(() => {
         axios
@@ -163,7 +165,6 @@ const SearchResult = () => {
             })
             .then((response) => {
                 setSearchResults(response.data);
-                console.log(response.data);
             });
     }, [searchParams]);
     return (
@@ -183,9 +184,13 @@ const SearchResult = () => {
                         <span className={`text-sky-white ${route == "oneway" ? "hidden" : ""} translate-y-0.5`}>
                             <span className={`material-symbols-outlined`}>calendar_month</span>
                         </span>
-                        {route == "roundtrip" ? (<p id="flight-date" className={`text-sky-white m-0 ${route == "oneway" ? "hidden" : ""}`}>
-                            {returnDate.toDateString()}
-                        </p>) : <></>}
+                        {route == "roundtrip" ? (
+                            <p id="flight-date" className={`text-sky-white m-0 ${route == "oneway" ? "hidden" : ""}`}>
+                                {returnDate.toDateString()}
+                            </p>
+                        ) : (
+                            <></>
+                        )}
                     </span>
                     <div className="w-1 h-9/12 bg-horizon-tint" />
                     <span className="flex items-center">

@@ -149,7 +149,7 @@ function Booking() {
     );
 
     const handleSubmit = () => {
-        navigate("/booking/seatmap", { state: { flight_id: searchParams.get("flightID"), passengers: passengers } });
+        navigate("/booking/seatmap", { state: { flight_id: searchParams.get("flightID"), route: searchParams.get("route"), passengers: passengers } });
     };
 
     return (

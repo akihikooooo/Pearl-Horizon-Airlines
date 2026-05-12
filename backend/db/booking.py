@@ -1,5 +1,19 @@
 from .database import Database
 import uuid
+from pydantic import BaseModel
+
+
+class bookedFlightModel(BaseModel):
+    booking_id: str
+    flight_id: str
+    origin_airport_id: str
+    destination_airport_id: str
+    flight_time: int
+    departure_timestamp: int
+    seat_no: str
+    title: str
+    first_name: str
+    last_name: str
 
 
 def bookPassengers(payload, userId):
@@ -27,6 +41,36 @@ def bookPassengers(payload, userId):
         (len(payload.passengers), payload.flight_id),
     )
     con.commit()
+
+
+def fetchBookedFlightsFromUser(user_id):
+    con = Database().con
+    cur = con.cursor()
+    cur.execute(
+        """
+            SELECT booking.booking_id, booking.flight_id, booking.seat_no, booking.title, booking.first_name, booking.last_name,
+                   flight.origin_airport_id, flight.destination_airport_id, flight.flight_time, flight.departure_timestamp 
+            FROM booking LEFT JOIN flight ON booking.flight_id = flight.flight_id WHERE user_id=?""",
+        (user_id,),
+    )
+    flightRet = cur.fetchall()
+    response = []
+    for booking in flightRet:
+        response.append(
+            bookedFlightModel(
+                booking_id=booking[0],
+                flight_id=booking[1],
+                seat_no=booking[2],
+                title=booking[3],
+                first_name=booking[4],
+                last_name=booking[5],
+                origin_airport_id=booking[6],
+                destination_airport_id=booking[7],
+                flight_time=booking[8],
+                departure_timestamp=booking[9],
+            )
+        )
+    return response
 
 
 def getTakenSeats(flightId):

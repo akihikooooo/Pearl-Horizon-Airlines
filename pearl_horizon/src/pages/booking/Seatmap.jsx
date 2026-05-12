@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useReducer, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../stylesheets/seatmap.css";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -53,6 +53,7 @@ const Infos = ({ passengerID, selectedPassenger, onSelect, name, seat, mealPrefe
 };
 
 const SeatMap = () => {
+    const navigate = useNavigate()
     const { state } = useLocation();
     const [takenSeats, setTakenSeats] = useState([]);
     const [seatData, updateSeatData] = useState(generator(takenSeats));
@@ -61,7 +62,9 @@ const SeatMap = () => {
     const [passengers, updatePassenger] = useReducer((state, action) => {
         // expects {passenger: num, field: str, value: value}
         // TODO: sanity checking
+
         const newState = state.map((passenger, index) => (index === action.passenger ? { ...passenger, [action.field]: action.value } : passenger));
+        console.log(newState)
         return newState
     }, state.passengers);
 
@@ -70,8 +73,10 @@ const SeatMap = () => {
         if (passengerNoSeat != -1) {
             alert(`Passenger ${passengerNoSeat+1} has no selected seats yet.`)
             // TODO: a better way to warn the user
+            return false
         }
-        axios.post(`${apiUrl}/api/book/entry`, {flight_id: state.flight_id, amount_due: 0, passengers: passengers}).then(() => alert("Successully booked. (btw this popup is still wip papalitan sya :3)"))
+        
+        navigate("/booking/payment", {state: {...state, passengers: passengers}})
     };
     useEffect(() => {
         axios

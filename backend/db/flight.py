@@ -53,6 +53,7 @@ def fetchTotalFlights():
     return ret[0]
 
 
+
 def addFlight(payload):
     con = Database().con
     cur = con.cursor()
