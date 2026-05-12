@@ -1,9 +1,9 @@
 import { useReducer } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "../index.css";
-import "./stylesheets/booking.css";
-import "./stylesheets/search.css";
-import InputField from "../components/InputField";
+import "../../index.css";
+import "../stylesheets/booking.css";
+import "../stylesheets/search.css";
+import InputField from "../../components/InputField.jsx";
 
 const RenderPassenger = ({ index, data, onChange }) => {
     return (

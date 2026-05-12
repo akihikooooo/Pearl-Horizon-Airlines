@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useReducer, useState } from "react";
 import { useLocation } from "react-router-dom";
-import "./stylesheets/seatmap.css";
+import "../stylesheets/seatmap.css";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function generator(seatsTaken) {

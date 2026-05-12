@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
-import InputField from "../components/InputField";
-import { useAuth } from "../services/auth";
+import InputField from "../../components/InputField";
+import { useAuth } from "../../services/auth";
 import { useState } from "react";
+import ErrorLabel from "../../components/Error";
 
 function Signup() {
     const [email, setEmail] = useState("");
@@ -12,6 +13,21 @@ function Signup() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPasswordError, setShowPasswordError] = useState(false);
     const { signup } = useAuth();
+
+    const handelEmail = () => {
+        if (email != confirmEmail) {
+            setShowMailError(true);
+        } else {
+            setShowMailError(false);
+        }
+    };
+    const handlePassword = () => {
+        if (password != confirmPassword) {
+            setShowPasswordError(true);
+        } else {
+            setShowPasswordError(false);
+        }
+    }
 
     return (
         <>
@@ -81,8 +97,9 @@ function Signup() {
                                 required
                             />
                         </div>
-                        <button type="submit" className="bg-horizon w-full rounded-md">
-                            Log-in
+                        <ErrorLabel error="Passwords do not match" />
+                        <button type="submit" className="bg-horizon text-sky-white w-full rounded-md">
+                            Sign-up
                         </button>
                     </form>
                     {/* <div id="form" className="flex flex-col gap-2 p-2">

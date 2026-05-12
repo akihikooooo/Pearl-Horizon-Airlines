@@ -5,17 +5,17 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-import Booking from "./pages/Booking";
+import Booking from "./pages/booking/Booking";
 import Home from "./pages/Home.jsx";
-import Login from "./pages/Login";
-import Search from "./pages/Search.jsx";
-import SeatMap from "./pages/Seatmap.jsx";
-import Signup from "./pages/Signup.jsx";
+import Login from "./pages/account/Login";
+import SearchResult from "./pages/SearchResult.jsx";
+import SeatMap from "./pages/booking/Seatmap.jsx";
+import Signup from "./pages/account/Signup.jsx";
 import { ProtectedRoutes } from "./services/auth.jsx";
-import AccountManagement from "./pages/Account.jsx";
+import AccountManagement from "./pages/account/Account.jsx";
 import AdminPanel from "./pages/Admin.jsx";
 import { AdminRoutes } from "./services/admin.jsx";
-import Payment from "./pages/Payment.jsx";
+import Payment from "./pages/booking/Payment.jsx";
 
 function App() {
     useEffect(() => {
@@ -30,8 +30,7 @@ function App() {
                 {/* Unprotected Routes */}
                 <Route path="/" element={<Home />} />
 
-                <Route path="/search" element={<Search />} />
-                <Route path="/search/results" element={<Booking />} />
+                <Route path="/search/results" element={<SearchResult />} />
 
                 <Route element={<ProtectedRoutes accounts={true} />}>
                     <Route path="/accounts/login" element={<Login />} />

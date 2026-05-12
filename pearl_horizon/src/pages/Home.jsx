@@ -3,6 +3,7 @@ import { createSearchParams, useNavigate } from "react-router-dom";
 import "../index.css";
 import "./stylesheets/home.css";
 import InputField from "../components/InputField";
+import ErrorLabel from "../components/Error";
 // import req from "../assets/requirements.jpg";
 
 const Requirement = ({ icon, title, description }) => {
@@ -26,7 +27,7 @@ const Home = () => {
         e.preventDefault();
         let form = new FormData(e.target);
         navigate({
-            pathname: "/search",
+            pathname: "/search/results",
             search: `?${createSearchParams({
                 route: tripType,
                 origin: form.get("From"),
@@ -37,6 +38,8 @@ const Home = () => {
             })}`,
         });
     };
+
+    
 
     return (
         <div id="container">
@@ -78,6 +81,7 @@ const Home = () => {
                             {tripType === "roundtrip" && <InputField label="Return" type="date" />}
                         </div>
                         <InputField label="Passengers" type="number" placeholder="1" min="1" max="9" />
+                        <ErrorLabel error="Return date must be after departure date" />
                         <button
                             type="submit"
                             className="w-full bg-horizon text-white py-3.5 text-sm font-medium tracking-widest hover:bg-horizon-deep transition-colors mt-1">

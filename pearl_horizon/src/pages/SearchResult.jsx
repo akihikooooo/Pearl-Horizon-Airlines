@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
-import "./stylesheets/search.css";
+import "./stylesheets/searchresults.css";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
@@ -19,6 +19,7 @@ const RenderResults = ({ result }) => {
     const [searchParams] = useSearchParams();
     const passengers = parseInt(searchParams.get("passengers")) || 1;
     const bookFlight = (flightID) => {
+        console.log(flightID);
         navigate({
             pathname: "/booking",
             search: `?${createSearchParams({
@@ -28,17 +29,24 @@ const RenderResults = ({ result }) => {
             })}`,
         });
     };
+    console.log(result);
     return (
         <>
             <div
                 id="cont"
-                className="w-9/12 border rounded-md border-horizon bg-dusk-pale flex justify-center items-center flex-col h-full my-2 shadow-md">
-                <div className="flex flex-col md:flex-row justify-between items-stretch w-full h-full gap-0 pl-2 pt-2">
+                className="w-9/12 border rounded-md border-horizon bg-horizon-tint flex justify-center items-center flex-col h-full my-2 shadow-md">
+                <div className="flex flex-col md:flex-row justify-between items-stretch w-full h-full gap-0">
+                    {/* Toward */}
                     <div id="flight-info" className="w-full h-full md:w-1/2 font-medium flex items-start justify-center flex-col">
-                        <div>{result.flight_id}</div>
-                        <div className="flex items-center justify-center gap-10 w-full">
+                        <div className="w-full bg-dusk-deep text-horizon-tint font-bold pl-2 rounded-tl-md">{result.flight_id}</div>
+                        <div className="flex items-center justify-center gap-10 w-full pl-3 text-dusk-deep mt-2">
                             <span id="origin" className="flex justify-center items-center flex-col gap-0">
                                 <p className="">
+                                    {new Date(result.departure_timestamp * 1000).toLocaleDateString([], {
+                                        month: "short",
+                                        day: "numeric",
+                                    })}
+                                    <br />
                                     {new Date(result.departure_timestamp * 1000).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
@@ -47,13 +55,56 @@ const RenderResults = ({ result }) => {
                                 </p>
                                 <p className="uppercase">{result.origin_airport_id}</p>
                             </span>
-                            <span id="graphics" className="flex justify-center items-center text-horizon-deep gap-2 flex-1 w-full">
+                            <span id="graphics" className="flex justify-center items-center text-horizon-tint gap-2 flex-1 w-full">
                                 <span className="material-symbols-outlined">flight_takeoff</span>
-                                <span className="flex-1 w-full border-t-2 border-dotted border-horizon-deep" />
+                                <span className="flex-1 w-full border-t-2 border-dotted border-horizon-tint" />
                                 <span className="material-symbols-outlined">flight_land</span>
                             </span>
                             <span id="destination" className="flex justify-center items-center flex-col gap-0">
                                 <p>
+                                    17 May
+                                    <br />
+                                    {new Date((result.departure_timestamp + result.flight_time) * 1000).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: false,
+                                    })}
+                                </p>
+                                <p className="uppercase">{result.destination_airport_id}</p>
+                            </span>
+                        </div>
+                        <div className="flex px-2 gap-0 border-t-2 border-dusk-deep w-full">
+                            <p>Flight Duration: {formatTime(result.flight_time)}</p>
+                        </div>
+                        {/* Back */}
+                    </div>
+                    <div id="flight-info" className="w-full h-full md:w-1/2 font-medium flex items-start justify-center flex-col">
+                        <div className="w-full bg-horizon-deep text-horizon-tint font-bold pl-2">{result.flight_id}</div>
+                        <div className="flex items-center justify-center gap-10 w-full pl-3 text-horizon-deep mt-2">
+                            <span id="origin" className="flex justify-center items-center flex-col gap-0">
+                                <p className="">
+                                    {new Date(result.departure_timestamp * 1000).toLocaleDateString([], {
+                                        month: "short",
+                                        day: "numeric",
+                                    })}
+                                    <br />
+                                    {new Date(result.departure_timestamp * 1000).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: false,
+                                    })}
+                                </p>
+                                <p className="uppercase">{result.origin_airport_id}</p>
+                            </span>
+                            <span id="graphics" className="flex justify-center items-center text-horizon-tint gap-2 flex-1 w-full">
+                                <span className="material-symbols-outlined">flight_takeoff</span>
+                                <span className="flex-1 w-full border-t-2 border-dotted border-horizon-tint" />
+                                <span className="material-symbols-outlined">flight_land</span>
+                            </span>
+                            <span id="destination" className="flex justify-center items-center flex-col gap-0">
+                                <p>
+                                    17 May
+                                    <br />
                                     {new Date((result.departure_timestamp + result.flight_time) * 1000).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
@@ -70,7 +121,6 @@ const RenderResults = ({ result }) => {
                     <div id="flight-price" className="md:w-1/2 flex items-stretch justify-end gap-4 pr-4 font-medium text-xl">
                         <button onClick={() => {}} className="flex flex-row items-center justify-center gap-2 px-2 h-12/12 w-full">
                             {result.economy}
-                            <span className="material-symbols-outlined text-horizon">check_circle</span>
                         </button>
                         <button
                             onClick={() => bookFlight(result.flight_id)}
@@ -84,7 +134,7 @@ const RenderResults = ({ result }) => {
     );
 };
 
-const Search = () => {
+const SearchResult = () => {
     const [searchResults, setSearchResults] = useState([]);
 
     const [searchParams] = useSearchParams();
@@ -92,27 +142,28 @@ const Search = () => {
     const route = searchParams.get("route");
     const origin = searchParams.get("origin");
     const destination = searchParams.get("destination");
-    const departure = useMemo(() => new Date(searchParams.get("departure")), [searchParams])
+    const departure = new Date(searchParams.get("departure"));
     const passenger = searchParams.get("passengers");
-    const returnDate = useMemo(() => new Date(searchParams.get("return")), [searchParams])
-    
+    const returnDate = searchParams.get("return") != "null" ? new Date(searchParams.get("return")) : null;
+    console.log(returnDate ? { returndate: new Date(returnDate).getTime() / 1000 } : {});
+
     useEffect(() => {
         axios
             .get(`${apiUrl}/api/search/flights`, {
                 params: {
-                    route: route,
+                    route: searchParams.get("route"),
                     origin: origin,
                     destination: destination,
                     departuredate: departure.getTime() / 1000,
-                    ...(returnDate == "invalidDate" && { returndate: returnDate ? new Date(returnDate).getTime() / 1000 : null }),
+                    ...(returnDate ? { returndate: new Date(returnDate).getTime() / 1000 } : {}),
                     // TODO: put return date logic here
                 },
             })
             .then((response) => {
                 setSearchResults(response.data);
+                console.log(response.data);
             });
-    }, [route, origin, destination, departure, returnDate]);
-    
+    }, [searchParams]);
     return (
         <div className="search-page pt-16 flex flex-col">
             <div id="flight-details" className="px-2 md:px-20 flex justify-center gap-2 bg-horizon">
@@ -123,16 +174,16 @@ const Search = () => {
                         {destination}
                     </p>
                     <div className="w-1 h-9/12 bg-horizon-tint" />
-                    <span className="flex gap-1">
+                    <span className="flex gap-1 items-center">
                         <p id="flight-date" className="text-sky-white m-0">
                             {departure.toDateString()}
                         </p>
-                        <span className="material-symbols-outlined text-sky-white">calendar_month</span>
-                        {returnDate != "Invalid Date" && (
-                            <p id="flight-date" className="text-sky-white m-0">
-                                {returnDate.toDateString()}
-                            </p>
-                        )}
+                        <span className={`text-sky-white ${route == "oneway" ? "hidden" : ""} translate-y-0.5`}>
+                            <span className={`material-symbols-outlined`}>calendar_month</span>
+                        </span>
+                        {route == "roundtrip" ? (<p id="flight-date" className={`text-sky-white m-0 ${route == "oneway" ? "hidden" : ""}`}>
+                            {returnDate.toDateString()}
+                        </p>) : <></>}
                     </span>
                     <div className="w-1 h-9/12 bg-horizon-tint" />
                     <span className="flex items-center">
@@ -170,17 +221,13 @@ const Search = () => {
                 </div> */}
 
                 <div id="results" className="flex justify-center items-center flex-col">
-                    {searchResults.length != 0 ? (
-                        searchResults.map((result) => {
-                            return <RenderResults result={result} />;
-                        })
-                    ) : (
-                        <div>No Flights found...</div>
-                    )}
+                    {searchResults.map((result) => {
+                        return <RenderResults result={result} />;
+                    })}
                 </div>
             </div>
         </div>
     );
 };
 
-export default Search;
+export default SearchResult;
