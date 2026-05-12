@@ -25,10 +25,6 @@ const Home = () => {
     const handleSearch = (e) => {
         e.preventDefault();
         let form = new FormData(e.target);
-        console.log(form.get("From"));
-        console.log(form.get("To"));
-        console.log(form.get("Departure"));
-        console.log(form.get("Passengers"));
         navigate({
             pathname: "/search",
             search: `?${createSearchParams({

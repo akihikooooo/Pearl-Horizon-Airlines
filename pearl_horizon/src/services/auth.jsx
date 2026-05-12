@@ -19,7 +19,6 @@ export function AuthProvider({ children }) {
                 return { success: true };
             })
             .catch((error) => {
-                console.log(error.response);
                 if (error.response) {
                     if (error.response.status == 401) {
                         // invalid credentials

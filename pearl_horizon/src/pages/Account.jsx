@@ -5,7 +5,6 @@ import "./stylesheets/account.css";
 function AccountManagement() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
-    console.log(user);
     return (
         <>
             <div id="cont" className="pt-16 flex bg-dusk-warm">

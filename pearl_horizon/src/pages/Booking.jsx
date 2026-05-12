@@ -130,7 +130,6 @@ function Booking() {
             // expects {passenger: num, field: str, value: value}
             // TODO: sanity checking
             const ret = state.map((passenger, index) => (index === action.passenger ? { ...passenger, [action.field]: action.value } : passenger));
-            console.log(ret);
             return ret;
         },
         Array.from({ length: passengerCount }, () => ({

@@ -23,7 +23,6 @@ function generator(seatsTaken) {
 }
 
 const Infos = ({ passengerID, selectedPassenger, onSelect, name, seat, mealPreference, onClick }) => {
-    console.log(mealPreference)
     const Meals = ["Sandwich", "Drink", "Snack"];
     return (
         <div className="flex flex-col gap-1">
@@ -62,9 +61,7 @@ const SeatMap = () => {
     const [passengers, updatePassenger] = useReducer((state, action) => {
         // expects {passenger: num, field: str, value: value}
         // TODO: sanity checking
-        console.log(state)
         const newState = state.map((passenger, index) => (index === action.passenger ? { ...passenger, [action.field]: action.value } : passenger));
-        console.log(newState)
         return newState
     }, state.passengers);
 
@@ -74,8 +71,7 @@ const SeatMap = () => {
             alert(`Passenger ${passengerNoSeat+1} has no selected seats yet.`)
             // TODO: a better way to warn the user
         }
-        axios.post(`${apiUrl}/api/book/entry`, {flight_id: state.flight_id, amount_due: 0, passengers: passengers}).then((res) => console.log(res.data))
-        console.log(passengers);
+        axios.post(`${apiUrl}/api/book/entry`, {flight_id: state.flight_id, amount_due: 0, passengers: passengers}).then(() => alert("Successully booked. (btw this popup is still wip papalitan sya :3)"))
     };
     useEffect(() => {
         axios
@@ -134,7 +130,6 @@ const SeatMap = () => {
                                 {["H", "D"].includes(seat.column) ? <div className="text-center font-bold">{seat.row}</div> : <></>}
                                 <button
                                     onClick={() => {
-                                        console.log(seat.id);
                                         updatePassenger({ passenger: selectedPassenger, field: "selected_seat", value: seat.id });
                                     }}
                                     key={i}

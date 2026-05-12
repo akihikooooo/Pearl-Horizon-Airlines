@@ -12,9 +12,7 @@ export const AdminRoutes = () => {
             .then((ret) => {
                 setAuthed(ret.data);
             })
-            .catch((ret) => {
-                console.log(ret);
-            })
+            .catch(() => {})
             .finally(() => setLoading(false));
     }, []);
 

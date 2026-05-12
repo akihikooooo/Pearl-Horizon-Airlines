@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import "./stylesheets/search.css";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
@@ -19,7 +19,6 @@ const RenderResults = ({ result }) => {
     const [searchParams] = useSearchParams();
     const passengers = parseInt(searchParams.get("passengers")) || 1;
     const bookFlight = (flightID) => {
-        console.log(flightID);
         navigate({
             pathname: "/booking",
             search: `?${createSearchParams({
@@ -29,7 +28,6 @@ const RenderResults = ({ result }) => {
             })}`,
         });
     };
-    console.log(result);
     return (
         <>
             <div
@@ -94,16 +92,15 @@ const Search = () => {
     const route = searchParams.get("route");
     const origin = searchParams.get("origin");
     const destination = searchParams.get("destination");
-    const departure = new Date(searchParams.get("departure"));
+    const departure = useMemo(() => new Date(searchParams.get("departure")), [searchParams])
     const passenger = searchParams.get("passengers");
-    const returnDate = new Date(searchParams.get("return"));
-    console.log(returnDate.toString());
-
+    const returnDate = useMemo(() => new Date(searchParams.get("return")), [searchParams])
+    
     useEffect(() => {
         axios
             .get(`${apiUrl}/api/search/flights`, {
                 params: {
-                    route: searchParams.get("route"),
+                    route: route,
                     origin: origin,
                     destination: destination,
                     departuredate: departure.getTime() / 1000,
@@ -114,7 +111,8 @@ const Search = () => {
             .then((response) => {
                 setSearchResults(response.data);
             });
-    }, [searchParams]);
+    }, [route, origin, destination, departure, returnDate]);
+    
     return (
         <div className="search-page pt-16 flex flex-col">
             <div id="flight-details" className="px-2 md:px-20 flex justify-center gap-2 bg-horizon">
@@ -172,9 +170,13 @@ const Search = () => {
                 </div> */}
 
                 <div id="results" className="flex justify-center items-center flex-col">
-                    {searchResults.map((result) => {
-                        return <RenderResults result={result} />;
-                    })}
+                    {searchResults.length != 0 ? (
+                        searchResults.map((result) => {
+                            return <RenderResults result={result} />;
+                        })
+                    ) : (
+                        <div>No Flights found...</div>
+                    )}
                 </div>
             </div>
         </div>

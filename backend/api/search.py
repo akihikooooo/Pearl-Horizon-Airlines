@@ -34,11 +34,9 @@ async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
                 "departure_timestamp": i[0],
                 "flight_time": i[1],
                 "economy": i[2],
-                "business": i[3],
-                "first": i[4],
-                "flight_id": i[5],
-                "origin_airport_id": i[6],
-                "destination_airport_id": i[7],
+                "flight_id": i[3],
+                "origin_airport_id": i[4],
+                "destination_airport_id": i[5],
             }
         )
     return JSONResponse(
