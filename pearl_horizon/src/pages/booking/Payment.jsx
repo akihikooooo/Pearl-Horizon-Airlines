@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import InputField from "../../components/InputField";
 import "../stylesheets/payment.css";
 
@@ -20,15 +21,16 @@ function PaymentView(){
 }
 
 function Payment() {
-
-    const travelqty = 2;
-    const sandwichqty = 2;
-    const drinksqty = 2;
-    const snacksqty = 2;
-    const travelPrice = 30.00;
-    const sandwichPrice = 30.00;
-    const drinksPrice = 15.00;
-    const snacksPrice = 20.00;
+    const { state } = useLocation();
+    console.log(state)
+    const travelqty = state.passengers.length;
+    const sandwichqty = state.passengers.filter(p => p.meal_preference === "Sandwich").length;
+    const drinksqty =  state.passengers.filter(p => p.meal_preference === "Drink").length;;
+    const snacksqty =  state.passengers.filter(p => p.meal_preference === "Snack").length;;
+    const travelPrice = 30.00 * travelqty;
+    const sandwichPrice = 30.00 * sandwichqty;
+    const drinksPrice = 15.00 * drinksqty;
+    const snacksPrice = 20.00 * snacksqty;
     const totalPrice = travelPrice + sandwichPrice + drinksPrice + snacksPrice;
 
     return (
@@ -43,10 +45,9 @@ function Payment() {
                             Flight Details
                             <span className="flex-1 w-3/12 border-t-2 border border-horizon-deep" />
                         </h1>
-                            <TextFields styles="" start="Flight ID:" end="PH1234" />
-                            <TextFields styles="" start="Booking ID:" end="1" />
-                            <TextFields styles="" start="Trip Type:" end="Roundtrip" />
-                            <TextFields styles="" start="Passenger Number:" end="1" />
+                            <TextFields styles="" start="Flight ID:" end={state.flight_id} />
+                            <TextFields styles="" start="Trip Type:" end={state.route} />
+                            <TextFields styles="" start="Passenger Number:" end={state.passengers.length} />
                     </div>
                     <div className="w-full bg-sky-cloud flex flex-col justify-between rounded-lg p-2">
                         <h1 id="header" className="header font-medium flex gap-6 items-center justify-between">
@@ -54,13 +55,13 @@ function Payment() {
                             Payment Summary
                             <span className="flex-1 w-3/12 border-t-2 border border-horizon-deep" />
                         </h1>
-                            <TextFields styles="" start="Flight Ticket" middle={travelqty} end={travelPrice * travelqty} />
+                            <TextFields styles="" start="Flight Ticket" middle={travelqty} end={travelPrice} />
                             <h1 id="header" className="header font-medium flex gap-6 items-center justify-center    ">
                             Add-ons
                         </h1>
-                            <TextFields styles="" start="Sandwich" middle={sandwichqty} end={sandwichPrice * sandwichqty} />
-                            <TextFields styles="" start="Drinks" middle={drinksqty} end={drinksPrice * drinksqty} />
-                            <TextFields styles="" start="Snacks" middle={snacksqty} end={snacksPrice * snacksqty} />
+                            <TextFields styles="" start="Sandwich" middle={sandwichqty} end={sandwichPrice} />
+                            <TextFields styles="" start="Drinks" middle={drinksqty} end={drinksPrice} />
+                            <TextFields styles="" start="Snacks" middle={snacksqty} end={snacksPrice} />
                     </div>
                     <div className="w-full bg-sky-cloud flex flex-col justify-between rounded-lg p-2">
                             <TextFields styles="" start="Grand Total" end={totalPrice} />

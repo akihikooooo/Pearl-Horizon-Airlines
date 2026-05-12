@@ -26,6 +26,7 @@ const RenderResults = ({ result }) => {
                 passengers: passengers,
                 bookingID: "d12k",
                 flightID: flightID,
+                route: route
             })}`,
         });
     };
