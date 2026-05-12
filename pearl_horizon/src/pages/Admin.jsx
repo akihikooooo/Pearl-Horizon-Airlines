@@ -120,7 +120,7 @@ function AdminPanel() {
             <div id="cont" className="pt-16 flex bg-sky-cloud">
                 <div id="sidebar" className="w-3/12 h-screen bg-sky-white p-6 flex flex-col gap-2">
                     <h2 className="text-xl font-bold text-horizon">Admin Menu</h2>
-                    {["Dashboard", "Manage Airports", "Manage Airplane", "Manage Flight", "Manage Users"].map((item) => (
+                    {["Dashboard", "Manage Airports", "Manage Flight", "Manage Users"].map((item) => (
                         <button
                             key={item}
                             onClick={() => {
