@@ -24,7 +24,8 @@ class DashboardReturnModel(BaseModel):
     next_flight: Dict[str, str|int] | None
     airports_available: Dict[str, Dict[str, str]]
     airplanes_available: Dict[str, Dict[str, str|int]]
-    users: List[Dict[str, str]]
+    users: List[Dict[str, str|None]]
+    flights: List[Dict[str, str|int | None]]
 
 @router.get("/dashboard")
 def getDashboardData(token: dict = Depends(verify_token)):
@@ -37,7 +38,8 @@ def getDashboardData(token: dict = Depends(verify_token)):
         next_flight = flight.fetchNextFlight(),
         airports_available = airport.getAllAirports(),
         airplanes_available = airplane.getAllAirplanes(),
-        users = users.getAllUsers()
+        users = users.getAllUsers(),
+        flights = flight.fetchAllFlights()
     )
     return ret
 

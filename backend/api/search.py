@@ -27,21 +27,10 @@ class SearchFlightParams(BaseModel):
 @router.get("/flights")
 async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
     ret = searchFlights(payload.route, payload.origin, payload.destination, payload.departuredate)
-    response = []
-    for i in ret:
-        response.append(
-            {
-                "departure_timestamp": i[0],
-                "flight_time": i[1],
-                "economy": i[2],
-                "flight_id": i[3],
-                "origin_airport_id": i[4],
-                "destination_airport_id": i[5],
-            }
-        )
+
     
     return JSONResponse(
-        content=response,
+        content=ret,
         status_code=status.HTTP_200_OK,
     )
 

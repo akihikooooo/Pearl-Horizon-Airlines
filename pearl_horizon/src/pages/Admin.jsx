@@ -4,8 +4,8 @@ import InputField from "../components/InputField";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
+
 function AdminPanel() {
     const [dashboardData, setDashboardData] = useState({});
     const [loading, setLoading] = useState(true);
@@ -32,27 +32,27 @@ function AdminPanel() {
             });
     }
 
-    function newAirplaneSubmit(e) {
-        e.preventDefault();
-        const form = new FormData(e.target);
+    // function newAirplaneSubmit(e) {
+    //     e.preventDefault();
+    //     const form = new FormData(e.target);
 
-        for (const [_key, value] of form.entries()) {
-            if (!value || (typeof value === "string" && value.trim() === "")) {
-                return false;
-            }
-        }
-        axios
-            .post(`${apiUrl}/api/admin/add/airplane`, Object.fromEntries(form.entries()))
-            .then(() => {
-                e.target.reset();
-                toast("Success");
-                refreshData();
-            })
-            .catch((error) => {
-                toast("Something went wrong, Check Console");
-                console.log(error);
-            });
-    }
+    //     for (const [_key, value] of form.entries()) {
+    //         if (!value || (typeof value === "string" && value.trim() === "")) {
+    //             return false;
+    //         }
+    //     }
+    //     axios
+    //         .post(`${apiUrl}/api/admin/add/airplane`, Object.fromEntries(form.entries()))
+    //         .then(() => {
+    //             e.target.reset();
+    //             toast("Success");
+    //             refreshData();
+    //         })
+    //         .catch((error) => {
+    //             toast("Something went wrong, Check Console");
+    //             console.log(error);
+    //         });
+    // }
     function newFlightSubmit(e) {
         e.preventDefault();
         const form = new FormData(e.target);
@@ -110,6 +110,7 @@ function AdminPanel() {
     }, []);
 
     if (loading) return <div>Loading...</div>;
+    console.log(dashboardData);
     function dateNow() {
         const now = new Date();
         const localISO = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
@@ -133,7 +134,7 @@ function AdminPanel() {
                 </div>
                 <div id="content" className="w-full overflow-scroll p-2">
                     {page === "Dashboard" && <Dashboard dashboardData={dashboardData} />}
-                    {page === "Manage Airports" && <ManageAirport newAirportSubmit={newAirportSubmit} />}
+                    {page === "Manage Airports" && <ManageAirport newAirportSubmit={newAirportSubmit} airports={dashboardData.airports_available} />}
                     {page === "Manage Flight" && <AddFlight newFlightSubmit={newFlightSubmit} dashboardData={dashboardData} dateNow={dateNow} />}
                     {page === "Manage Users" && <ModifyUser modifyUserSubmit={modifyUserSubmit} dashboardData={dashboardData} />}
                 </div>
@@ -172,16 +173,13 @@ function Dashboard({ dashboardData }) {
     );
 }
 
-function ManageAirport({ newAirportSubmit }) {
+function ManageAirport({ newAirportSubmit, airports }) {
     const [open, setOpen] = useState(false);
 
     return (
         <div>
             <div id="topbar" className="flex items-center justify-end p-4">
-                <button
-                    className="bg-green-600 text-white p-2 rounded-md"
-                    onClick={() => setOpen(true)}
-                >
+                <button className="bg-green-600 text-white p-2 rounded-md" onClick={() => setOpen(true)}>
                     Add Airport
                 </button>
             </div>
@@ -193,10 +191,11 @@ function ManageAirport({ newAirportSubmit }) {
                     <div className="table-cell">City</div>
                     <div className="table-cell"></div>
                 </div>
-                    <div className="table-row">
-                        <div className="table-cell">MNL</div>
-                        <div className="table-cell">Philippines</div>
-                        <div className="table-cell">Manila</div>
+                {Object.entries(airports).map(([airportID, data], i) => (
+                    <div key={i} className="table-row">
+                        <div className="table-cell">{airportID}</div>
+                        <div className="table-cell">{data.country}</div>
+                        <div className="table-cell">{data.city}</div>
                         <div className="table-cell">
                             <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md">
                                 <span className="material-symbols-outlined">delete</span>
@@ -204,58 +203,31 @@ function ManageAirport({ newAirportSubmit }) {
                             </button>
                         </div>
                     </div>
+                ))}
             </div>
 
-            <div
-                className={`fixed inset-0 bg-black/50 z-10 ${
-                    open ? "block" : "hidden"
-                }`}
-            ></div>
+            <div className={`fixed inset-0 bg-black/50 z-10 ${open ? "block" : "hidden"}`}></div>
 
             <div
                 className={`fixed top-1/2 left-1/2 w-8/12 bg-white rounded-xl shadow-xl p-6 z-20 transform -translate-x-1/2 -translate-y-1/2 ${
                     open ? "block" : "hidden"
-                }`}
-            >
-                <h1 className="text-2xl font-bold text-horizon-deep mb-4">
-                    Add Airport
-                </h1>
+                }`}>
+                <h1 className="text-2xl font-bold text-horizon-deep mb-4">Add Airport</h1>
 
-                <form onSubmit={newAirportSubmit} className="grid grid-cols-5 gap-3">
-                    <InputField
-                        label="Airport ID"
-                        name="airport_id"
-                        required
-                        placeholder="MNL"
-                        pattern="[A-Z]{3}"
-                    />
-
-                    <InputField
-                        label="Country"
-                        name="country"
-                        required
-                        placeholder="Philippines"
-                    />
-
-                    <InputField
-                        label="City"
-                        name="city"
-                        required
-                        placeholder="Manila"
-                    />
-
-                    <button
-                        type="submit"
-                        className="bg-green-600 text-white rounded-md"
-                    >
+                <form
+                    onSubmit={(e) => {
+                        if (newAirportSubmit(e)) setOpen(false);
+                    }}
+                    className="grid grid-cols-5 gap-3">
+                    <InputField label="Airport ID" name="airport_id" required placeholder="MNL" pattern="[A-Z]{3}" />
+                    <InputField label="Country" name="country" required placeholder="Philippines" />
+                    <InputField label="City" name="city" required placeholder="Manila" />
+                    <button type="submit" className="bg-green-600 text-white rounded-md">
                         Submit
                     </button>
                 </form>
 
-                <button
-                    onClick={() => setOpen(false)}
-                    className="absolute top-2 right-2"
-                >
+                <button onClick={() => setOpen(false)} className="absolute top-2 right-2">
                     <span className="material-symbols-outlined">close</span>
                 </button>
             </div>
@@ -269,10 +241,7 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
     return (
         <div>
             <div id="topbar" className="flex items-center justify-end p-4">
-                <button
-                    className="bg-green-600 text-white p-2 rounded-md"
-                    onClick={() => setOpen(true)}
-                >
+                <button className="bg-green-600 text-white p-2 rounded-md" onClick={() => setOpen(true)}>
                     Add Flight
                 </button>
             </div>
@@ -283,15 +252,19 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                     <div className="table-cell">Origin</div>
                     <div className="table-cell">Destination</div>
                     <div className="table-cell">Airplane</div>
+                    <div className="table-cell">Route</div>
+                    <div className="table-cell">Departure</div>
                     <div className="table-cell"></div>
                 </div>
 
                 {dashboardData.flights?.map((flight, i) => (
                     <div key={i} className="table-row">
                         <div className="table-cell">{flight.flight_id}</div>
-                        <div className="table-cell">{flight.origin_airport}</div>
-                        <div className="table-cell">{flight.destination_airport}</div>
-                        <div className="table-cell">{flight.airplane_used}</div>
+                        <div className="table-cell">{flight.origin_airport_id}</div>
+                        <div className="table-cell">{flight.destination_airport_id}</div>
+                        <div className="table-cell">{flight.airplane_id}</div>
+                        <div className="table-cell">{flight.route}</div>
+                        <div className="table-cell">{new Date(flight.departure_timestamp * 1000).toLocaleString()}</div>
 
                         <div className="table-cell">
                             <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md">
@@ -303,29 +276,16 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                 ))}
             </div>
 
-            <div
-                className={`fixed inset-0 bg-black/50 z-10 ${
-                    open ? "block" : "hidden"
-                }`}
-            ></div>
+            <div className={`fixed inset-0 bg-black/50 z-10 ${open ? "block" : "hidden"}`}></div>
 
             <div
                 className={`fixed top-1/2 left-1/2 w-8/12 bg-white rounded-xl shadow-xl p-6 z-20 transform -translate-x-1/2 -translate-y-1/2 ${
                     open ? "block" : "hidden"
-                }`}
-            >
-                <h1 className="text-2xl font-bold text-horizon-deep mb-4">
-                    Add Flight
-                </h1>
+                }`}>
+                <h1 className="text-2xl font-bold text-horizon-deep mb-4">Add Flight</h1>
 
                 <form onSubmit={newFlightSubmit} className="grid grid-cols-5 gap-3">
-                    <InputField
-                        label="Flight ID"
-                        name="flight_id"
-                        required
-                        pattern="PH[0-9]{4}"
-                        placeholder="PH0000"
-                    />
+                    <InputField label="Flight ID" name="flight_id" required pattern="PH[0-9]{4}" placeholder="PH0000" />
 
                     <select name="origin_airport" required>
                         <option value="" disabled selected>
@@ -372,43 +332,18 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                         <option value="roundtrip">Round Trip</option>
                     </select>
 
-                    <InputField
-                        label="Departure Time"
-                        name="departure_time"
-                        type="datetime-local"
-                        required
-                        min={dateNow()}
-                    />
+                    <InputField label="Departure Time" name="departure_time" type="datetime-local" required min={dateNow()} />
 
-                    <InputField
-                        label="Flight Hour"
-                        name="flight_hour"
-                        type="number"
-                        required
-                        min="0"
-                    />
+                    <InputField label="Flight Hour" name="flight_hour" type="number" required min="0" />
 
-                    <InputField
-                        label="Flight Minute"
-                        name="flight_minute"
-                        type="number"
-                        min="0"
-                        max="59"
-                        required
-                    />
+                    <InputField label="Flight Minute" name="flight_minute" type="number" min="0" max="59" required />
 
-                    <button
-                        type="submit"
-                        className="bg-green-600 text-white rounded-md"
-                    >
+                    <button type="submit" className="bg-green-600 text-white rounded-md">
                         Submit
                     </button>
                 </form>
 
-                <button
-                    onClick={() => setOpen(false)}
-                    className="absolute top-2 right-2"
-                >
+                <button onClick={() => setOpen(false)} className="absolute top-2 right-2">
                     <span className="material-symbols-outlined">close</span>
                 </button>
             </div>
@@ -418,16 +353,13 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
 
 function ModifyUser({ modifyUserSubmit, dashboardData }) {
     const [open, setOpen] = useState(false);
-
+    const [selectedUser, setSelectedUser] = useState({});
     return (
         <div>
             <div id="topbar" className="flex items-center justify-end p-4">
-                <button
-                    className="bg-blue-600 text-white p-2 rounded-md"
-                    onClick={() => setOpen(true)}
-                >
+                {/* <button className="bg-blue-600 text-white p-2 rounded-md" onClick={() => setOpen(true)}>
                     Modify User
-                </button>
+                </button> */}
             </div>
 
             <div id="table" className="w-full">
@@ -445,7 +377,12 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
                         <div className="table-cell">{user.permissions}</div>
 
                         <div className="table-cell">
-                            <button className="flex justify-center items-center text-white bg-blue-500 p-2 rounded-md">
+                            <button
+                                className="flex justify-center items-center text-white bg-blue-500 p-2 rounded-md"
+                                onClick={() => {
+                                    setSelectedUser(user);
+                                    setOpen(true);
+                                }}>
                                 <span className="material-symbols-outlined">edit</span>
                                 Edit
                             </button>
@@ -454,32 +391,19 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
                 ))}
             </div>
 
-            <div
-                className={`fixed inset-0 bg-black/50 z-10 ${
-                    open ? "block" : "hidden"
-                }`}
-            ></div>
+            <div className={`fixed inset-0 bg-black/50 z-10 ${open ? "block" : "hidden"}`}></div>
 
             <div
                 className={`fixed top-1/2 left-1/2 w-8/12 bg-white rounded-xl shadow-xl p-6 z-20 transform -translate-x-1/2 -translate-y-1/2 ${
                     open ? "block" : "hidden"
-                }`}
-            >
-                <h1 className="text-2xl font-bold text-horizon-deep mb-4">
-                    Modify User
-                </h1>
+                }`}>
+                <h1 className="text-2xl font-bold text-horizon-deep mb-4">Modify User</h1>
 
                 <form onSubmit={modifyUserSubmit} className="grid grid-cols-5 gap-3">
-                    <select name="user">
-                        <option value="" disabled selected>
-                            Select a user...
+                    <select name="user" value={selectedUser.email}>
+                        <option value={selectedUser.email} disabled selected>
+                            {selectedUser.name} ({selectedUser.email})
                         </option>
-
-                        {dashboardData.users.map((user, i) => (
-                            <option key={i} value={user.email}>
-                                {user.name} ({user.email})
-                            </option>
-                        ))}
                     </select>
 
                     <select name="field">
@@ -493,25 +417,14 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
                         <option value="permissions">Permissions</option>
                     </select>
 
-                    <InputField
-                        label="Value"
-                        name="value"
-                        type="text"
-                        required
-                    />
+                    <InputField label="Value" name="value" type="text" required />
 
-                    <button
-                        type="submit"
-                        className="bg-blue-600 text-white rounded-md"
-                    >
+                    <button type="submit" className="bg-blue-600 text-white rounded-md">
                         Submit
                     </button>
                 </form>
 
-                <button
-                    onClick={() => setOpen(false)}
-                    className="absolute top-2 right-2"
-                >
+                <button onClick={() => setOpen(false)} className="absolute top-2 right-2">
                     <span className="material-symbols-outlined">close</span>
                 </button>
             </div>

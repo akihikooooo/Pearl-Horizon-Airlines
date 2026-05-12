@@ -26,8 +26,19 @@ def searchFlights(route, origin, destination, departuredate):
             "departure": int(departuredate.timestamp()),
         },
     )
-    ret = cur.fetchall()
-    return ret
+    response = []
+    for i in cur.fetchall():
+        response.append(
+            {
+                "departure_timestamp": i[0],
+                "flight_time": i[1],
+                "economy": i[2],
+                "flight_id": i[3],
+                "origin_airport_id": i[4],
+                "destination_airport_id": i[5],
+            }
+        )
+    return response
 
 
 def fetchNextFlight():
@@ -53,6 +64,26 @@ def fetchTotalFlights():
     return ret[0]
 
 
+def fetchAllFlights():
+    con = Database().con
+    cur = con.cursor()
+    cur.execute("SELECT * FROM flight ORDER BY departure_timestamp DESC")
+    response = []
+    for i in cur.fetchall():
+        response.append(
+            {
+                "departure_timestamp": i[6],
+                "flight_time": i[8],
+                "economy": i[4],
+                "flight_id": i[0],
+                "origin_airport_id": i[1],
+                "destination_airport_id": i[2],
+                "airplane_id": i[3],
+                "route": i[5],
+                "return_timestamp": i[7],
+            }
+        )
+    return response
 
 def addFlight(payload):
     con = Database().con

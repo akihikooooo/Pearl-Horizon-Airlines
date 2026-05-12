@@ -53,11 +53,11 @@ def fetchTotalUsers():
 def getAllUsers():
     con = Database().con
     cur = con.cursor()
-    cur.execute("SELECT first_name, last_name, email FROM users")
+    cur.execute("SELECT first_name, last_name, email, permissions FROM users")
     data = cur.fetchall()
     ret = []
-    for airplane in data:
-        ret.append({"name": f"{airplane[0]} {airplane[1]}", "email": airplane[2]})
+    for user in data:
+        ret.append({"name": f"{user[0]} {user[1]}", "email": user[2], "permissions": user[3]})
     return ret
 
 

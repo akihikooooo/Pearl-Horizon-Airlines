@@ -4,7 +4,9 @@ import "../index.css";
 import "./stylesheets/home.css";
 import InputField from "../components/InputField";
 import ErrorLabel from "../components/Error";
+import axios from "axios";
 // import req from "../assets/requirements.jpg";
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Requirement = ({ icon, title, description }) => {
     return (
@@ -24,6 +26,10 @@ const Home = () => {
     const navigate = useNavigate();
     const [tripType, setTripType] = useState("oneway");
     const [showError, setShowError] = useState("");
+    const [airports, setAirports] = useState({});
+    useState(() => {
+        axios.get(`${apiUrl}/api/search/airports`).then((res) => setAirports(res.data));
+    }, []);
     const handleSearch = (e) => {
         e.preventDefault();
         let form = new FormData(e.target);
@@ -34,7 +40,6 @@ const Home = () => {
             }
         }
 
-        
         if (tripType == "roundtrip") {
             const departure = new Date(form.get("Departure"));
             const arrival = new Date(form.get("Return"));
@@ -52,7 +57,7 @@ const Home = () => {
                 destination: form.get("To"),
                 departure: form.get("Departure"),
                 passengers: form.get("Passengers"),
-                ...(tripType == "roundtrip" ? {return: form.get("Return")} : {})
+                ...(tripType == "roundtrip" ? { return: form.get("Return") } : {}),
             })}`,
         });
     };
@@ -89,15 +94,29 @@ const Home = () => {
                     </div>
                     <form onSubmit={handleSearch} className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-3">
-                            <select className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm" name="From">
-                                <option value="" disabled selected>-Select Origin-</option>
-                                <option value="MNL">Manila (MNL)</option>
-                                <option value="CEB">Cebu (CEB)</option>
+                            <select
+                                className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
+                                name="From">
+                                <option value="" disabled selected>
+                                    -Select Origin-
+                                </option>
+                                {Object.entries(airports).map(([airportID, data]) => (
+                                    <option key={airportID} value={airportID}>
+                                        {airportID} - {data.city}, {data.country}
+                                    </option>
+                                ))}
                             </select>
-                            <select className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm" name="To" >
-                                <option value="" disabled selected>-Select Destination-</option>
-                                <option value="MNL">Manila (MNL)</option>
-                                <option value="CEB">Cebu (CEB)</option>
+                            <select
+                                className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
+                                name="To">
+                                <option value="" disabled selected>
+                                    -Select Destination-
+                                </option>
+                                {Object.entries(airports).map(([airportID, data]) => (
+                                    <option key={airportID} value={airportID}>
+                                        {airportID} - {data.city}, {data.country}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="grid grid-cols-2 gap-3">

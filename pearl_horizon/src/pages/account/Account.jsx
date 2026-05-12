@@ -285,7 +285,7 @@ function AccountManagement() {
                     My Flights
                 </h1>
                 <div className="flex justify-center items-center flex-col w-5/12 gap-4">
-                    {loading ? <div>Loading...</div> : userData.booked_flights.map((flight, i) => <BookedFlights flight={flight} key={i} />)}
+                    {loading ? <div>Loading...</div> : (userData.booked_flights.length == 0 ? <div>No Bookings found.</div> : userData.booked_flights.map((flight, i) => <BookedFlights flight={flight} key={i} />))}
                 </div>
             </div>
 
