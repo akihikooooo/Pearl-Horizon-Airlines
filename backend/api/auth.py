@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timedelta
 from sqlite3 import IntegrityError
 
-import db
+from db.users import fetchUserFromCredentials, fetchUserFromId, createUser
 import jwt
 from auth import ALGORITHM, SECRET_KEY, verify_token
 from fastapi import APIRouter, Depends, HTTPException, Response
@@ -25,17 +25,7 @@ class LoginRequest(BaseModel):
 
 @app.post("/login")
 async def login(payload: LoginRequest, response: Response):
-    con = db.Database().con
-    cur = con.cursor()
-    cur.execute(
-        "SELECT user_id FROM users WHERE (email IS ? AND password IS ?);",
-        (
-            payload.email,
-            payload.password,
-        ),
-    )
-    user = cur.fetchone()
-    print(user)
+    user = fetchUserFromCredentials(payload.email, payload.password)
     if user:
         token = create_cookie(user[0])
         response.set_cookie(
@@ -58,23 +48,11 @@ class SignupRequest(BaseModel):
 
 @app.post("/signup")
 async def signup(payload: SignupRequest):
-    con = db.Database().con
-    cur = con.cursor()
     userId = str(uuid.uuid4())
     try:
-        cur.execute(
-            "INSERT INTO users (user_id, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)",
-            (
-                userId,
-                payload.first_name,
-                payload.last_name,
-                payload.email,
-                payload.password,
-            ),
-        )
+        createUser(userId, payload)
     except IntegrityError:
         raise HTTPException(status_code=409, detail="Duplicate Entries")
-    con.commit()
 
 
 @app.post("/logout")
@@ -85,13 +63,7 @@ def logout(response: Response):
 
 @app.get("/check")
 async def check_credentials(payload: dict = Depends(verify_token)):
-    con = db.Database().con
-    cur = con.cursor()
-    cur.execute(
-        "SELECT first_name, last_name, permissions FROM users WHERE (user_id IS ?)",
-        (payload["user_id"],),
-    )
-    ret = cur.fetchone()  # TODO: what if invalid userid?
+    ret = fetchUserFromId(payload["user_id"])
     return {
         "user_id": payload["user_id"],
         "first_name": ret[0],

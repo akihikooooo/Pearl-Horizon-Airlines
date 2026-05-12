@@ -74,7 +74,9 @@ const RenderResults = ({ result }) => {
                             {result.economy}
                             <span className="material-symbols-outlined text-horizon">check_circle</span>
                         </button>
-                        <button onClick={() => bookFlight(result.flight_id)} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
+                        <button
+                            onClick={() => bookFlight(result.flight_id)}
+                            className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
                             Book Flight
                         </button>
                     </div>
@@ -89,13 +91,13 @@ const Search = () => {
 
     const [searchParams] = useSearchParams();
 
-    const route = searchParams.get("route")
+    const route = searchParams.get("route");
     const origin = searchParams.get("origin");
     const destination = searchParams.get("destination");
     const departure = new Date(searchParams.get("departure"));
     const passenger = searchParams.get("passengers");
     const returnDate = new Date(searchParams.get("return"));
-
+    console.log(returnDate.toString());
 
     useEffect(() => {
         axios
@@ -105,7 +107,7 @@ const Search = () => {
                     origin: origin,
                     destination: destination,
                     departuredate: departure.getTime() / 1000,
-                    returndate: returnDate ? new Date(returnDate).getTime() / 1000 : null,
+                    ...(returnDate == "invalidDate" && { returndate: returnDate ? new Date(returnDate).getTime() / 1000 : null }),
                     // TODO: put return date logic here
                 },
             })
@@ -116,32 +118,32 @@ const Search = () => {
     return (
         <div className="search-page pt-16 flex flex-col">
             <div id="flight-details" className="px-2 md:px-20 flex justify-center gap-2 bg-horizon">
-                    <div className="flex gap-2 justify-center items-center">
-                        <p
-                            id="origin-destination"
-                            className="text-2xl md:text-4xl text-sky-white font-medium flex items-center justify-start uppercase">
-                            {origin}
-                            <span className="material-symbols-outlined">{route == "roundtrip" ? "compare_arrows" : "travel"}</span>
-                            {destination}
+                <div className="flex gap-2 justify-center items-center">
+                    <p id="origin-destination" className="text-2xl md:text-4xl text-sky-white font-medium flex items-center justify-start uppercase">
+                        {origin}
+                        <span className="material-symbols-outlined">{route == "roundtrip" ? "compare_arrows" : "travel"}</span>
+                        {destination}
+                    </p>
+                    <div className="w-1 h-9/12 bg-horizon-tint" />
+                    <span className="flex gap-1">
+                        <p id="flight-date" className="text-sky-white m-0">
+                            {departure.toDateString()}
                         </p>
-                        <div className="w-1 h-9/12 bg-horizon-tint"/>
-                        <span className="flex gap-1">
+                        <span className="material-symbols-outlined text-sky-white">calendar_month</span>
+                        {returnDate != "Invalid Date" && (
                             <p id="flight-date" className="text-sky-white m-0">
-                                {departure.toDateString()} 
+                                {returnDate.toDateString()}
                             </p>
-                            <span className="material-symbols-outlined text-sky-white">calendar_month</span>
-                            <p id="flight-date" className="text-sky-white m-0">
-                            {returnDate.toDateString()}
+                        )}
+                    </span>
+                    <div className="w-1 h-9/12 bg-horizon-tint" />
+                    <span className="flex items-center">
+                        <p id="passengers" className="text-sky-white m-0">
+                            {passenger}
                         </p>
-                        </span>
-                        <div className="w-1 h-9/12 bg-horizon-tint"/>
-                        <span className="flex items-center">
-                            <p id="passengers" className="text-sky-white m-0">
-                                {passenger} 
-                            </p>
-                                <span className="material-symbols-outlined text-sky-white">person</span>
-                        </span>
-                    </div>
+                        <span className="material-symbols-outlined text-sky-white">person</span>
+                    </span>
+                </div>
                 {/* <div id="modify" className="flex justify-center items-center gap-2 text-sky-white cursor-pointer">
                     <span class="material-symbols-outlined">edit</span>
                     Edit

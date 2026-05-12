@@ -2,7 +2,10 @@ import logging
 from datetime import datetime
 from typing import Annotated, Optional
 
-import db
+
+from db.airport import getAllAirports
+from db.airplane import getAllAirplanes
+from db.flight import searchFlights
 from fastapi import Query, status
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
@@ -23,32 +26,7 @@ class SearchFlightParams(BaseModel):
 
 @router.get("/flights")
 async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
-    con = db.Database().con
-    cur = con.cursor()
-    cur.execute(
-        """
-            SELECT departure_timestamp,
-                   flight_time,
-                   (SELECT seats_economy FROM airplane WHERE airplane.airplane_id = flight.airplane_id) - booked_economy AS available_economy,
-                   (SELECT seats_business FROM airplane WHERE airplane.airplane_id = flight.airplane_id) - booked_business AS available_business,
-                   (SELECT seats_first FROM airplane WHERE airplane.airplane_id = flight.airplane_id) - booked_first AS available_first, 
-                   flight_id,
-                   origin_airport_id,
-                   destination_airport_id
-            FROM flight WHERE
-                        route=:route
-                    AND origin_airport_id=:origin
-                    AND destination_airport_id=:destination
-                    AND departure_timestamp BETWEEN :departure AND (:departure+86400);
-        """,
-        {
-            "route": payload.route.lower(),
-            "origin": payload.origin.upper(),
-            "destination": payload.destination.upper(),
-            "departure": int(payload.departuredate.timestamp()),
-        },
-    )
-    ret = cur.fetchall()
+    ret = searchFlights(payload.route, payload.origin, payload.destination, payload.departuredate)
     response = []
     for i in ret:
         response.append(
@@ -70,23 +48,11 @@ async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
 
 @router.get("/airports")
 def get_all_airports():
-    con = db.Database().con
-    cur = con.cursor()
-    cur.execute("SELECT * FROM airport")
-    data = cur.fetchall()
-    ret = {}
-    for airport in data:
-        ret[airport[0]] = {"country": airport[1], "city": airport[2]}
+    ret = getAllAirports()
     return ret
         
 @router.get("/airplanes")
 def get_all_airplanes():
-    con = db.Database().con
-    cur = con.cursor()
-    cur.execute("SELECT * FROM airplane")
-    data = cur.fetchall()
-    ret = {}
-    for airplane in data:
-        ret[airplane[0]] = {"model": airplane[1], "seats": airplane[2]}
+    ret = getAllAirplanes()
     return ret
         
