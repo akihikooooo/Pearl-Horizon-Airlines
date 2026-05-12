@@ -23,6 +23,7 @@ function PaymentView(){
 
 function Payment() {
 
+    const [paymentOpen, setPaymentOpen] = useState(false);
     const [mode, setMop] = useState();
     const travelqty = 2;
     const sandwichqty = 2;
@@ -69,12 +70,12 @@ function Payment() {
                             <TextFields styles="" start="Grand Total" end={totalPrice} />
                     </div>
                 </div>
-                <button className="bg-horizon text-sky-white px-4 py-2 rounded-lg">
+                <button className="bg-horizon text-sky-white px-4 py-2 rounded-lg" onClick={() => setPaymentOpen(true)}>
                     Proceed to Payment
                 </button>
 
-                <div className="bg-black w-full h-full absolute top-0 left-0 opacity-50 z-10"></div>
-                <div className="bg-white w-8/12 p-6 rounded-lg z-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className={`bg-black w-full h-full absolute top-0 left-0 opacity-50 z-10 ${paymentOpen ? "block" : "hidden"}`}></div>
+                <div className={`bg-white w-8/12 p-6 rounded-lg z-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${paymentOpen ? "block" : "hidden"}`}>
                     <h1 className="text-2xl text-horizon-deep font-bold mb-4">Payment</h1>
                     <div className="flex border border-sky-cloud mb-6 rounded-sm overflow-hidden">
                         {["GCash", "Card"].map((type) => (
@@ -108,7 +109,12 @@ function Payment() {
                             <button onClick={{}}className="bg-horizon text-white px-4 py-2 rounded mt-4 hover:bg-horizon-dark transition-colors duration-300">Pay Now</button>
                         </form>
                     </div>
-                        </div>
+                    <button onClick={() => setPaymentOpen(false)} className="absolute top-2 right-2 text-sky-slate hover:text-sky-night">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </>
     );
