@@ -18,6 +18,7 @@ const RenderResults = ({ result }) => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const passengers = parseInt(searchParams.get("passengers")) || 1;
+    const route = searchParams.get("route");
     const bookFlight = (flightID) => {
         console.log(flightID);
         navigate({
@@ -55,9 +56,9 @@ const RenderResults = ({ result }) => {
                                 </p>
                                 <p className="uppercase">{result.origin_airport_id}</p>
                             </span>
-                            <span id="graphics" className="flex justify-center items-center text-horizon-tint gap-2 flex-1 w-full">
+                            <span id="graphics" className="flex justify-center items-center text-dusk-deep gap-2 flex-1 w-full">
                                 <span className="material-symbols-outlined">flight_takeoff</span>
-                                <span className="flex-1 w-full border-t-2 border-dotted border-horizon-tint" />
+                                <span className="flex-1 w-full border-t-2 border-dotted border-dusk-deep" />
                                 <span className="material-symbols-outlined">flight_land</span>
                             </span>
                             <span id="destination" className="flex justify-center items-center flex-col gap-0">
@@ -78,7 +79,7 @@ const RenderResults = ({ result }) => {
                         </div>
                         {/* Back */}
                     </div>
-                    <div id="flight-info" className="w-full h-full md:w-1/2 font-medium flex items-start justify-center flex-col">
+                    <div id="flight-info" className={ `w-full h-full md:w-1/2 font-medium ${route == "roundtrip" ? "flex" : "hidden" } items-start justify-center flex-col` }>
                         <div className="w-full bg-horizon-deep text-horizon-tint font-bold pl-2">{result.flight_id}</div>
                         <div className="flex items-center justify-center gap-10 w-full pl-3 text-horizon-deep mt-2">
                             <span id="origin" className="flex justify-center items-center flex-col gap-0">
@@ -96,9 +97,9 @@ const RenderResults = ({ result }) => {
                                 </p>
                                 <p className="uppercase">{result.origin_airport_id}</p>
                             </span>
-                            <span id="graphics" className="flex justify-center items-center text-horizon-tint gap-2 flex-1 w-full">
+                            <span id="graphics" className="flex justify-center items-center text-horizon-deep gap-2 flex-1 w-full">
                                 <span className="material-symbols-outlined">flight_takeoff</span>
-                                <span className="flex-1 w-full border-t-2 border-dotted border-horizon-tint" />
+                                <span className="flex-1 w-full border-t-2 border-dotted border-horizon-deep" />
                                 <span className="material-symbols-outlined">flight_land</span>
                             </span>
                             <span id="destination" className="flex justify-center items-center flex-col gap-0">
@@ -120,6 +121,7 @@ const RenderResults = ({ result }) => {
                     </div>
                     <div id="flight-price" className="md:w-1/2 flex items-stretch justify-end gap-4 pr-4 font-medium text-xl">
                         <button onClick={() => {}} className="flex flex-row items-center justify-center gap-2 px-2 h-12/12 w-full">
+                            Seats Available<br/>
                             {result.economy}
                         </button>
                         <button

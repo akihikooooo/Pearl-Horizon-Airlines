@@ -109,7 +109,7 @@ const SeatMap = () => {
                     ))}
 
                     <button onClick={onSubmit} className="bg-horizon text-sky-white ml-2 p-4 rounded-lg">
-                        Proceed to Payment
+                        Proceed to Summary
                     </button>
                 </div>
 
