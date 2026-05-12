@@ -35,7 +35,7 @@ def fetchUserFromId(user_id):
     con = Database().con
     cur = con.cursor()
     cur.execute(
-        "SELECT first_name, last_name, permissions FROM users WHERE (user_id IS ?)",
+        "SELECT first_name, last_name, permissions, email FROM users WHERE (user_id IS ?)",
         (user_id,),
     )
     ret = cur.fetchone()
@@ -83,5 +83,24 @@ def modifyUser(payload):
     cur.execute(
         f"UPDATE users SET {payload.field} = :value WHERE email == :user",
         payload.model_dump(),
+    )
+    con.commit()
+
+
+def modifyUserBatch(payload, user_id):
+    con = Database().con
+    cur = con.cursor()
+    cur.execute(
+        "UPDATE users SET first_name = :first_name, last_name=:last_name, email = :email WHERE user_id == :user_id",
+        {**payload.model_dump(), "user_id": user_id },
+    )
+    con.commit()
+
+def modifyPassword(payload, user_id):
+    con = Database().con
+    cur = con.cursor()
+    cur.execute(
+        "UPDATE users SET password = :new_password WHERE password == :old_password AND user_id == :user_id",
+        {**payload.model_dump(), "user_id": user_id },
     )
     con.commit()

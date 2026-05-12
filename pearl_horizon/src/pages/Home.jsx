@@ -23,9 +23,27 @@ const Requirement = ({ icon, title, description }) => {
 const Home = () => {
     const navigate = useNavigate();
     const [tripType, setTripType] = useState("oneway");
+    const [showError, setShowError] = useState("");
     const handleSearch = (e) => {
         e.preventDefault();
         let form = new FormData(e.target);
+        for (const [_key, value] of form.entries()) {
+            if (!value || (typeof value === "string" && value.trim() === "")) {
+                setShowError(`Fill out the ${_key} Field.`);
+                return false;
+            }
+        }
+
+        
+        if (tripType == "roundtrip") {
+            const departure = new Date(form.get("Departure"));
+            const arrival = new Date(form.get("Return"));
+            if (departure >= arrival) {
+                setShowError(`Return cannot be sooner than Departure`);
+                return false;
+            }
+        }
+
         navigate({
             pathname: "/search/results",
             search: `?${createSearchParams({
@@ -33,13 +51,11 @@ const Home = () => {
                 origin: form.get("From"),
                 destination: form.get("To"),
                 departure: form.get("Departure"),
-                return: form.get("Return"),
                 passengers: form.get("Passengers"),
+                ...(tripType == "roundtrip" ? {return: form.get("Return")} : {})
             })}`,
         });
     };
-
-    
 
     return (
         <div id="container">
@@ -81,7 +97,7 @@ const Home = () => {
                             {tripType === "roundtrip" && <InputField label="Return" type="date" />}
                         </div>
                         <InputField label="Passengers" type="number" placeholder="1" min="1" max="9" />
-                        <ErrorLabel error="Return date must be after departure date" />
+                        <ErrorLabel error={showError != ""} message={showError} />
                         <button
                             type="submit"
                             className="w-full bg-horizon text-white py-3.5 text-sm font-medium tracking-widest hover:bg-horizon-deep transition-colors mt-1">
@@ -110,7 +126,5 @@ const Home = () => {
         </div>
     );
 };
-
-
 
 export default Home;
