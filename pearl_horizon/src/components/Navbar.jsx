@@ -10,10 +10,10 @@ function Navbar() {
 
     const accountText = authed ? user.first_name : "Log in";
 
-    const taskbarItems = ["Home", "Contact"];
-    if (authed) {
-        taskbarItems.splice(1, 0, "Booking");
-    }
+    const taskbarItems = ["Home", "Search",];
+    // if (authed) {
+    //     taskbarItems.splice(1, 0, "Booking");
+    // }
     // useEffect(() => {
     //     const handleScroll = () => setScrolled(window.scrollY > 10);
     //     window.addEventListener("scroll", handleScroll);
@@ -30,7 +30,7 @@ function Navbar() {
 
             <span>
                 <ul className="hidden md:flex items-center">
-                    {/* {taskbarItems.map((item) => (
+                    {taskbarItems.map((item) => (
                         <li key={item} className="inline-block ml-6">
                             <NavLink
                                 to={item === "Home" ? "/" : `/${item.toLowerCase().replace(/\s/g, "")}`}
@@ -38,7 +38,7 @@ function Navbar() {
                                 {item}
                             </NavLink>
                         </li>
-                    ))} */}
+                    ))}
                     <NavLink
                         to="/accounts/login"
                         id="account"

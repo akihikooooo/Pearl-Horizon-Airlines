@@ -1,8 +1,13 @@
-#header h1::before {
+/* #header h1::before {
     content: " ";
     display: inline-block;
     height: 0.2rem;
     width: 1.6rem;
     background: var(--color-horizon);
     margin-right: 1rem;
+} */
+
+#account-icon{
+    color:var(--color-horizon);
+    font-size:5rem;
 }
