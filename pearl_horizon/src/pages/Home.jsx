@@ -89,8 +89,16 @@ const Home = () => {
                     </div>
                     <form onSubmit={handleSearch} className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-3">
-                            <InputField label="From" placeholder="Manila (MNL)" type="text" />
-                            <InputField label="To" placeholder="Cebu (CEB)" type="text" />
+                            <select className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm" name="From">
+                                <option value="" disabled selected>-Select Origin-</option>
+                                <option value="MNL">Manila (MNL)</option>
+                                <option value="CEB">Cebu (CEB)</option>
+                            </select>
+                            <select className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm" name="To" >
+                                <option value="" disabled selected>-Select Destination-</option>
+                                <option value="MNL">Manila (MNL)</option>
+                                <option value="CEB">Cebu (CEB)</option>
+                            </select>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                             <InputField label="Departure" type="date" />

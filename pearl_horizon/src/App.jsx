@@ -29,7 +29,7 @@ function App() {
             <Routes className="">
                 {/* Unprotected Routes */}
                 <Route path="/" element={<Home />} />
-
+                <Route path="/search" element={<Home />} />
                 <Route path="/search/results" element={<SearchResult />} />
 
                 <Route element={<ProtectedRoutes accounts={true} />}>
