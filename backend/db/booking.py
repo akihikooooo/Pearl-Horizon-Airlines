@@ -3,6 +3,7 @@ import uuid
 from pydantic import BaseModel
 from time import time
 
+
 class bookedFlightModel(BaseModel):
     booking_id: str
     flight_id: str
@@ -69,6 +70,31 @@ def fetchBookedFlightsFromUser(user_id):
                 flight_time=booking[8],
                 departure_timestamp=booking[9],
             )
+        )
+    return response
+
+
+def fetchPendingBookings():
+    con = Database().con
+    cur = con.cursor()
+    cur.execute(
+        """
+            SELECT booking.booking_id, booking.flight_id, booking.seat_no, booking.title, booking.first_name, booking.last_name, booking.amount_due, flight.origin_airport_id, flight.destination_airport_id
+            FROM booking LEFT JOIN flight ON booking.flight_id = flight.flight_id WHERE booking.paid == 0  """,
+        (),
+    )
+    flightRet = cur.fetchall()
+    response = []
+    for booking in flightRet:
+        response.append(
+            {
+                "booking_id": booking[0],
+                "flight_id": booking[1],
+                "seat_no": booking[2],
+                "name": f"{booking[3]}. {booking[4]} {booking[5]}",
+                "amount_due": booking[6],
+                "route": f"{booking[7]} - {booking[8]}"
+            }
         )
     return response
 

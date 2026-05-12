@@ -121,7 +121,7 @@ function AdminPanel() {
             <div id="cont" className="pt-16 flex bg-sky-cloud">
                 <div id="sidebar" className="w-3/12 h-screen bg-sky-white p-6 flex flex-col gap-2">
                     <h2 className="text-xl font-bold text-horizon">Admin Menu</h2>
-                    {["Dashboard", "Manage Airports", "Manage Flight", "Manage Users"].map((item) => (
+                    {["Dashboard", "Manage Airports", "Booking Approval", "Manage Flight", "Manage Users"].map((item) => (
                         <button
                             key={item}
                             onClick={() => {
@@ -135,6 +135,7 @@ function AdminPanel() {
                 <div id="content" className="w-full overflow-scroll p-2">
                     {page === "Dashboard" && <Dashboard dashboardData={dashboardData} />}
                     {page === "Manage Airports" && <ManageAirport newAirportSubmit={newAirportSubmit} airports={dashboardData.airports_available} />}
+                    {page === "Booking Approval" && <BookAppr bookings={dashboardData.booking_pending} />}
                     {page === "Manage Flight" && <AddFlight newFlightSubmit={newFlightSubmit} dashboardData={dashboardData} dateNow={dateNow} />}
                     {page === "Manage Users" && <ModifyUser modifyUserSubmit={modifyUserSubmit} dashboardData={dashboardData} />}
                 </div>
@@ -338,7 +339,64 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
 
                     <InputField label="Flight Minute" name="flight_minute" type="number" min="0" max="59" required />
 
-                    <button type="submit" className="bg-green-600 text-white rounded-md">
+                    <button type="submit" className="bg-blue-600 text-white rounded-md">
+                        Submit
+                    </button>
+                </form>
+
+                <button onClick={() => setOpen(false)} className="absolute top-2 right-2">
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function BookAppr({ bookings }) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <div>
+            <div id="table" className="w-full table-fixed">
+                <div className="table-row table-heading">
+                    <div className="table-cell w-1/5">Name</div>
+                    <div className="table-cell w-1/5">Flight ID</div>
+                    <div className="table-cell w-1/5">Origin - Destination</div>
+                    <div className="table-cell w-1/5">Amount</div>
+                    <div className="table-cell w-1/5">Receipt</div>
+                </div>
+                {bookings.map((passenger, i) => (
+                    <div key={i} className="table-row">
+                        <div className="table-cell wrap-break-word w-1/5">{passenger.name}</div>
+                        <div className="table-cell wrap-break-word w-1/5">{passenger.flight_id}</div>
+                        <div className="table-cell wrap-break-word w-1/5">{passenger.route}</div>
+                        <div className="table-cell wrap-break-word w-1/5">{passenger.amount_due}</div>
+                        <div className="table-cell wrap-break-word w-1/5">{passenger.booking_id}</div>
+
+                        {/* <div className="table-cell ">
+                            <button className="flex justify-center items-center text-white bg-green-500 p-2 rounded-md">
+                                <span className="material-symbols-outlined">check</span>
+                                Approve
+                            </button>
+                            <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md">
+                                <span className="material-symbols-outlined">close</span>
+                                Reject
+                            </button>
+                        </div> */}
+                    </div>
+                ))}
+            </div>
+
+            <div className={`fixed inset-0 bg-black/50 z-10 ${open ? "block" : "hidden"}`}></div>
+
+            <div
+                className={`fixed top-1/2 left-1/2 w-8/12 bg-white rounded-xl shadow-xl p-6 z-20 transform -translate-x-1/2 -translate-y-1/2 ${
+                    open ? "block" : "hidden"
+                }`}>
+                <h1 className="text-2xl font-bold text-horizon-deep mb-4">Modify User</h1>
+
+                <form onSubmit="" className="grid grid-cols-5 gap-3">
+                    <button type="submit" className="bg-blue-600 text-white rounded-md">
                         Submit
                     </button>
                 </form>

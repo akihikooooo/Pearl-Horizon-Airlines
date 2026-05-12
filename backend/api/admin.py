@@ -17,29 +17,33 @@ router = APIRouter()
 def check_admin_permission(token: dict = Depends(verify_token)):
     return users.hasAdminPermissions(token["user_id"])
 
+
 class DashboardReturnModel(BaseModel):
     total_users: int
     total_flights: int
     total_booked_seats: int
-    next_flight: Dict[str, str|int] | None
+    next_flight: Dict[str, str | int] | None
     airports_available: Dict[str, Dict[str, str]]
-    airplanes_available: Dict[str, Dict[str, str|int]]
-    users: List[Dict[str, str|None]]
-    flights: List[Dict[str, str|int | None]]
+    airplanes_available: Dict[str, Dict[str, str | int]]
+    users: List[Dict[str, str | None]]
+    flights: List[Dict[str, str | int | None]]
+    booking_pending: List[Dict[str, str | int | None]]
+
 
 @router.get("/dashboard")
 def getDashboardData(token: dict = Depends(verify_token)):
     if not users.hasAdminPermissions(token["user_id"]):
         return HTTPException(status_code=401, detail="Not an Administrator")
     ret = DashboardReturnModel(
-        total_users = users.fetchTotalUsers(),
-        total_flights = flight.fetchTotalFlights(),
-        total_booked_seats = booking.fetchTotalBooking(),
-        next_flight = flight.fetchNextFlight(),
-        airports_available = airport.getAllAirports(),
-        airplanes_available = airplane.getAllAirplanes(),
-        users = users.getAllUsers(),
-        flights = flight.fetchAllFlights()
+        total_users=users.fetchTotalUsers(),
+        total_flights=flight.fetchTotalFlights(),
+        total_booked_seats=booking.fetchTotalBooking(),
+        next_flight=flight.fetchNextFlight(),
+        airports_available=airport.getAllAirports(),
+        airplanes_available=airplane.getAllAirplanes(),
+        users=users.getAllUsers(),
+        flights=flight.fetchAllFlights(),
+        booking_pending=booking.fetchPendingBookings()
     )
     return ret
 
@@ -58,6 +62,7 @@ def add_airport(payload: AddAirportModel, token: dict = Depends(verify_token)):
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=409, detail="Airport ID already exists")
 
+
 class AddAirplaneModel(BaseModel):
     airplane_id: str
     model: str
@@ -73,6 +78,7 @@ def add_airplane(payload: AddAirplaneModel, token: dict = Depends(verify_token))
         print(e)
         raise HTTPException(status_code=409, detail="Airplane ID already exists")
 
+
 class AddFlightModel(BaseModel):
     flight_id: str
     origin_airport: str
@@ -82,6 +88,7 @@ class AddFlightModel(BaseModel):
     departure_time: int
     flight_time: int
 
+
 @router.post("/add/flight")
 def add_flight(payload: AddFlightModel, token: dict = Depends(verify_token)):
     try:
@@ -90,10 +97,12 @@ def add_flight(payload: AddFlightModel, token: dict = Depends(verify_token)):
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=409, detail="Airport ID already exists")
 
+
 class ModifyUserModel(BaseModel):
     user: str
-    field:  Literal["first_name", "last_name", "password", "permissions"]
+    field: Literal["first_name", "last_name", "password", "permissions"]
     value: str
+
 
 @router.post("/modify/user")
 def modify_user(payload: ModifyUserModel, token: dict = Depends(verify_token)):
