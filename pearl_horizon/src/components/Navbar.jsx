@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import logo from "../assets/Pearl Horizon.png";
 import "../index.css";
 import { useAuth } from "../services/auth";
 import "./stylesheets/navbar.css";
-import logo from "../assets/Pearl Horizon.png"
+
 function Navbar() {
     const [scrolled, setScrolled] = useState(true);
     const { user, authed } = useAuth();
 
     const accountText = authed ? user.first_name : "Log in";
 
-    const taskbarItems = ["Home", "Search",];
+    const taskbarItems = ["Home"];
     // if (authed) {
     //     taskbarItems.splice(1, 0, "Booking");
     // }
@@ -43,7 +44,7 @@ function Navbar() {
                         to="/accounts/login"
                         id="account"
                         className={`flex items-center border border-horizon rounded-sm px-3 py-1 ml-6 cursor-pointer hover:bg-horizon hover:text-white transition-colors duration-300 ${scrolled ? "text-black" : "text-white"}`}>
-                    <span className="material-symbols-outlined mr-1">person</span>
+                        <span className="material-symbols-outlined mr-1">person</span>
                         {accountText}
                     </NavLink>
                 </ul>

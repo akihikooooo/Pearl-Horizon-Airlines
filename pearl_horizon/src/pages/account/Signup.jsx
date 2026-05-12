@@ -7,27 +7,30 @@ import ErrorLabel from "../../components/Error";
 function Signup() {
     const [email, setEmail] = useState("");
     const [confirmEmail, setConfirmEmail] = useState("");
-    const [showMailError, setShowMailError] = useState(false);
+    const [showError, setShowError] = useState("");
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [showPasswordError, setShowPasswordError] = useState(false);
     const { signup } = useAuth();
 
-    const handelEmail = () => {
+    const handleEmail = () => {
         if (email != confirmEmail) {
-            setShowMailError(true);
+            setShowError("Email does not match.");
+            return false
         } else {
-            setShowMailError(false);
+            setShowError("");
+            return true
         }
     };
     const handlePassword = () => {
         if (password != confirmPassword) {
-            setShowPasswordError(true);
+            setShowError("Password does not match");
+            return false
         } else {
-            setShowPasswordError(false);
+            setShowError("");
+            return true
         }
-    }
+    };
 
     return (
         <>
@@ -40,7 +43,9 @@ function Signup() {
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
-                            if (email != confirmEmail || password != confirmPassword) {
+                            if (!handleEmail()) {
+                                return false;
+                            } else if (!handlePassword()) {
                                 return false;
                             }
                             signup({ email: email, password: password, first_name: e.target[0].value, last_name: e.target[1].value });
@@ -64,13 +69,11 @@ function Signup() {
                                 value={confirmEmail}
                                 onChange={(e) => {
                                     setConfirmEmail(e.target.value);
-                                    setShowMailError(false);
+                                    setShowError("");
                                 }}
                                 label="Confirm E-mail"
                                 type="email"
                                 placeholder="johndoe@email.com"
-                                error={email != confirmEmail && showMailError}
-                                onBlur={() => setShowMailError(true)}
                                 required
                             />
                         </div>
@@ -87,17 +90,15 @@ function Signup() {
                                 value={confirmPassword}
                                 onChange={(e) => {
                                     setConfirmPassword(e.target.value);
-                                    setShowPasswordError(false);
+                                    setShowError("");
                                 }}
                                 label="Confirm Password"
                                 type="password"
                                 placeholder=""
-                                error={password != confirmPassword && showPasswordError}
-                                onBlur={() => setShowPasswordError(true)}
                                 required
                             />
                         </div>
-                        <ErrorLabel error="Passwords do not match" />
+                        <ErrorLabel error={showError != ""} message={showError} />
                         <button type="submit" className="bg-horizon text-sky-white w-full rounded-md">
                             Sign-up
                         </button>

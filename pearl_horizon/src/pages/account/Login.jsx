@@ -45,7 +45,7 @@ function Login() {
                             type="password"
                             placeholder=""
                         />
-                        <ErrorLabel error="Incorrect Password" />
+                        <ErrorLabel error={error} message="Incorrect Password" />
                         <button type="submit" className="bg-horizon text-sky-white w-full rounded-md">
                             Log-in
                         </button>

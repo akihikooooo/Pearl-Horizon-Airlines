@@ -1,7 +1,7 @@
 from .database import Database
 import uuid
 from pydantic import BaseModel
-
+from time import time
 
 class bookedFlightModel(BaseModel):
     booking_id: str
@@ -50,8 +50,8 @@ def fetchBookedFlightsFromUser(user_id):
         """
             SELECT booking.booking_id, booking.flight_id, booking.seat_no, booking.title, booking.first_name, booking.last_name,
                    flight.origin_airport_id, flight.destination_airport_id, flight.flight_time, flight.departure_timestamp 
-            FROM booking LEFT JOIN flight ON booking.flight_id = flight.flight_id WHERE user_id=?""",
-        (user_id,),
+            FROM booking LEFT JOIN flight ON booking.flight_id = flight.flight_id WHERE user_id=? AND flight.departure_timestamp > ? ORDER BY flight.departure_timestamp ASC """,
+        (user_id, time()),
     )
     flightRet = cur.fetchall()
     response = []

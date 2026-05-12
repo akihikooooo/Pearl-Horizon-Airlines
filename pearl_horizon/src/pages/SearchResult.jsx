@@ -228,9 +228,9 @@ const SearchResult = () => {
                 </div> */}
 
                 <div id="results" className="flex justify-center items-center flex-col">
-                    {searchResults.map((result) => {
+                    {searchResults.length != 0 ? (searchResults.map((result) => {
                         return <RenderResults result={result} />;
-                    })}
+                    })): <div>No Flights found...</div>}
                 </div>
             </div>
         </div>

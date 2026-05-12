@@ -39,6 +39,7 @@ async def get_all_flights(payload: Annotated[SearchFlightParams, Query()]):
                 "destination_airport_id": i[5],
             }
         )
+    
     return JSONResponse(
         content=response,
         status_code=status.HTTP_200_OK,
