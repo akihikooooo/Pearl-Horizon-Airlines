@@ -1,0 +1,27 @@
+.flex-row{
+    display:flex;
+}
+
+#table {
+  display: flex;
+  flex-direction: column; /* Stack rows vertically */
+}
+
+.table-row {
+  display: flex; /* Align cells horizontally */
+  border-bottom: 1px solid #eee;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-cell {
+  flex: 1; /* Ensure all cells take equal width */
+  padding: 10px;
+  border-right: 1px solid #eee;
+}
+
+/* Style for the header row */
+.table-heading {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
