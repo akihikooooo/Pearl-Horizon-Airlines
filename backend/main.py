@@ -1,7 +1,6 @@
 import asyncio
 import logging
-
-import db
+from db import database
 import logs
 import uvicorn
 from api import app
@@ -12,7 +11,7 @@ log = logging.getLogger(f"PearlHorizon.{__name__}")
 
 
 async def main():
-    db.init()
+    database.init()
     log.info("Starting API Server")
     uviConfig = uvicorn.Config(
         app,
