@@ -87,6 +87,7 @@ function AdminPanel() {
                 return false;
             }
         }
+        console.log(form)
         axios
             .post(`${apiUrl}/api/admin/modify/user`, Object.fromEntries(form.entries()))
             .then(() => {
@@ -238,7 +239,7 @@ function ManageAirport({ newAirportSubmit, airports }) {
 
 function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
     const [open, setOpen] = useState(false);
-
+    
     return (
         <div>
             <div id="topbar" className="flex items-center justify-end p-4">
@@ -459,7 +460,7 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
 
                 <form onSubmit={modifyUserSubmit} className="grid grid-cols-5 gap-3">
                     <select name="user" value={selectedUser.email}>
-                        <option value={selectedUser.email} disabled selected>
+                        <option value={selectedUser.email} selected>
                             {selectedUser.name} ({selectedUser.email})
                         </option>
                     </select>

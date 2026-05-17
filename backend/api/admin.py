@@ -12,10 +12,13 @@ log = logging.getLogger(f"PearlHorizon.{__name__}")
 
 router = APIRouter()
 
+class PermissionsModel(BaseModel):
+    perms: str
 
 @router.get("/permitted")
-def check_admin_permission(token: dict = Depends(verify_token)):
-    return users.hasAdminPermissions(token["user_id"])
+def check_admin_permission(payload: PermissionsModel, token: dict = Depends(verify_token)):
+    # TODO: do a js return for like, {perm1: true, perm2: false}
+    return users.userHasPerms(token["user_id"], payload.perms)
 
 
 class DashboardReturnModel(BaseModel):
@@ -32,7 +35,7 @@ class DashboardReturnModel(BaseModel):
 
 @router.get("/dashboard")
 def getDashboardData(token: dict = Depends(verify_token)):
-    if not users.hasAdminPermissions(token["user_id"]):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
         return HTTPException(status_code=401, detail="Not an Administrator")
     ret = DashboardReturnModel(
         total_users=users.fetchTotalUsers(),
@@ -56,6 +59,8 @@ class AddAirportModel(BaseModel):
 
 @router.post("/add/airport")
 def add_airport(payload: AddAirportModel, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        return HTTPException(status_code=401, detail="Not an Administrator")
     try:
         airport.addAirport(payload)
         return {"success": True}
@@ -71,6 +76,8 @@ class AddAirplaneModel(BaseModel):
 
 @router.post("/add/airplane")
 def add_airplane(payload: AddAirplaneModel, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        return HTTPException(status_code=401, detail="Not an Administrator")
     try:
         airplane.addAirplane(payload)
         return {"success": True}
@@ -91,6 +98,8 @@ class AddFlightModel(BaseModel):
 
 @router.post("/add/flight")
 def add_flight(payload: AddFlightModel, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        return HTTPException(status_code=401, detail="Not an Administrator")
     try:
         flight.addFlight(payload)
         return {"success": True}
@@ -106,6 +115,8 @@ class ModifyUserModel(BaseModel):
 
 @router.post("/modify/user")
 def modify_user(payload: ModifyUserModel, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        return HTTPException(status_code=401, detail="Not an Administrator")
     try:
         users.modifyUser(payload)
         return {"success": True}

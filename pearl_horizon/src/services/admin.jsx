@@ -8,7 +8,7 @@ export const AdminRoutes = () => {
     const [authed, setAuthed] = useState(true);
     useEffect(() => {
         axios
-            .get(`${apiUrl}/api/admin/permitted`)
+            .get(`${apiUrl}/api/admin/permitted`, {perms: "ADMINISTATOR"})
             .then((ret) => {
                 setAuthed(ret.data);
             })
