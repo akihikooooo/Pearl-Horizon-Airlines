@@ -7,7 +7,13 @@ function Login() {
     const { login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordvis, setPasswordvis] = useState(false);
+    const [ischecked, setIschecked] = useState(false);
+
     const [error, setError] = useState("");
+    const passwordChange = () => {
+        setPasswordvis(!ischecked)
+    }
     return (
         <>
             <title>Login | Pearl Horizon Airlines</title>
@@ -42,9 +48,18 @@ function Login() {
                                 setError("");
                             }}
                             label="Password"
-                            type="password"
+                            type={passwordvis ? "text" : "password"}
                             placeholder=""
                         />
+                        <div>
+                            <input
+        id="check"
+        type="checkbox"
+        checked={passwordvis}
+        onChange={() => setPasswordvis((prev) => !prev)}
+      />
+      <label htmlFor="check"> Show Password</label>
+                        </div>
                         <ErrorLabel error={error} message="Incorrect Password" />
                         <button type="submit" className="bg-horizon text-sky-white w-full rounded-md">
                             Log-in
