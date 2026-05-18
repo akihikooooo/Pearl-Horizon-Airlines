@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../services/auth";
 import "../stylesheets/account.css";
-import InputField from "../../components/InputField";
+import {InputField} from "../../components/InputField";
 import ErrorLabel from "../../components/Error";
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import "../index.css";
 import "./stylesheets/home.css";
-import InputField from "../components/InputField";
+import { InputField, SelectField } from "../components/InputField";
 import ErrorLabel from "../components/Error";
 import axios from "axios";
 // import req from "../assets/requirements.jpg";
@@ -94,9 +94,7 @@ const Home = () => {
                     </div>
                     <form onSubmit={handleSearch} className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-3">
-                            <select
-                                className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
-                                name="From">
+                            <SelectField name="From" label="Origin">
                                 <option value="" disabled selected>
                                     -Select Origin-
                                 </option>
@@ -105,10 +103,8 @@ const Home = () => {
                                         {airportID} - {data.city}, {data.country}
                                     </option>
                                 ))}
-                            </select>
-                            <select
-                                className="bg-horizon-tint px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm"
-                                name="To">
+                            </SelectField>
+                            <SelectField name="To" label="Destination">
                                 <option value="" disabled selected>
                                     -Select Destination-
                                 </option>
@@ -117,7 +113,7 @@ const Home = () => {
                                         {airportID} - {data.city}, {data.country}
                                     </option>
                                 ))}
-                            </select>
+                            </SelectField>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                             <InputField label="Departure" type="date" />

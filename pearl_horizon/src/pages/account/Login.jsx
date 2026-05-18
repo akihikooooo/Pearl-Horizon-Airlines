@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../services/auth";
-import InputField from "../../components/InputField";
+import {InputField} from "../../components/InputField";
 import ErrorLabel from "../../components/Error";
 function Login() {
     const { login } = useAuth();

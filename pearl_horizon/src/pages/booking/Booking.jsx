@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import "../../index.css";
 import "../stylesheets/booking.css";
 import "../stylesheets/search.css";
-import InputField from "../../components/InputField.jsx";
+import { InputField, SelectField } from "../../components/InputField.jsx";
 
 const RenderPassenger = ({ index, data, onChange }) => {
     return (
@@ -15,18 +15,17 @@ const RenderPassenger = ({ index, data, onChange }) => {
                 <div id="name" className="flex gap-2 md:items-center flex-col md:flex-row">
                     <div id="title" className="name">
                         <label className="block text-[0.65rem] font-semibold md:tracking-[0.15em] text-sky-slate uppercase mb-1.5">Title</label>
-                        <select
+                        <SelectField
                             value={data.title}
                             onChange={(e) => onChange({ passenger: index, field: "title", value: e.target.value })}
-                            required
-                            className="w-full md:text-sm bg-sky-white border border-sky-slate px-3.5 py-2.5 text-sky-night text-xs placeholder:text-sky-slate/60 outline-none focus:border-horizon transition-colors rounded-sm">
+                            required>
                             <option value="" disabled>
                                 -Select your title-
                             </option>
                             <option value="Mr">Mr.</option>
                             <option value="Ms">Ms.</option>
                             <option value="Mrs">Mrs.</option>
-                        </select>
+                        </SelectField>
                     </div>
                     <InputField
                         label="First Name"
@@ -130,6 +129,7 @@ function Booking() {
             // expects {passenger: num, field: str, value: value}
             // TODO: sanity checking
             const ret = state.map((passenger, index) => (index === action.passenger ? { ...passenger, [action.field]: action.value } : passenger));
+            console.log(ret)
             return ret;
         },
         Array.from({ length: passengerCount }, () => ({
@@ -149,7 +149,9 @@ function Booking() {
     );
 
     const handleSubmit = () => {
-        navigate("/booking/seatmap", { state: { flight_id: searchParams.get("flightID"), route: searchParams.get("route"), passengers: passengers } });
+        navigate("/booking/seatmap", {
+            state: { flight_id: searchParams.get("flightID"), route: searchParams.get("route"), passengers: passengers },
+        });
     };
 
     return (
