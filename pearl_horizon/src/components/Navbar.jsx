@@ -11,7 +11,7 @@ function Navbar() {
 
     const accountText = authed ? user.first_name : "Log in";
 
-    const taskbarItems = ["Home"];
+    const taskbarItems = [];
     // if (authed) {
     //     taskbarItems.splice(1, 0, "Booking");
     // }

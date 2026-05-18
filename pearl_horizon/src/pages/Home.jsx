@@ -5,6 +5,7 @@ import "./stylesheets/home.css";
 import InputField from "../components/InputField";
 import ErrorLabel from "../components/Error";
 import axios from "axios";
+import SelectionField from "../components/Selection";
 // import req from "../assets/requirements.jpg";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -150,6 +151,7 @@ const Home = () => {
                     your local embassy.
                 </div>
             </section>
+            <SelectionField label="Hatdog" options={["Fuck", "Bitch"]} disabled="-hatdog-   "/>
         </div>
     );
 };
