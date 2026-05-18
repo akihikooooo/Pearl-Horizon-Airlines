@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import InputField from "../../components/InputField";
+import {InputField} from "../../components/InputField";
 import { useAuth } from "../../services/auth";
 import { useState } from "react";
 import ErrorLabel from "../../components/Error";

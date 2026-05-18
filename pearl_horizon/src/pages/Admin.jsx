@@ -1,6 +1,6 @@
 // import "./stylesheets/account.css";
 import "./stylesheets/admin.css";
-import InputField from "../components/InputField";
+import { InputField, SelectField } from "../components/InputField";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -78,15 +78,17 @@ function AdminPanel() {
                 console.log(error);
             });
     }
-    function modifyUserSubmit(e) {
+    function modifyUserSubmit(e, email) {
         e.preventDefault();
         const form = new FormData(e.target);
-
+        console.log(email)
+        form.append("user", email);
         for (const [_key, value] of form.entries()) {
             if (!value || (typeof value === "string" && value.trim() === "")) {
                 return false;
             }
         }
+        console.log(form);
         axios
             .post(`${apiUrl}/api/admin/modify/user`, Object.fromEntries(form.entries()))
             .then(() => {
@@ -288,7 +290,7 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                 <form onSubmit={newFlightSubmit} className="grid grid-cols-5 gap-3">
                     <InputField label="Flight ID" name="flight_id" required pattern="PH[0-9]{4}" placeholder="PH0000" />
 
-                    <select name="origin_airport" required>
+                    <SelectField name="origin_airport" label="Origin" required>
                         <option value="" disabled selected>
                             Select an Airport...
                         </option>
@@ -298,9 +300,9 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                                 {airportID} - {data.city}, {data.country}
                             </option>
                         ))}
-                    </select>
+                    </SelectField>
 
-                    <select name="destination_airport" required>
+                    <SelectField name="destination_airport" label="Destination" required>
                         <option value="" disabled selected>
                             Select an Airport...
                         </option>
@@ -310,9 +312,9 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                                 {airportID} - {data.city}, {data.country}
                             </option>
                         ))}
-                    </select>
+                    </SelectField>
 
-                    <select name="airplane_used" required>
+                    <SelectField name="airplane_used" label="Airplane" required>
                         <option selected disabled value="">
                             Select Airplane...
                         </option>
@@ -322,16 +324,16 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                                 {data.model} - {data.seats} pax.
                             </option>
                         ))}
-                    </select>
+                    </SelectField>
 
-                    <select name="route_type" required>
+                    <SelectField name="route_type" label="Route" required>
                         <option disabled selected value="">
                             Select Route Type...
                         </option>
 
                         <option value="oneway">One Way</option>
                         <option value="roundtrip">Round Trip</option>
-                    </select>
+                    </SelectField>
 
                     <InputField label="Departure Time" name="departure_time" type="datetime-local" required min={dateNow()} />
 
@@ -373,7 +375,7 @@ function BookAppr({ bookings }) {
                         <div className="table-cell wrap-break-word w-1/5">{passenger.amount_due}</div>
                         <div className="table-cell wrap-break-word w-1/5">{passenger.booking_id}</div>
 
-                        {/* <div className="table-cell ">
+                        <div className="table-cell ">
                             <button className="flex justify-center items-center text-white bg-green-500 p-2 rounded-md">
                                 <span className="material-symbols-outlined">check</span>
                                 Approve
@@ -382,7 +384,7 @@ function BookAppr({ bookings }) {
                                 <span className="material-symbols-outlined">close</span>
                                 Reject
                             </button>
-                        </div> */}
+                        </div>
                     </div>
                 ))}
             </div>
@@ -414,12 +416,6 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
     const [selectedUser, setSelectedUser] = useState({});
     return (
         <div>
-            <div id="topbar" className="flex items-center justify-end p-4">
-                {/* <button className="bg-blue-600 text-white p-2 rounded-md" onClick={() => setOpen(true)}>
-                    Modify User
-                </button> */}
-            </div>
-
             <div id="table" className="w-full">
                 <div className="table-row table-heading">
                     <div className="table-cell">Name</div>
@@ -455,16 +451,10 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
                 className={`fixed top-1/2 left-1/2 w-8/12 bg-white rounded-xl shadow-xl p-6 z-20 transform -translate-x-1/2 -translate-y-1/2 ${
                     open ? "block" : "hidden"
                 }`}>
-                <h1 className="text-2xl font-bold text-horizon-deep mb-4">Modify User</h1>
+                <h1 className="text-2xl font-bold text-horizon-deep mb-4">Modify {selectedUser.email}</h1>
 
-                <form onSubmit={modifyUserSubmit} className="grid grid-cols-5 gap-3">
-                    <select name="user" value={selectedUser.email}>
-                        <option value={selectedUser.email} disabled selected>
-                            {selectedUser.name} ({selectedUser.email})
-                        </option>
-                    </select>
-
-                    <select name="field">
+                <form onSubmit={(e) => modifyUserSubmit(e, selectedUser.email)} className="flex gap-3">
+                    <SelectField name="field" label="Field">
                         <option value="" disabled selected>
                             Select a field...
                         </option>
@@ -473,11 +463,11 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
                         <option value="last_name">Last Name</option>
                         <option value="password">Password</option>
                         <option value="permissions">Permissions</option>
-                    </select>
+                    </SelectField>
 
                     <InputField label="Value" name="value" type="text" required />
 
-                    <button type="submit" className="bg-blue-600 text-white rounded-md">
+                    <button type="submit" className="bg-blue-600 text-white rounded-md w-64">
                         Submit
                     </button>
                 </form>

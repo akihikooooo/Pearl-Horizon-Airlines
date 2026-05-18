@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import InputField from "../../components/InputField";
+import {InputField} from "../../components/InputField";
 import { useState } from "react";
 import "../stylesheets/payment.css";
 import GCash from "../../assets/GCASH.JPG";

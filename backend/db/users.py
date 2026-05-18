@@ -1,17 +1,12 @@
 from .database import Database
 
 
-def userPerms(userId):
+def userHasPerms(userId, permissions):
     con = Database().con
     cur = con.cursor()
     cur.execute("SELECT permissions FROM users WHERE user_id=?", (userId,))
     perms = cur.fetchone()[0]
-    return perms
-
-
-def hasAdminPermissions(userId):
-    perms = userPerms(userId)
-    if perms and "ADMINISTRATOR" in perms.split(" "):
+    if perms and permissions in perms.split(" "):
         return True
     else:
         return False
