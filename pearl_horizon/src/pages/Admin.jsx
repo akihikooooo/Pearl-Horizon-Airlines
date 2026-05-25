@@ -81,7 +81,7 @@ function AdminPanel() {
     function modifyUserSubmit(e, email) {
         e.preventDefault();
         const form = new FormData(e.target);
-        console.log(email)
+        console.log(email);
         form.append("user", email);
         for (const [_key, value] of form.entries()) {
             if (!value || (typeof value === "string" && value.trim() === "")) {
@@ -136,9 +136,9 @@ function AdminPanel() {
                 </div>
                 <div id="content" className="w-full overflow-scroll p-2">
                     {page === "Dashboard" && <Dashboard dashboardData={dashboardData} />}
-                    {page === "Manage Airports" && <ManageAirport newAirportSubmit={newAirportSubmit} airports={dashboardData.airports_available} />}
-                    {page === "Booking Approval" && <BookAppr bookings={dashboardData.booking_pending} />}
-                    {page === "Manage Flight" && <AddFlight newFlightSubmit={newFlightSubmit} dashboardData={dashboardData} dateNow={dateNow} />}
+                    {page === "Manage Airports" && <ManageAirport newAirportSubmit={newAirportSubmit} airports={dashboardData.airports_available} refresh={refreshData} />}
+                    {page === "Booking Approval" && <BookAppr bookings={dashboardData.booking_pending} refresh={refreshData} />}
+                    {page === "Manage Flight" && <AddFlight newFlightSubmit={newFlightSubmit} dashboardData={dashboardData} dateNow={dateNow} refresh={refreshData} />}
                     {page === "Manage Users" && <ModifyUser modifyUserSubmit={modifyUserSubmit} dashboardData={dashboardData} />}
                 </div>
             </div>
@@ -176,9 +176,20 @@ function Dashboard({ dashboardData }) {
     );
 }
 
-function ManageAirport({ newAirportSubmit, airports }) {
+function ManageAirport({ newAirportSubmit, airports, refresh }) {
     const [open, setOpen] = useState(false);
-
+    function deleteAirport(airport_id) {
+        axios
+            .delete(`${apiUrl}/api/admin/delete/airport/${airport_id}`).then(() => {
+                toast("Airport deleted");
+                refresh();
+            }).catch((e) => {
+                if (e.response.status === 409) {
+                    toast("Cannot delete airport with existing flights  ");
+                } else {
+                    toast("Something went wrong");
+                }});
+    }
     return (
         <div>
             <div id="topbar" className="flex items-center justify-end p-4">
@@ -200,7 +211,7 @@ function ManageAirport({ newAirportSubmit, airports }) {
                         <div className="table-cell">{data.country}</div>
                         <div className="table-cell">{data.city}</div>
                         <div className="table-cell">
-                            <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md">
+                            <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md" onClick={() => deleteAirport(airportID)}>
                                 <span className="material-symbols-outlined">delete</span>
                                 Delete
                             </button>
@@ -238,9 +249,23 @@ function ManageAirport({ newAirportSubmit, airports }) {
     );
 }
 
-function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
+function AddFlight({ newFlightSubmit, dashboardData, dateNow, refresh }) {
     const [open, setOpen] = useState(false);
+    function deleteFlight(flight_id) {
+        axios
+            .delete(`${apiUrl}/api/admin/delete/flight/${flight_id}`)
+            .then(() => {
+                toast("Flight deleted");
+                refresh();
+            }).catch((e) => {
+                if (e.response.status === 409) {
+                    toast("Cannot delete flight with existing bookings");
+                } else {
+                    toast("Something went wrong");
+                }
 
+            });
+    }
     return (
         <div>
             <div id="topbar" className="flex items-center justify-end p-4">
@@ -267,10 +292,15 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
                         <div className="table-cell">{flight.destination_airport_id}</div>
                         <div className="table-cell">{flight.airplane_id}</div>
                         <div className="table-cell">{flight.route}</div>
-                        <div className="table-cell">{new Date(flight.departure_timestamp * 1000).toLocaleString()}</div>
+                        <div className="table-cell">
+                            {(() => {
+                                console.log(new Date(flight.departure_timestamp * 1000).toLocaleString());
+                                return new Date(flight.departure_timestamp * 1000).toLocaleString();
+                            })()}
+                        </div>
 
                         <div className="table-cell">
-                            <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md">
+                            <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md" onClick={() => deleteFlight(flight.flight_id)}>
                                 <span className="material-symbols-outlined">delete</span>
                                 Delete
                             </button>
@@ -354,9 +384,22 @@ function AddFlight({ newFlightSubmit, dashboardData, dateNow }) {
     );
 }
 
-function BookAppr({ bookings }) {
+function BookAppr({ bookings, refresh }) {
     const [open, setOpen] = useState(false);
-
+    const [openDetails, setOpenDetails] = useState(false);
+    const [selectedPayment, setSelectedPayment] = useState({});
+    function getPaymentDetails(passenger) {
+        axios.get(`${apiUrl}/api/admin/payment/${passenger.booking_id}`).then((res) => {
+            console.log(res.data);
+            setSelectedPayment(res.data);
+        });
+    }
+    function setPaymentStatus(booking_id, paid) {
+        axios.patch(`${apiUrl}/api/admin/payment/status`, { booking_id, paid: paid ? 1 : -1 }).then(() => {
+            toast("Payment status updated");
+            refresh();
+        });
+    }
     return (
         <div>
             <div id="table" className="w-full table-fixed">
@@ -368,24 +411,63 @@ function BookAppr({ bookings }) {
                     <div className="table-cell w-1/5">Receipt</div>
                 </div>
                 {bookings.map((passenger, i) => (
-                    <div key={i} className="table-row">
-                        <div className="table-cell wrap-break-word w-1/5">{passenger.name}</div>
-                        <div className="table-cell wrap-break-word w-1/5">{passenger.flight_id}</div>
-                        <div className="table-cell wrap-break-word w-1/5">{passenger.route}</div>
-                        <div className="table-cell wrap-break-word w-1/5">{passenger.amount_due}</div>
-                        <div className="table-cell wrap-break-word w-1/5">{passenger.booking_id}</div>
+                    <>
+                        <div key={i} className="table-row">
+                            <div className="table-cell wrap-break-word w-1/5">{passenger.name}</div>
+                            <div className="table-cell wrap-break-word w-1/5">{passenger.flight_id}</div>
+                            <div className="table-cell wrap-break-word w-1/5">{passenger.route}</div>
+                            <div className="table-cell wrap-break-word w-1/5">{passenger.amount_due}</div>
+                            <div className="table-cell wrap-break-word w-1/5">
+                                {" "}
+                                <button
+                                    className="flex justify-center items-center text-white bg-green-500 p-2 rounded-md"
+                                    onClick={() => {
+                                        getPaymentDetails(passenger);
+                                        setOpenDetails(true);
+                                    }}>
+                                    <span className="material-symbols-outlined">check</span>
+                                    Details
+                                </button>
+                            </div>
 
-                        <div className="table-cell ">
-                            <button className="flex justify-center items-center text-white bg-green-500 p-2 rounded-md">
-                                <span className="material-symbols-outlined">check</span>
-                                Approve
-                            </button>
-                            <button className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md">
+                            <div className="table-cell ">
+                                <button
+                                    className="flex justify-center items-center text-white bg-green-500 p-2 rounded-md"
+                                    onClick={() => setPaymentStatus(passenger.booking_id, true)}>
+                                    <span className="material-symbols-outlined">check</span>
+                                    Approve
+                                </button>
+                                <button
+                                    className="flex justify-center items-center text-white bg-red-500 p-2 rounded-md"
+                                    onClick={() => setPaymentStatus(passenger.booking_id, false)}>
+                                    <span className="material-symbols-outlined">close</span>
+                                    Reject
+                                </button>
+                            </div>
+                        </div>
+                        <div className={`fixed inset-0 bg-black/5 z-10 ${openDetails ? "block" : "hidden"}`}></div>
+
+                        <div
+                            className={`fixed top-1/2 left-1/2 w-8/12 bg-white rounded-xl shadow-xl p-6 z-20 transform -translate-x-1/2 -translate-y-1/2 ${
+                                openDetails ? "block" : "hidden"
+                            }`}>
+                            <h1 className="text-2xl font-bold text-horizon-deep mb-4">Payment Details</h1>
+
+                            <div>
+                                <p>Selected Mode: {selectedPayment.payment_mode}</p>
+                                <p>Amount Paid: {passenger.amount_due} PHP </p>
+                                {selectedPayment.payment_mode == "receipt" ? (
+                                    <img src={selectedPayment.receipt_image} alt="Receipt" />
+                                ) : (
+                                    <p>Card Details: {selectedPayment.last_four_digits}</p>
+                                )}
+                            </div>
+
+                            <button onClick={() => setOpenDetails(false)} className="absolute top-2 right-2">
                                 <span className="material-symbols-outlined">close</span>
-                                Reject
                             </button>
                         </div>
-                    </div>
+                    </>
                 ))}
             </div>
 

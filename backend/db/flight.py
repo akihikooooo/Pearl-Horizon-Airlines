@@ -67,20 +67,20 @@ def fetchTotalFlights():
 def fetchAllFlights():
     con = Database().con
     cur = con.cursor()
-    cur.execute("SELECT * FROM flight ORDER BY departure_timestamp DESC")
+    cur.execute("SELECT departure_timestamp, flight_time, booked_economy, flight_id, origin_airport_id, destination_airport_id, airplane_id, route, return_timestamp FROM flight ORDER BY departure_timestamp DESC")
     response = []
     for i in cur.fetchall():
         response.append(
             {
-                "departure_timestamp": i[6],
-                "flight_time": i[8],
-                "economy": i[4],
-                "flight_id": i[0],
-                "origin_airport_id": i[1],
-                "destination_airport_id": i[2],
-                "airplane_id": i[3],
-                "route": i[5],
-                "return_timestamp": i[7],
+                "departure_timestamp": i[0],
+                "flight_time": i[1],
+                "economy": i[2],
+                "flight_id": i[3],
+                "origin_airport_id": i[4],
+                "destination_airport_id": i[5],
+                "airplane_id": i[6],
+                "route": i[7],
+                "return_timestamp": i[8],
             }
         )
     return response
@@ -94,3 +94,18 @@ def addFlight(payload):
         payload.model_dump(),
     )
     con.commit()
+
+def deleteFlight(flight_id: str):
+    con = Database().con
+    cur = con.cursor()
+
+    cur.execute("SELECT COUNT(*) FROM booking WHERE flight_id = ?", (flight_id,))
+    if cur.fetchone()[0] > 0:
+        return "has_bookings"
+
+    cur.execute("DELETE FROM flight WHERE flight_id = ?", (flight_id,))
+    if cur.rowcount == 0:
+        return "not_found"
+
+    con.commit()
+    return "ok"

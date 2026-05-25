@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import {InputField} from "../../components/InputField";
+import { InputField } from "../../components/InputField";
 import { useState } from "react";
 import "../stylesheets/payment.css";
 import GCash from "../../assets/GCASH.JPG";
@@ -22,6 +22,17 @@ function TextFields({ styles, start, middle, end }) {
 
 function PaymentView({ onSubmit }) {
     const [mode, setMop] = useState("GCash");
+    const [receiptFile, setReceiptFile] = useState(null);
+    const [cardForm, setCardForm] = useState({
+        card_number: "",
+        expiry: "",
+        cvv: "",
+    });
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        onSubmit({ mode, receiptFile, cardForm });
+    }
 
     return (
         <>
@@ -34,45 +45,66 @@ function PaymentView({ onSubmit }) {
                             key={type}
                             onClick={() => setMop(type)}
                             className={`flex-1 py-2.5 text-[0.8rem] tracking-wide transition-colors font-medium
-                          ${mode === type ? "bg-horizon text-white" : "text-sky-slate hover:text-sky-night bg-transparent"}`}>
+                            ${mode === type ? "bg-horizon text-white" : "text-sky-slate hover:text-sky-night bg-transparent"}`}>
                             {type}
                         </button>
                     ))}
                 </div>
+
                 {mode === "GCash" ? (
-                    <form onSubmit={onSubmit} className={`flex flex-col gap-4`}>
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <div className="flex items-center justify-center gap-6 w-full pl-3 text-horizon-deep mt-2">
                             <img src={GCash} alt="GCash" className="w-3/12" />
-                            <InputField label="GCash Receipt" type="file" placeholder="" required />
+                            <InputField
+                                label="GCash Receipt"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                placeholder=""
+                                required
+                                onChange={(e) => setReceiptFile(e.target.files[0])}
+                            />
                         </div>
-                        <button
-                            onClick={{}}
-                            className="bg-horizon text-white px-4 py-2 rounded mt-4 hover:bg-horizon-dark transition-colors duration-300">
+                        <button className="bg-horizon text-white px-4 py-2 rounded mt-4 hover:bg-horizon-dark transition-colors duration-300">
                             Pay Now
                         </button>
                     </form>
                 ) : (
-                    <form onSubmit={onSubmit} className={`flex flex-col gap-4`}>
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <div className="flex gap-4">
-                            <InputField label="Card Number" type="text" placeholder="1234 5678 9012 3456" required />
-                            <InputField label="Expiration Date" type="text" placeholder="MM/YY" required />
-                            <InputField label="CVV" type="text" placeholder="123" required />
+                            <InputField
+                                label="Card Number"
+                                type="text"
+                                placeholder="1234 5678 9012 3456"
+                                required
+                                onChange={(e) => setCardForm((prev) => ({ ...prev, card_number: e.target.value.replace(/\s/g, "") }))}
+                            />
+                            <InputField
+                                label="Expiration Date"
+                                type="text"
+                                placeholder="MM/YY"
+                                required
+                                onChange={(e) => setCardForm((prev) => ({ ...prev, expiry: e.target.value }))}
+                            />
+                            <InputField
+                                label="CVV"
+                                type="text"
+                                placeholder="123"
+                                required
+                                onChange={(e) => setCardForm((prev) => ({ ...prev, cvv: e.target.value }))}
+                            />
                         </div>
-                        <button
-                            onClick={{}}
-                            className="bg-horizon text-white px-4 py-2 rounded mt-4 hover:bg-horizon-dark transition-colors duration-300">
+                        <button className="bg-horizon text-white px-4 py-2 rounded mt-4 hover:bg-horizon-dark transition-colors duration-300">
                             Pay Now
                         </button>
                     </form>
                 )}
-                {/* CARD */}
             </div>
         </>
     );
 }
 
 function Payment() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { state } = useLocation();
     const [showPayment, setShowPayment] = useState(false);
 
@@ -86,12 +118,52 @@ function Payment() {
     const snacksPrice = 20.0 * snacksqty;
     const totalPrice = travelPrice + sandwichPrice + drinksPrice + snacksPrice;
 
-    function onSubmit(e) {
-        // warn: this is just mocked, walang actual saving of credentials na nangyayari here
-        e.preventDefault()
+    const [paymentMode, setPaymentMode] = useState(null); // "credit_card" | "receipt"
+    const [cardDetails, setCardDetails] = useState(null); // { cardholder_name, card_number, expiry_month, expiry_year, cvv }
+    const [receiptFile, setReceiptFile] = useState(null); // File object
+
+    function onSubmit({ mode, receiptFile, cardForm }) {
+        const formData = new FormData();
+
+        formData.append(
+            "payload",
+            JSON.stringify({
+                flight_id: state.flight_id,
+                amount_due: totalPrice,
+                passengers: state.passengers,
+            }),
+        );
+
+        if (mode === "GCash") {
+            formData.append("payment_mode", "receipt");
+            formData.append("receipt", receiptFile);
+        } else {
+            // Parse MM/YY into separate fields for the backend
+            const [expiry_month, expiry_year] = cardForm.expiry.split("/").map(Number);
+            formData.append("payment_mode", "credit_card");
+            formData.append(
+                "card_details",
+                JSON.stringify({
+                    cardholder_name: "N/A", // your card form doesn't collect this; add an InputField if needed
+                    card_number: cardForm.card_number,
+                    expiry_month,
+                    expiry_year: expiry_year + 2000, // "27" -> 2027
+                    cvv: cardForm.cvv,
+                }),
+            );
+        }
+
         axios
-            .post(`${apiUrl}/api/book/entry`, { flight_id: state.flight_id, amount_due: totalPrice, passengers: state.passengers })
-            .then(() => {alert("Successully booked. (btw this popup is still wip papalitan sya :3)"); navigate("/accounts")});
+            .post(`${apiUrl}/api/book/entry`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then(() => {
+                alert("Successfully booked. (btw this popup is still wip papalitan sya :3)");
+                navigate("/accounts");
+            })
+            .catch((err) => {
+                alert(`Booking failed: ${err.response?.data?.detail ?? "Unknown error"}`);
+            });
     }
     return (
         <>
@@ -130,7 +202,15 @@ function Payment() {
                 <button className="bg-horizon text-sky-white px-4 py-2 rounded-lg" onClick={() => setShowPayment(true)}>
                     Proceed to Payment
                 </button>
-                {showPayment ? <PaymentView onSubmit={onSubmit} /> : <></>}
+                {showPayment && (
+                    <PaymentView
+                        onSubmit={onSubmit}
+                        paymentMode={paymentMode}
+                        setPaymentMode={setPaymentMode}
+                        setCardDetails={setCardDetails}
+                        setReceiptFile={setReceiptFile}
+                    />
+                )}
             </div>
         </>
     );

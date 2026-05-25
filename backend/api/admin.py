@@ -5,7 +5,7 @@ from auth import verify_token
 from db import airplane, airport, booking, flight, users
 from fastapi import Depends, HTTPException
 from fastapi.routing import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Dict, List, Literal
 
 log = logging.getLogger(f"PearlHorizon.{__name__}")
@@ -122,3 +122,67 @@ def modify_user(payload: ModifyUserModel, token: dict = Depends(verify_token)):
         return {"success": True}
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=409, detail="Airport ID already exists")
+
+@router.get("/payment/{booking_id}")
+def getPaymentDetails(booking_id: str, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        raise HTTPException(status_code=401, detail="Not an Administrator")
+
+    payment = booking.fetchPaymentByBookingId(booking_id)
+    if not payment:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    return payment
+
+class UpdatePaidStatusParams(BaseModel):
+    booking_id: str
+    paid: int = Field(..., ge=-1, le=1)
+
+@router.patch("/payment/status")
+def updatePaymentStatus(payload: UpdatePaidStatusParams, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        raise HTTPException(status_code=401, detail="Not an Administrator")
+
+    if not booking.updatePaidStatus(payload.booking_id, payload.paid):
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    return {"success": True, "booking_id": payload.booking_id, "paid": payload.paid}
+
+@router.delete("/delete/flight/{flight_id}")
+def deleteFlightEndpoint(flight_id: str, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        raise HTTPException(status_code=401, detail="Not an Administrator")
+
+    result = flight.deleteFlight(flight_id)
+    if result == "not_found":
+        raise HTTPException(status_code=404, detail="Flight not found")
+    if result == "has_bookings":
+        raise HTTPException(status_code=409, detail="Cannot delete a flight with existing bookings")
+
+    return {"success": True, "flight_id": flight_id}
+
+@router.delete("/delete/airplane/{airplane_id}")
+def deleteAirplaneEndpoint(airplane_id: str, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        raise HTTPException(status_code=401, detail="Not an Administrator")
+
+    result = airplane.deleteAirplane(airplane_id)
+    if result == "not_found":
+        raise HTTPException(status_code=404, detail="Airplane not found")
+    if result == "has_flights":
+        raise HTTPException(status_code=409, detail="Cannot delete an airplane assigned to existing flights")
+
+    return {"success": True, "airplane_id": airplane_id}
+
+@router.delete("/delete/airport/{airport_id}")
+def deleteAirportEndpoint(airport_id: str, token: dict = Depends(verify_token)):
+    if not users.userHasPerms(token["user_id"], "ADMINISTRATOR"):
+        raise HTTPException(status_code=401, detail="Not an Administrator")
+
+    result = airport.deleteAirport(airport_id)
+    if result == "not_found":
+        raise HTTPException(status_code=404, detail="Airport not found")
+    if result == "has_flights":
+        raise HTTPException(status_code=409, detail="Cannot delete an airport referenced by existing flights")
+
+    return {"success": True, "airport_id": airport_id}

@@ -18,3 +18,21 @@ def addAirport(payload):
         (payload.airport_id, payload.country, payload.city),
     )
     con.commit()
+
+def deleteAirport(airport_id: str):
+    con = Database().con
+    cur = con.cursor()
+
+    cur.execute(
+        "SELECT COUNT(*) FROM flight WHERE origin_airport_id = ? OR destination_airport_id = ?",
+        (airport_id, airport_id),
+    )
+    if cur.fetchone()[0] > 0:
+        return "has_flights"
+
+    cur.execute("DELETE FROM airport WHERE airport_id = ?", (airport_id,))
+    if cur.rowcount == 0:
+        return "not_found"
+
+    con.commit()
+    return "ok"

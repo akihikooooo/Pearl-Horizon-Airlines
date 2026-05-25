@@ -92,7 +92,6 @@ async def getUserDetails(payload: dict = Depends(verify_token)):
     )
     return ret
 
-
 @app.post("/modify/user")
 async def modifyUserDetails(
     payload: userDetailsModel, token: dict = Depends(verify_token)

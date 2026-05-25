@@ -23,5 +23,8 @@
     "editor.tabSize": 4,
     "prettier.bracketSameLine": true,
     "prettier.printWidth": 150,
-    "prettier.tabWidth": 4
+    "prettier.tabWidth": 4,
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
