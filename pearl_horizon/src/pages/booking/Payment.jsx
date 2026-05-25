@@ -4,6 +4,7 @@ import { useState } from "react";
 import "../stylesheets/payment.css";
 import GCash from "../../assets/GCASH.JPG";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function TextFields({ styles, start, middle, end }) {
@@ -157,12 +158,14 @@ function Payment() {
             .post(`${apiUrl}/api/book/entry`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            .then(() => {
-                alert("Successfully booked. (btw this popup is still wip papalitan sya :3)");
+            .then(async () => {
+                toast("Successfully booked the flight!");
+                setShowPayment(false);
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 navigate("/accounts");
             })
             .catch((err) => {
-                alert(`Booking failed: ${err.response?.data?.detail ?? "Unknown error"}`);
+                toast(`Booking failed: ${err.response?.data?.detail ?? "Unknown error"}`);
             });
     }
     return (
@@ -211,6 +214,7 @@ function Payment() {
                         setReceiptFile={setReceiptFile}
                     />
                 )}
+                <ToastContainer/>
             </div>
         </>
     );

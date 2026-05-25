@@ -103,7 +103,8 @@ def add_flight(payload: AddFlightModel, token: dict = Depends(verify_token)):
     try:
         flight.addFlight(payload)
         return {"success": True}
-    except sqlite3.IntegrityError:
+    except sqlite3.IntegrityError as e:
+        print(e)
         raise HTTPException(status_code=409, detail="Airport ID already exists")
 
 

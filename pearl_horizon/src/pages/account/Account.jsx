@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../services/auth";
 import "../stylesheets/account.css";
-import {InputField} from "../../components/InputField";
+import { InputField } from "../../components/InputField";
 import ErrorLabel from "../../components/Error";
 import axios from "axios";
+import logo from "../../assets/Pearl Horizon.png";
+import QRCode from "react-qr-code";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function formatTime(seconds) {
@@ -17,7 +19,38 @@ function formatTime(seconds) {
 
     return parts.join(" ");
 }
-
+function RenderTicket({ name, origin, destination, flightID, flightDate, seat }) {
+    return (
+        <div id="ticket" className="flex     h-full border w-9/12 text-2xl ">
+            <div id="information" className="w-9/12">
+                <p className="text-md font-normal w-full text-left bg-horizon p-2 flex items-center gap-2 text-white">
+                    <img src={logo} alt="Pearl Horizon Logo" className="h-16" />
+                    Pearl Horizon Airlines
+                </p>
+                <div className="w-full p-2">
+                    <p className="text-md font-normal flex justify-between">
+                        <p>{name}</p>
+                        <p>{seat}</p>
+                    </p>
+                    <div className="flex justify-between">
+                        <p className="text-md font-normal w-3/12 ">{origin}</p>
+                        <span id="graphics" className="flex justify-center items-center text-horizon-deep gap-2 flex-1 w-full">
+                            <span className="material-symbols-outlined">flight_takeoff</span>
+                            <span className="flex-1 w-full border-t-2 border-dotted border-horizon-deep" />
+                            <span className="material-symbols-outlined">flight_land</span>
+                        </span>
+                        <p className="text-md font-normal w-3/12 text-center">{destination}</p>
+                    </div>
+                    <p className="text-sm font-normal w-full text-left">Flight: {flightID}</p>
+                    <p className="text-sm font-normal w-full text-left">Flight Date: {flightDate}</p>
+                </div>
+            </div>
+            <div id="qrcode" className="w-3/12 p-2 flex justify-center items-center">
+                <QRCode value={"name: " + name + ", origin: " + origin + ", destination: " + destination + ", seat: " + seat} size={128} />
+            </div>
+        </div>
+    );
+}
 function EditProfile({ onExit, user }) {
     const navigate = useNavigate();
     function onSubmit(e) {
@@ -133,6 +166,7 @@ function EditPassword({ onExit }) {
 }
 
 const BookedFlights = ({ flight }) => {
+    const [open, setOpen] = useState(false);
     return (
         <>
             <div
@@ -184,10 +218,30 @@ const BookedFlights = ({ flight }) => {
                         </div>
                     </div>
                     <div id="flight-price" className="md:w-1/3 flex items-stretch justify-end gap-4 pr-4 font-medium text-xl">
-                        <button onClick={() => {}} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
+                        <button onClick={() => setOpen(true)} className={`text-xs h-1/2 bg-horizon text-white px-4 py-2 rounded-sm self-center`}>
                             Show Details
                         </button>
                     </div>
+                </div>
+                <div className={`fixed inset-0 bg-black/50 z-10 ${open ? "block" : "hidden"}`}></div>
+
+                <div
+                    className={`fixed top-1/2 left-1/2 w-8/12 bg-white rounded-xl shadow-xl p-6 z-20 transform -translate-x-1/2 -translate-y-1/2 ${
+                        open ? "block" : "hidden"
+                    }`}>
+                    <h1 className="text-2xl font-bold text-horizon-deep mb-4">Booking Ticket</h1>
+                    <RenderTicket
+                        name={flight.first_name + " " + flight.last_name}
+                        origin={flight.origin_airport_id}
+                        destination={flight.destination_airport_id}
+                        flightID={flight.flight_id}
+                        flightDate={new Date(flight.departure_timestamp * 1000).toLocaleString()}
+                        seat={flight.seat_no}
+                    />
+
+                    <button onClick={() => setOpen(false)} className="absolute top-2 right-2">
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
                 </div>
             </div>
         </>
@@ -285,7 +339,13 @@ function AccountManagement() {
                     My Flights
                 </h1>
                 <div className="flex justify-center items-center flex-col w-5/12 gap-4">
-                    {loading ? <div>Loading...</div> : (userData.booked_flights.length == 0 ? <div>No Bookings found.</div> : userData.booked_flights.map((flight, i) => <BookedFlights flight={flight} key={i} />))}
+                    {loading ? (
+                        <div>Loading...</div>
+                    ) : userData.booked_flights.length == 0 ? (
+                        <div>No Bookings found.</div>
+                    ) : (
+                        userData.booked_flights.map((flight, i) => <BookedFlights flight={flight} key={i} />)
+                    )}
                 </div>
             </div>
 
