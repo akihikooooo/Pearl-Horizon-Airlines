@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useReducer, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../stylesheets/seatmap.css";
+import { InputField } from "../../components/InputField";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function generator(seatsTaken) {
@@ -47,6 +48,8 @@ const Infos = ({ passengerID, selectedPassenger, onSelect, name, seat, mealPrefe
                         </button>
                     ))}
                 </div>
+                <p className="text-white text-lg font medium">Baggage Weight in kg:</p>
+                <InputField labelshow={false} label={`Baggage`}/>
             </div>
         </div>
     );
