@@ -40,6 +40,9 @@ services:
       - "8000"
     cpus: "0.5"
     mem_limit: 128m
+    volumes:
+    - ./backend/db:/app/db
+    - ./backend/receipts:/app/receipts
 
 volumes:
   pearlfrontend:
