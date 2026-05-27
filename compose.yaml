@@ -41,9 +41,11 @@ services:
     cpus: "0.5"
     mem_limit: 128m
     volumes:
-    - ./backend/db/db.db:/usr/src/pearl_backend/db/db.db:rw
-    - ./backend/receipts:/usr/src/pearl_backend/receipts:rw
+      - ./backend/db/db.db:/usr/src/pearl_backend/db/db.db:rw
+      - receipts:/usr/src/pearl_backend/receipts:rw
 
 volumes:
   pearlfrontend:
+    driver: local
+  receipts:
     driver: local
