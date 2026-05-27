@@ -1,6 +1,9 @@
-export const InputField = ({labelshow, label, className, error, ...inputProps }) => (
+export const InputField = ({ labelshow = true, label, className, error, ...inputProps }) => (
     <div>
-        <label className={`block text-[0.65rem] font-semibold md:tracking-[0.15em] text-sky-slate uppercase mb-1.5 ${labelshow?"block":"hidden"}`}>{label}</label>
+        <label
+            className={`block text-[0.65rem] font-semibold md:tracking-[0.15em] text-sky-slate uppercase mb-1.5 ${labelshow ? "block" : "hidden"}`}>
+            {label}
+        </label>
         <input
             {...inputProps}
             name={inputProps.name ? inputProps.name : label}

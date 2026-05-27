@@ -141,9 +141,7 @@ function RatingModal({ onClose }) {
                             style={{
                                 fontSize: "2.5rem",
                                 color: star <= (hovered || rating) ? "#f59e0b" : "#d1d5db",
-                                fontVariationSettings: star <= (hovered || rating)
-                                    ? "'FILL' 1, 'wght' 400"
-                                    : "'FILL' 0, 'wght' 400",
+                                fontVariationSettings: star <= (hovered || rating) ? "'FILL' 1, 'wght' 400" : "'FILL' 0, 'wght' 400",
                             }}
                             onMouseEnter={() => setHovered(star)}
                             onMouseLeave={() => setHovered(0)}
@@ -155,7 +153,9 @@ function RatingModal({ onClose }) {
 
                 {/* Optional suggestions */}
                 <div className="flex flex-col gap-1">
-                    <label className="text-sm text-gray-500">Other suggestions <span className="text-gray-400">(optional)</span></label>
+                    <label className="text-sm text-gray-500">
+                        Other suggestions <span className="text-gray-400">(optional)</span>
+                    </label>
                     <textarea
                         className="w-full border border-gray-200 rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-horizon"
                         rows={3}
@@ -177,8 +177,8 @@ function RatingModal({ onClose }) {
 
 function Payment() {
     const [showRating, setShowRating] = useState(false);
-const [rating, setRating] = useState(0);
-const [suggestion, setSuggestion] = useState("");
+    const [rating, setRating] = useState(0);
+    const [suggestion, setSuggestion] = useState("");
     const navigate = useNavigate();
     const { state } = useLocation();
     const [showPayment, setShowPayment] = useState(false);
@@ -193,9 +193,9 @@ const [suggestion, setSuggestion] = useState("");
     const snacksPrice = 20.0 * snacksqty;
     const totalPrice = travelPrice + sandwichPrice + drinksPrice + snacksPrice;
 
-    const [paymentMode, setPaymentMode] = useState(null); // "credit_card" | "receipt"
-    const [cardDetails, setCardDetails] = useState(null); // { cardholder_name, card_number, expiry_month, expiry_year, cvv }
-    const [receiptFile, setReceiptFile] = useState(null); // File object
+    const [paymentMode, setPaymentMode] = useState(null);
+    const [cardDetails, setCardDetails] = useState(null); 
+    const [receiptFile, setReceiptFile] = useState(null);
 
     function onSubmit({ mode, receiptFile, cardForm }) {
         const formData = new FormData();
@@ -232,13 +232,13 @@ const [suggestion, setSuggestion] = useState("");
             .post(`${apiUrl}/api/book/entry`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            .then(async () => {
-    toast("Successfully booked the flight!");
-    setShowPayment(false);
-    setShowRating(true); // ← new
-})
+            .then(async () => { 
+                setShowPayment(false);
+                setShowRating(true);
+            })
             .catch((err) => {
-                toast(`Booking failed: ${err.response?.data?.detail ?? "Unknown error"}`);
+                toast(`Booking failed, check Console for Details.`);
+                console.error("Booking error:", err.response || err);
             });
     }
     return (
@@ -279,17 +279,16 @@ const [suggestion, setSuggestion] = useState("");
                     Proceed to Payment
                 </button>
                 {showPayment && (
-    <PaymentView
-        onSubmit={onSubmit}
-        paymentMode={paymentMode}
-        setPaymentMode={setPaymentMode}
-        setCardDetails={setCardDetails}
-        setReceiptFile={setReceiptFile}
-    />
-)}
-{showRating && <RatingModal onClose={() => setShowRating(false)} />}
-<ToastContainer/>
-                <ToastContainer/>
+                    <PaymentView
+                        onSubmit={onSubmit}
+                        paymentMode={paymentMode}
+                        setPaymentMode={setPaymentMode}
+                        setCardDetails={setCardDetails}
+                        setReceiptFile={setReceiptFile}
+                    />
+                )}
+                {showRating && <RatingModal onClose={() => setShowRating(false)} />}
+                <ToastContainer />
             </div>
         </>
     );
