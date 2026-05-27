@@ -250,3 +250,4 @@ def updatePaidStatus(booking_id: str, paid: int):
         return False
     con.commit()
     return True
+

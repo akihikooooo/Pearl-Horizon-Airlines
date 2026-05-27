@@ -2,7 +2,7 @@ import logging
 import sqlite3
 
 from auth import verify_token
-from db import airplane, airport, booking, flight, users
+from db import airplane, airport, booking, flight, users, review
 from fastapi import Depends, HTTPException
 from fastapi.routing import APIRouter
 from pydantic import BaseModel, Field
@@ -31,6 +31,7 @@ class DashboardReturnModel(BaseModel):
     users: List[Dict[str, str | None]]
     flights: List[Dict[str, str | int | None]]
     booking_pending: List[Dict[str, str | int | None]]
+    reviews: List[Dict[str, str | int | None]]
 
 
 @router.get("/dashboard")
@@ -46,7 +47,8 @@ def getDashboardData(token: dict = Depends(verify_token)):
         airplanes_available=airplane.getAllAirplanes(),
         users=users.getAllUsers(),
         flights=flight.fetchAllFlights(),
-        booking_pending=booking.fetchPendingBookings()
+        booking_pending=booking.fetchPendingBookings(),
+        reviews=review.fetchAllReviews()
     )
     return ret
 

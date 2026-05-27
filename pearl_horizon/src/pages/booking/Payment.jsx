@@ -112,8 +112,21 @@ function RatingModal({ onClose }) {
 
     function handleSubmit() {
         // optionally POST rating + suggestion to your API here
-        onClose();
-        navigate("/accounts");
+        axios
+            .post(`${apiUrl}/api/book/feedback`, {
+                rating: rating,
+                comments: suggestion,
+            })
+            .then(() => {
+                toast("Thank you for your feedback!");
+            })
+            .catch(() => {
+                toast(`Failed to submit feedback, Contact the Administrator.`);
+            })
+            .finally(() => {
+                onClose();
+                navigate("/accounts");
+            });
     }
 
     return (
@@ -194,7 +207,7 @@ function Payment() {
     const totalPrice = travelPrice + sandwichPrice + drinksPrice + snacksPrice;
 
     const [paymentMode, setPaymentMode] = useState(null);
-    const [cardDetails, setCardDetails] = useState(null); 
+    const [cardDetails, setCardDetails] = useState(null);
     const [receiptFile, setReceiptFile] = useState(null);
 
     function onSubmit({ mode, receiptFile, cardForm }) {
@@ -232,7 +245,7 @@ function Payment() {
             .post(`${apiUrl}/api/book/entry`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            .then(async () => { 
+            .then(async () => {
                 setShowPayment(false);
                 setShowRating(true);
             })

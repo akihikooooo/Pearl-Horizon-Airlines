@@ -1,7 +1,9 @@
+import sqlite3
 import logging
 from typing import Annotated, List, Optional
 import uuid
 from db.booking import bookPassengers, getTakenSeats, BookEntryParams
+from db.review import addReview
 from auth import verify_token
 from fastapi import Depends, Query
 from fastapi.responses import JSONResponse
@@ -92,3 +94,16 @@ async def book_passengers(
         return {"success": True, "payment_mode": "credit_card", "last_four_digits": card_number[-4:]}
     else:
         return {"success": True, "payment_mode": "receipt"}
+
+class FeedbackPayload(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    comments: Optional[str] = Field(max_length=500)
+
+@router.post("/feedback")
+async def feedback(payload: FeedbackPayload, _token: dict = Depends(verify_token)):
+    try:
+        addReview(payload)
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to submit feedback. Contact the administrator.")
+    return {"success": True, "message": "Feedback submitted successfully."}

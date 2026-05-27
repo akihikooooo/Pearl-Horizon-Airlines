@@ -123,7 +123,7 @@ function AdminPanel() {
             <div id="cont" className="pt-16 flex bg-sky-cloud">
                 <div id="sidebar" className="w-3/12 h-screen bg-sky-white p-6 flex flex-col gap-2">
                     <h2 className="text-xl font-bold text-horizon">Admin Menu</h2>
-                    {["Dashboard", "Manage Airports", "Booking Approval", "Manage Flight", "Manage Users"].map((item) => (
+                    {["Dashboard", "Manage Airports", "Booking Approval", "Manage Flight", "Manage Users", "Reviews"].map((item) => (
                         <button
                             key={item}
                             onClick={() => {
@@ -140,6 +140,7 @@ function AdminPanel() {
                     {page === "Booking Approval" && <BookAppr bookings={dashboardData.booking_pending} refresh={refreshData} />}
                     {page === "Manage Flight" && <AddFlight newFlightSubmit={newFlightSubmit} dashboardData={dashboardData} dateNow={dateNow} refresh={refreshData} />}
                     {page === "Manage Users" && <ModifyUser modifyUserSubmit={modifyUserSubmit} dashboardData={dashboardData} />}
+                    {page === "Reviews" && <ReviewStats reviews={dashboardData.reviews} />}
                 </div>
             </div>
             <ToastContainer />
@@ -561,4 +562,27 @@ function ModifyUser({ modifyUserSubmit, dashboardData }) {
         </div>
     );
 }
+
+function ReviewStats({ reviews }) {
+    console.log(reviews);
+    return (
+        <div>
+            <div id="table" className="w-full">
+                <div className="table-row table-heading">
+                    <div className="table-cell">Rating</div>
+                    <div className="table-cell">Comments</div>
+                </div>
+
+                {reviews.map((review, i) => (
+                    <div key={i} className="table-row">
+                        <div className="table-cell">{review.rating}</div>
+                        <div className="table-cell">{review.comments}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+
 export default AdminPanel;

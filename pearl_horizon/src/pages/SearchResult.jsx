@@ -62,7 +62,10 @@ const RenderResults = ({ result }) => {
                             </span>
                             <span id="destination" className="flex justify-center items-center flex-col gap-0">
                                 <p>
-                                    17 May
+                                    {new Date((result.departure_timestamp + result.flight_time) * 1000).toLocaleDateString([], {
+                                        month: "short",
+                                        day: "numeric",
+                                    })}
                                     <br />
                                     {new Date((result.departure_timestamp + result.flight_time) * 1000).toLocaleTimeString([], {
                                         hour: "2-digit",
