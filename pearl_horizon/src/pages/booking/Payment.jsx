@@ -104,7 +104,81 @@ function PaymentView({ onSubmit }) {
     );
 }
 
+function RatingModal({ onClose }) {
+    const navigate = useNavigate();
+    const [rating, setRating] = useState(0);
+    const [hovered, setHovered] = useState(0);
+    const [suggestion, setSuggestion] = useState("");
+
+    function handleSubmit() {
+        // optionally POST rating + suggestion to your API here
+        onClose();
+        navigate("/accounts");
+    }
+
+    return (
+        <>
+            <div className="fixed inset-0 bg-black/50 z-30" />
+            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-white rounded-xl shadow-xl p-6 w-5/12 flex flex-col gap-4">
+                <button onClick={handleSubmit} className="absolute top-3 right-3">
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+
+                <div className="flex flex-col items-center gap-1 text-center">
+                    <span className="material-symbols-outlined text-horizon" style={{ fontSize: "3rem" }}>
+                        check_circle
+                    </span>
+                    <h2 className="text-xl font-bold text-horizon-deep">Booking Confirmed!</h2>
+                    <p className="text-sm text-gray-500">How was your booking experience?</p>
+                </div>
+
+                {/* Star Rating */}
+                <div className="flex justify-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                            key={star}
+                            className="material-symbols-outlined cursor-pointer select-none transition-colors"
+                            style={{
+                                fontSize: "2.5rem",
+                                color: star <= (hovered || rating) ? "#f59e0b" : "#d1d5db",
+                                fontVariationSettings: star <= (hovered || rating)
+                                    ? "'FILL' 1, 'wght' 400"
+                                    : "'FILL' 0, 'wght' 400",
+                            }}
+                            onMouseEnter={() => setHovered(star)}
+                            onMouseLeave={() => setHovered(0)}
+                            onClick={() => setRating(star)}>
+                            star
+                        </span>
+                    ))}
+                </div>
+
+                {/* Optional suggestions */}
+                <div className="flex flex-col gap-1">
+                    <label className="text-sm text-gray-500">Other suggestions <span className="text-gray-400">(optional)</span></label>
+                    <textarea
+                        className="w-full border border-gray-200 rounded-md p-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-horizon"
+                        rows={3}
+                        placeholder="Tell us what we can improve..."
+                        value={suggestion}
+                        onChange={(e) => setSuggestion(e.target.value)}
+                    />
+                </div>
+
+                <button
+                    onClick={handleSubmit}
+                    className="bg-horizon text-white py-2 rounded-lg text-sm font-medium hover:bg-horizon-deep transition-colors">
+                    Submit & Go to My Flights
+                </button>
+            </div>
+        </>
+    );
+}
+
 function Payment() {
+    const [showRating, setShowRating] = useState(false);
+const [rating, setRating] = useState(0);
+const [suggestion, setSuggestion] = useState("");
     const navigate = useNavigate();
     const { state } = useLocation();
     const [showPayment, setShowPayment] = useState(false);
@@ -159,11 +233,10 @@ function Payment() {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then(async () => {
-                toast("Successfully booked the flight!");
-                setShowPayment(false);
-                await new Promise(resolve => setTimeout(resolve, 3000));
-                navigate("/accounts");
-            })
+    toast("Successfully booked the flight!");
+    setShowPayment(false);
+    setShowRating(true); // ← new
+})
             .catch((err) => {
                 toast(`Booking failed: ${err.response?.data?.detail ?? "Unknown error"}`);
             });
@@ -206,14 +279,16 @@ function Payment() {
                     Proceed to Payment
                 </button>
                 {showPayment && (
-                    <PaymentView
-                        onSubmit={onSubmit}
-                        paymentMode={paymentMode}
-                        setPaymentMode={setPaymentMode}
-                        setCardDetails={setCardDetails}
-                        setReceiptFile={setReceiptFile}
-                    />
-                )}
+    <PaymentView
+        onSubmit={onSubmit}
+        paymentMode={paymentMode}
+        setPaymentMode={setPaymentMode}
+        setCardDetails={setCardDetails}
+        setReceiptFile={setReceiptFile}
+    />
+)}
+{showRating && <RatingModal onClose={() => setShowRating(false)} />}
+<ToastContainer/>
                 <ToastContainer/>
             </div>
         </>
